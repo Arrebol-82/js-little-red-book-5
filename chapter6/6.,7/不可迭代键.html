@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WeakMap是不可迭代的,因为在任何时候都会被销毁</h1>
+  <p>在此了解一下</p>
+  <code>
+    <pre>
+      const wm = new WeakMap([[键,1],[键,2],[键,3][.........]])
+    </pre>
+  </code>
+  <ul>
+    <li><strong>参数唯一性</strong> 因为WeakMap只接受一个参数</li>
+    <li><strong>可迭代协议</strong> 数组实现了 Symbol.iterator，满足构造函数对参数 “可迭代” 的要求。 并且能接收多个参数</li>
+    <li><strong>结构识别</strong> 用 [[键1, 值1], [键2, 值2]] 的嵌套数组结构，让引擎明确每个小数组对应一个键值对（第 0 项为键，第 1 项为值）。</li>
+  </ul>
+
+  <h1>因为WeakMap是不可迭代的,所以也是访问不到除了自身之外的值,所以就没有clear方法了</h1>
+  <h1>weakMap之所以要键为引用值而不是原始值就是因为 原始值太混乱了 , 而引用值是唯一的</h1>
+  <script>
+
+  </script>
+</body>
+
+</html>

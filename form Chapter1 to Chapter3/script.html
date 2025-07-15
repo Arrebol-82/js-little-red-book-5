@@ -1,0 +1,41 @@
+<!DO CTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 这样可以事先告诉浏览器 , 以至于节省性能 -->
+    <link rel="preload" href="myscript.js">
+    <script></script>
+    <!-- 在上嵌入会造成页面卡段 -->
+  </head>
+
+  <body>
+
+
+    <!-- 在默认的情况下, script 标签是按照书写顺序执行的 -->
+    <!-- defer: 相当于告诉浏览器立即下载 , 等待 HTML 解析完后执行 -->
+    <script defer src="./2.js"></script>
+
+    <!-- async:  表示会异步加载 不会阻塞文档渲染 , 加载完会直接执行 , 但是页面出现的顺序是不能保证的-->
+    <script async src="./3.js"></script>
+    <script>
+      // 严格模式
+      'use strict';
+
+      // 在下面的话 , 会等html加载完再运行
+      console.log('<\/script>');
+      // 他会报错,因为在严格模式下,为给变量声明就会报错
+      message = 10
+      // 这样写会浪费大量性能 所以可以写link先告诉浏览器
+
+      let script = document.createElement('script');
+      script.src = 'myscript.js';
+      document.body.appendChild(script);
+    </script>
+
+    <script async src="./1.js"></script>
+  </body>
+
+  </html>

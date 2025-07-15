@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>apply call bind</h1>
+  <p class="black">注意!!! 改变this的指向只是在 call bind apply 里面改变 也就是改变函数体内的this , 如果正常调用函数的话this还是正常指向的</p>
+  <ul>
+    <li>
+      <h2>共同点</h2>
+      <p>都是可以改变this的指向 作用都是一样的 </p>
+    </li>
+    <li>
+      <h2>区别</h2>
+      <ul>
+        <li>call , apply 可以立即指向 , bind不会立即执行 因为bind返回的是一个函数 可赋值给变量 或者 加入() 立即执行函数</li>
+        <li>参数不同: apply第二个参数是数组(也可以是类数组) call和bind有对个参数需要挨个写 (一个个传参 ) </li>
+      </ul>
+    </li>
+  </ul>
+  <section>
+    <h2>apply()</h2>
+    <p>函数有三个方法 , apply call bind 这些方法是以不同的策略指定this 值来调用函数 即会设置函数时函数体内this对象的值 <strong>apply() 方法接收两个参数
+        函数内this的值 和 一个参数数组(类数组也是可行的)</strong>
+    </p>
+    <code>
+        <pre>
+              function sum(num1, num2) {
+                return num1 + num2
+              }
+    
+              function callsum1(num1, num2) {
+                return sum.apply(this, arguments)
+              }
+    
+              function callSum2(num1, num2) {
+                return sum.apply(this, [num1, num2])
+              }
+    
+              console.log(callsum1(3, 2));  // 5
+              console.log(callSum2(3, 2));  // 5
+        </pre>
+      </code>
+  </section>
+  <section>
+    <h2>call() </h2>
+    <p>call 和 apply 的作用是一样的 区别就在于传参的时候要 <strong>要一个一个传参</strong></p>
+    <code>
+      <pre>
+          function cal(num1, num2) {
+            return num1 + num2
+          }
+
+          function callSum(num1, num2) {
+            return cal.call(this, num1, num2)
+          }
+
+          console.log(callSum(3, 2)); // 5
+      </pre>
+    </code>
+    <p>返回的结果也是一样的 </p>
+  </section>
+  <p>这两个方法都是把this指向了sum 如果apply 和 call 不传参数的话 那这两个方法都是一样的</p>
+  <strong>他们真正强的地方是用于改变函数体内的this指向</strong>
+  <code>
+    <pre>
+       window.color = 'red'
+        let o = {
+          color: 'blue'
+        }
+
+        function sayColor() {
+          console.log(this.color);
+        }
+
+        sayColor.call(this) // red
+        sayColor.call(window) // red
+        sayColor.call(o) // blue
+    </pre>
+  </code>
+  <p>这就是他们直接改变了函数体内的上下文this指向</p>
+  <section>
+    <h2>bind()</h2>
+    <p>bind他不会立即执行 , 而是要等到有人调用才会执行</p>
+    <code>
+      <pre>
+           window.color = 'pink'
+            var O = {
+              color: 'blue'
+            }
+            function saycolor() {
+              console.log(this.color);
+            }
+
+            let objectSaycolor = saycolor.bind(O)
+            objectSaycolor() // blue
+      </pre>
+    </code>
+    <p>在sayColor上调用bind() 方法并传入 O 创建了一个新函数 而bind 是指向 O 所以也就打印出了 blue</p>
+  </section>
+  <h2>自从 ECMAscript 增加的特性 比如箭头函数 和 Array 方法越来越多 , apply call bind 实用性已经很小了</h2>
+  <script>
+    function sum(num1, num2) {
+      return num1 + num2
+    }
+
+    function callsum1(num1, num2) {
+      return sum.apply(this, arguments)
+    }
+
+    function callSum2(num1, num2) {
+      return sum.apply(this, [num1, num2])
+    }
+
+    console.log(callsum1(3, 2));  // 5
+    console.log(callSum2(3, 2));  // 5
+
+    console.log('====================== call ======================');
+    function cal(num1, num2) {
+      return num1 + num2
+    }
+
+    function callSum(num1, num2) {
+      return cal.call(this, num1, num2)
+    }
+
+
+    console.log(callSum(3, 2)); // 5
+
+    console.log('============================= 他们真正强的地方是用于改变函数体内的this指向 ====================================');
+    window.color = 'red'
+    let o = {
+      color: 'blue'
+    }
+
+    function sayColor() {
+      console.log(this.color);
+    }
+
+    sayColor.call(this) // red
+    sayColor.call(window) // red
+    sayColor.call(o) // blue
+
+    console.log('====================================== bind ========================================');
+    window.color = 'pink'
+    var O = {
+      color: 'blue'
+    }
+    function saycolor() {
+      console.log(this.color);
+    }
+
+    let objectSaycolor = saycolor.bind(O)
+    objectSaycolor() // blue
+  </script>
+</body>
+
+</html>

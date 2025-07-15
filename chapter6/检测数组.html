@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>检测数组</h1>
+  <p>检测数组是ECMAscript的一个经典问题 如果只是在一个全局作用域的情况下就没什么大问题可以使用instanceof这个方法 <br>
+    但是如果有多个框架的话就出现问题(这里指的多框架比不是Vue React 而是iframe元素) 那此时用instanceof元素就无法准确判断了 , 所以要使用isArray()
+    isArray()是ECMAscript定义的新方法不会受全局作用域的影响 , 是会直接检测你是不是数组</p>
+  <code>
+      <pre>
+        if (value instanceof Array) { }
+        
+        if (Array.isArray()) { }
+      </pre>
+    </code>
+  <script>
+    if (value instanceof Array) { }
+    if (Array.isArray()) { }
+
+
+
+  </script>
+</body>
+
+</html>

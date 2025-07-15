@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>顺序与迭代</h1>
+  <p>Set() 会严格按照插入顺序存储值 迭代时遵循插入时的顺序</p>
+  <ul>
+    <li>values() 获取里面的指的所有</li>
+    <li>keys() 获取里面的指的所有</li>
+  </ul>
+  <h1>Set是不允许修改已经存储的值的 , 但是可以修改对象内部的值 他就跟const 一样</h1>
+  <script>
+    const s = new Set(['key1', 'key2', 'key3'])
+    console.log(s);
+
+    // 他们都是一样的
+    console.log(s.values === s[Symbol.iterator]);
+    console.log(s.keys === s[Symbol.iterator]);
+
+    console.log(' =========== Symbol ============ ');
+
+    for (const k of s[Symbol.iterator]()) {
+      console.log(k);
+    }
+
+    console.log(' =========== keys ============ ');
+
+    for (const k of s.keys()) {
+      console.log(k);
+    }
+
+    console.log(' ========== values ==========');
+
+    for (const k of s.values()) {
+      console.log(k);
+    }
+    // 拿到Set() 里面的所有值
+
+
+    const sa = new Set(['vall', 'val2', 'val3'])
+
+    // 展开成自己所需要的元素
+    console.log([...sa]);
+
+    for (const pair of s.entries()) {
+      console.log(pair);
+    }
+
+    const set = new Set(['val1', 'val2', 'val3'])
+    // 理解一下为什么这么打印
+    /* 这其实因为foreach的原因, 如果foreach遍历的的话 只传一个参数就表示当前的值,
+      如果传的是2个参数就是表示键值对了, 而Set并没有键值对, 所以只能在键的时候只能返回当前打印的元素 */
+    set.forEach((x, y) => console.log(`${x} -> ${y}`))
+
+    const s1 = new Set(['val'])
+
+
+    // Set里面的值是不能做修改的,所以只能删除,重新添加
+    for (let value of s1.values()) {
+      value = 'newVal'
+      console.log(value);
+      // Set里面的原始值不会被修改 
+      console.log(s1.has('val'));
+    }
+
+
+    //这里是属于修改了 对象内部 , 就跟const 是一个道理的
+    const val = { id: 1 }
+
+    const s2 = new Set([val])
+
+    for (let value of s2.values()) {
+      value.id = 'arrebol'
+      console.log(value);
+    }
+    console.log(val);
+
+  </script>
+</body>
+
+</html>

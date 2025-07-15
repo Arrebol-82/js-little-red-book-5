@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <p>let 和 cosnt 是块级作用域</p>
+  <p>var是函数作用域 会变量提升(未声明前可以访问,值为undefined) 可以重复声明(代码示例) 可变形(重新赋值)</p>
+  <code>
+    <pre>
+      var m = 1; var m = 2;
+      const a = [1];
+      a = [1,2] 报错
+
+      而a.push(2)不会报错
+      console.log(a) [1,2]
+      <strong>因为并没有修改引用值,而是修改了数组里面的方法(内存里面的值)</strong>
+    </pre>
+  </code>
+  <p>var 和 let 是可以重新赋值的 ,而const是不行的 const 声明对象或数组时，虽然引用不能变但内部可修改的</p>
+  <h2>var定义了之后，是属于window的</h2>
+  <h1>开发中先用const 在let 最好不要var</h1>
+</body>
+
+</html>

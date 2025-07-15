@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>捕获器不变式</h1>
+  <p>这就跟前面学的第8章的数据属性 有关了 , 他表示了一个属性是可读写 , 可访问 , 可删除 ,可修改 ,
+    <strong>而捕获器不能再一个属性不能修改的情况下 , 强行进行修改 , 此时会报错</strong> , 总结就是不能违反此时规则 , 不能强行执行
+  </p>
+  <code>
+    <pre>
+      const target = {}
+
+      Object.defineProperty(target, 'foo', {
+        value: 'bar',
+        writable: false
+      })
+      console.log(target);
+  
+      const handler = {
+        get(target, property, a) {
+          // target[property] = 'f'
+          return 'qux'
+        }
+      }
+  
+      const proxy = new Proxy(target, handler)
+      console.log(proxy.foo); <strong>TypeError</strong>
+    </pre>
+  </code>
+  <p><strong>第一个( target[property] = 'f' )则是直接修改属性 , 违反了不可修改的规则 , 而 第二个( return 'qux' )是违反了 不变式的规则 , 并没有直接修改属性 </strong>
+  </p>
+  <script>
+    const target = {}
+
+    Object.defineProperty(target, 'foo', {
+      value: 'bar',
+      writable: false
+    })
+
+    const handler = {
+      get(target, property, a) {
+        // target[property] = 'f'
+        return 'qux'
+      }
+    }
+
+    const proxy = new Proxy(target, handler)
+    console.log(proxy.foo);
+
+
+  </script>
+</body>
+
+</html>

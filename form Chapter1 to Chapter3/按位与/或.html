@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // 他们是将 计算的数值装换位2进制的模式 然后进行计算 , 最后把计算出来的二进制,在装换为10进制
+
+    // & 标准
+    // 第一个数值位     第二个数值位     结果
+    //     1               1            1
+    //     0               1            0
+    //     1               0            0
+    //     0               0            0
+    let res = 25 & 25;
+    console.log(res);
+
+
+    // | 标准
+    // 第一个数值位     第二个数值位     结果
+    //     1               1            1
+    //     0               1            1
+    //     1               0            1
+    //     0               0            0
+    let obj = 25 | 2;
+    console.log(obj);
+
+    // ^ 标准
+    // 第一个数值位     第二个数值位     结果
+    //     1               1            0
+    //     0               1            1
+    //     1               0            1   
+    //     0               0            0
+    let a = 25 ^ 4;
+    console.log(a);
+
+    console.log(typeof (h));
+
+  </script>
+</body>
+
+</html>

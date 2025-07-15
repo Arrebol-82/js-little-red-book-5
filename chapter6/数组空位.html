@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>总结</h1>
+  <p>ES5 及之前空值会被视为 “不存在”，遍历（如 for...in、forEach）时会跳过空值。 而在ES6后就不会了大多数视为undefined </p>
+  <p>[''] : 是否存在值 隐式 “不存在” undefined: 显式 “存在，值为 undefined”</p>
+  <p>遍历（forEach） ES6 后返回 undefined，ES5 跳过 始终返回 undefined</p>
+  <p>推荐场景 极少数特殊需求（如稀疏数组） :: 绝大多数场景，尤其是需要明确逻辑时</p>
+  <h2>总之尽量避免使用'' 空值 用undefined更好</h2>
+
+  <p>刚刚想到了null 但是想想确实不太合适 , 毕竟null更适合用于指向空对象 , 表示以后会调用</p>
+  <script>
+    const options = [, , , , , ,];
+    console.log(options.length);
+    console.log(options);
+    // 里面的空位其实就是undefined
+    // 都是等于undefined
+  </script>
+</body>
+
+</html>

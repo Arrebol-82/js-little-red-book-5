@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>函数声明与函数表达式</h1>
+  <p>定义函数有两种方式: 函数声明 和 函数表达式</p>
+  <p>函数声明的关键特点是 <strong>函数声明提升</strong> 既函数声明会在代码执行之前获得定义 , 这意味着函数声明 可以出现在调用它的代码之后</p>
+  <code>
+    <pre>
+    sayHi()
+      function sayHi() {
+        console.log('Hi!!!');
+      }
+    </pre>
+  </code>
+  <p>这个列子不会出错就是因为javascript引擎会先读取函数声明 , 然后再执行代码</p>
+  <p>第二种创建函数的方式就是函数表达式 函数表达式有几种不同的形式 , 最常见的是这样的</p>
+  <code>
+    <pre>
+    let functionName = function (arg1, arg2, arg3) {
+      // 函数体
+    }
+    </pre>
+  </code>
+  <p>函数表达式并不会有 <strong>变量提升</strong> 这样创建的 <strong>函数</strong> 叫作 <strong>匿名函数</strong> 因为function关键字后面没有标识符
+    (匿名函数有时候也被称为lambda函数) 如果一个匿名函数没有给其他变量赋值 那么name属性就是空字符串</p>
+  <code>
+      <pre>
+          sayhi() // ReferenceError: Cannot access 'sayhi' before initialization
+          let sayhi = function () {
+          console.log('fi');
+          
+          }
+      </pre>
+    </code>
+  <strong>关键在于理解函数声明 与 函数表达式的 区别 函数声明是会有变量提升的</strong>
+  <code>
+    <pre>
+      if (true) {
+          function say() {
+            console.log('Hi');
+          }
+        }
+        else {
+          function say() {
+            console.log('Yo');
+          }
+        }
+
+        say()
+    </pre>
+  </code>
+  <p>这种写法 很危险 输出的结果都是看浏览器怎么处理的 有些可能是输出 Hi 也有的是Yo 所以我们要换成 <strong>函数表达式</strong></p>
+  <code>
+    <pre>
+        let sugar
+        if (true) {
+          sugar = function () {
+            console.log('Hi');
+          }
+        } else {
+          sugar = function () {
+            console.log('Yo');
+          }
+        }
+
+        sugar()
+    </pre>
+  </code>
+  <p>创建函数并赋值给变量的能力也可以用于在一个函数中把另一函数当作值返回</p>
+  <code>
+    <pre>
+   function createComparisonFunction(propertyName) {
+      return function (Object1, Object2) {
+        let value1 = Object1[propertyName]
+        let value2 = Object2[propertyName]
+
+        if (value1 < value2) {
+          return -1
+        } else if (value1 > value2) {
+          return 1
+        } else {
+          return 0
+        }
+      }
+    }
+
+
+    let creat = createComparisonFunction(3)
+
+    console.log(creat([1, 3, 4, 5], [4, 2, 6, 3]));
+    </pre>
+  </code>
+  <p>先返回了一个匿名函数 , 用creat 接收 , 在使用</p>
+  <h2 style="color: pink;">函数声明最适合在全局作用域或函数作用域的顶层使用，在块级作用域中使用函数表达式才是安全可靠的做法。</h2>
+  <script>
+    sayHi()
+    function sayHi() {
+      console.log('Hi!!!');
+    }
+
+    let functionName = function (arg1, arg2, arg3) {
+      // 函数体
+    }
+
+    console.log('======================== 函数表示式 ==========================');
+    // sayhi()  //  ReferenceError: Cannot access 'sayhi' before initialization
+    let sayhi = function () {
+      console.log('fi');
+
+    }
+
+    console.log('========================== 两者的区别 ==========================');
+
+    if (true) {
+      function say() {
+        console.log('Hi');
+      }
+    }
+    else {
+      function say() {
+        console.log('Yo');
+      }
+    }
+
+    say()
+
+
+    let sugar
+    if (true) {
+      sugar = function () {
+        console.log('Hi');
+      }
+    } else {
+      sugar = function () {
+        console.log('Yo');
+      }
+    }
+
+    sugar()
+
+    function createComparisonFunction(propertyName) {
+      return function (Object1, Object2) {
+        let value1 = Object1[propertyName]
+        let value2 = Object2[propertyName]
+
+        if (value1 < value2) {
+          return -1
+        } else if (value1 > value2) {
+          return 1
+        } else {
+          return 0
+        }
+      }
+    }
+
+
+    let creat = createComparisonFunction(3)
+
+    console.log(creat([1, 3, 4, 5], [4, 2, 6, 3]));
+
+  </script>
+</body>
+
+</html>

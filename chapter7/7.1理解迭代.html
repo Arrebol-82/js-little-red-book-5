@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>理解迭代</h1>
+  <h3>为什么会有迭代器 ?</h3>
+  <ul>
+    <li>其实计算循环就是一种最简单的迭代器
+      <code>
+        <pre>
+          for(let i = 0 ; i < 5 ; i++) {
+            log(i)
+          }
+        </pre>
+      </code>
+      <strong>循环是迭代器的基础</strong>
+    </li>
+    <li>像for循环遍历的话只能要<strong>知道数据结构</strong> ,如果在 <strong>通过[]获得里面的值,而且还是通过索引来遍历的</strong>, 所以说就非常不方便</li>
+    <li>Array.prototype.foreach循环,相比for循环好了很多,但是只能遍历数组,无法再遍历中终止遍历</li>
+    <li>而迭代器只要是符合<strong>[Symbol.iterator]接口和迭代器协议</strong>即可遍历,可以实现自定义的业务逻辑,还能根据<strong>需求随时暂停数组</strong></li>
+    <li>可以自定义迭代器,根据自己的业务需求写,而这点事for循环他们是做不到的</li>
+  </ul>
+  <h2>常见的迭代器: 数组、字符串、Map、Set、生成器、自定义迭代器</h2>
+  <script>
+
+  </script>
+</body>
+
+</html>

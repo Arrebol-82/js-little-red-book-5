@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>立即调用的函数表达式</h1>
+  <p>立即调用的匿名函数又被称作<strong>立即调用的函数表达式(IIFF) 也就是我们常说的立即执行函数</strong> ,
+    有时候也被称为 <strong>自执行匿名函数</strong> 。它类似于函数声明，但由于被包含在括号中，所以会被解释为函数表达式。紧跟在第一组括号后面的第二组括号会立即调用前面的函数表达式。</p>
+  <code>
+      <pre>
+    (function () {
+      // 块代码
+    })()
+      </pre>
+    </code>
+  <p>如果你在写一个库或插件,那可能想把自己的代码封装起来，避免与同一页面加载的其他库发生冲突。此时，IIFE就可以用来为你的代码创建一个私有作用域，避免命名冲突。</p>
+  <code>
+    <pre>
+      (function ($) {
+        // 使用jQuery的代码
+      })(jQuery)
+    </pre>
+  </code>
+  <p>这里，我们将jQuery作为参数传人，然后在函数内部通过s引用它。这样就可以保证始终引用正确的 jQuery 版本，即使另外一个库也定义了自己的$变量，也不会影响这个函数内部。</p>
+  <p>
+    另一个使用异步IFE的场景是执行某些异步准备逻辑。比如，在应用开始染前，先从某个API获取一些数据并将其保存在局部变量中。再比如，我们想在一个非异步函数内部使用async/await语法。此时异步IFE就能让我们在局部作用域中立即执行异步逻辑
+  </p>
+  <code>
+    <pre>
+    (async function () {
+      const data = await fetch('api')
+      const result = await data.json()
+      // 对result执行某些操作
+    })()
+    </pre>
+  </code>
+  <script>
+    (function () {
+      // 块代码
+    })();
+
+    (function ($) {
+      // 使用jQuery的代码
+    })(jQuery);
+
+    (async function () {
+      const data = await fetch('api')
+      const result = await data.json()
+      // 对result执行某些操作
+    })()
+  </script>
+</body>
+
+</html>

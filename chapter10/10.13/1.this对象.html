@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>this对象</h1>
+  <p>在闭包使用this会让代码变得复杂 ,如果内部函数没有使用箭头函数定义 , 则this对象会在运行时绑定到执行函数上下文 ,
+    如果在全局函数中调用，则this 在非严格模式下等于window,在格模式下等于 undefined。如果作为某个对象的方法调用，则this 等于这个对象。
+    <strong>(谁调用 , this指向谁)</strong> , 匿名函数在这种情况下不会绑定到某个对象 这就意味着this 会指向window 除非在严格模式下this 是 undefined
+    不过由于闭包的写法导致 , 这个事实没有那么容易看出来
+  </p>
+  <code>
+    <pre>
+        window.identity = 'The Window'
+
+        let object = {
+          identity: 'My Object',
+          getIdentityFunc() {
+            return function () {
+              return this.identity
+            }
+
+          }
+        }
+
+        console.log(object.getIdentityFunc()()); //  The Window
+    </pre>
+  </code>
+  <p>这里的 getIdentityFunc 返回的还一个匿名函数 在匿名函数里面在返回this.identity 的值 所以object.getIdentityFunc()() 会立即调用这个返回函数 输出 'The
+    Window'
+    也就是返回了全局变量的 window.identity 那为什么匿名函数没有使用其包含作用域(getIdentityFunc())的this对象呢?
+  </p>
+  <p>前面介绍过 , 每个函数在被调用的时候都会自动创建两个特性变量 this 和 argument 内部函数永远不可能直接访问外部函数的这两个变量 , 但是
+    ,如果把this保存到闭包可以访问的另一个变量中则是行的通的 </p>
+  <code>
+      <pre>
+    window.id = 'This is my id'
+
+    let obj = {
+      id: 'Object and This ??? ',
+      getIdentityFunc() {
+        <strong>let that = this</strong>
+        return function () {
+          <strong>return that.id</strong>
+        }
+      }
+    }
+
+    console.log(obj.getIdentityFunc()());
+      </pre>
+    </code>
+  <p>这里加粗的代码展示了与前面那个列子的区别 , 在定义置名函数之前，先把外部函数的 this 保到变量that中 。然后在定义闭包时，就可以让它访问that，因为这是包含丽数中没有任何名称冲突的一个变量 即使在外部函数返回之后 ,
+    that仍然指向 Object 所以调用object 所以调用object.getIdentityFunc()() 最终会返回 Object and This ???</p>
+  <h2>注意! this 和 argument 都是不能直接在内部函数中访问的 如果想要访问的包含作用域中的argument对象 ，则同样需要将其引用先保存到闭包能访问的另一个变量中会</h2>
+  <p>在一些特殊情况下 , this的值可能并不是我们所期待的值 </p>
+  <code>
+    <pre>
+    window.byid = 'this window'
+    let objectId = {
+      byid: 'objectId',
+      getIdentity() {
+        return this.byid
+      }
+    }   
+    </pre>
+  </code>
+  <p>getIdentity()方法就是返回 this.identity的值。以下是几种调用object.getrdentity()的方式及返回值:</p>
+  <code>
+    <pre>
+    console.log(objectId.getIdentity()); // objectId
+    console.log((objectId.getIdentity)()); // objectId
+    console.log((objectId.getIdentity = objectId.getIdentity)()); // this window
+    </pre>
+  </code>
+  <p><strong>第一次</strong> 输出 objectId 因为此时的this是指向objectId 的普通函数在objectId的函数体内 , 不是指向objectId 还能指向谁 <strong>第二次</strong>
+    跟第一次执行的代码没有啥区别 , 区别就是立即执行
+    <strong>第三次</strong>objectId.getIdentity = getIdentity( ) 简化一点就是 getIdentity( ) 直接调用了 , 那直接调用的this那就肯定是指向全局window的了
+  </p>
+  <script>
+    window.identity = 'The Window'
+
+    let object = {
+      identity: 'My Object',
+      getIdentityFunc() {
+        return function () {
+          return this.identity
+        }
+
+      }
+    }
+
+    console.log(object.getIdentityFunc()()); //  The Window
+
+    window.id = 'This is my id'
+
+    let obj = {
+      id: 'Object and This ??? ',
+      getIdentityFunc() {
+        let that = this
+        return function () {
+          return that.id
+        }
+      }
+    }
+
+    console.log(obj.getIdentityFunc()());
+
+    console.log('========================= this值 =======================');
+
+    window.byid = 'this window'
+    let objectId = {
+      byid: 'objectId',
+      getIdentity() {
+        return this.byid
+      }
+    }
+
+
+    console.log(objectId.getIdentity());  //  objectId
+    console.log((objectId.getIdentity)());  // objectId
+    console.log((objectId.getIdentity = objectId.getIdentity)()); // this window
+
+
+  </script>
+</body>
+
+</html>

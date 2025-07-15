@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h2>边界情况</h2>
+  <p>看以下的列子</p>
+  <code>
+    <pre>
+     <strong>RangeError 总长是6字节 , Int32的字节是4 , 那不就剩下2字节了吗 , 那大于2字节就会报错啊</strong>
+      view.getInt32(3)
+      
+      <strong>尝试读取部分超出的值</strong> 
+      <strong>访问超出了存储范围</strong> 
+      // view.getInt32(8)
+      // view.getInt32(-1)
+      
+      <strong>当然尝试写入超出范围的值, 也是不行的</strong> 
+      // view.setInt32(4, 123)  
+    </pre>
+  </code>
+  <h2>在写入缓冲里时会尽最大努力把一个值转换为适当的类型,后备为0. 转换不了的话,就会抛出错误</h2>
+  <script>
+    const buf = new ArrayBuffer(6)
+    const view = new DataView(buf)
+
+    // 尝试读取部分超出的值
+    view.getInt32(2)
+    console.log(view.getInt8(3));
+
+    /*  RangeError 总长是6字节 , Int32的字节是4 , 那不就剩下2字节了吗 , 那大于2字节就会报错啊
+    view.getInt32(3)  */
+
+    // 尝试读取部分超出的值
+    // 访问超出了存储范围
+    // view.getInt32(8)
+    // view.getInt32(-1)
+
+    // 当然尝试写入超出范围的值, 也是不行的
+    // view.setInt32(4, 123)
+
+    console.log(' 在写入缓冲里时会尽最大努力把一个值转换为适当的类型,后备为0. 转换不了的话,就会抛出错误 ');
+    const but = new ArrayBuffer(1)
+    const vie = new DataView(but)
+
+
+    vie.setInt8(0, 1.5)
+    console.log(vie.getInt8(0));
+    vie.setInt8(0, [4])
+    console.log(vie.getInt8(0));
+    vie.setInt8(0, 'f')
+    console.log(vie.getInt8(0));
+
+    // vie.setInt8(0, Symbol()) //TypeError 
+
+
+  </script>
+</body>
+
+</html>

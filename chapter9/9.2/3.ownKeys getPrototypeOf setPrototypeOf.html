@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>ownKeys getPrototype setPrototype</h1>
+  <section>
+    <h2>ownKeys</h2>
+    <strong>他只存在Proxy处理器中 , 用于获取键</strong>
+    <code>
+      <pre>
+        const myOwnKeys = {
+          foo: 'bar'
+        }
+    
+        const proxy = new Proxy(myOwnKeys, {
+          ownKeys(target) {
+            console.log('ownkeys');
+            return Reflect.ownKeys(...arguments)
+          }
+        })
+    
+        console.log(Object.keys(proxy));
+        // ownkeys
+        // ['foo']
+      </pre>
+    </code>
+    <p>这里并没有返回myOwnKeys的所以键 , 因为被proxy拦截了</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                      ownKeys()必须返回包含字符串或符号的可枚举对象
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.getOwnPropertyName( peoxy )
+                                                       Object.getOwnPropertySymbol( peoxy )
+                                                       Object.keys(peoxy)
+                                                       Reflect.ownKeys(proxy)
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+            捕获器不变式                                返回的可枚举对象必须包含target 的所有不可配置的自有属性 (因为他是不可配置的 也就表示
+                                                       了不会被删除掉 , 会一直存在对象上 , 那么就要返回来 )
+
+                                                       如果target不可扩展 则返回可枚举对象必须准确地包含自有属性键 (因为目标对象不可扩展 也就
+                                                       表明了当前的对象的最大属性固定了 , 所以要直接返回里面的所有属性键)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>getPrototypeOf</h2>
+    <p>getPrototypeOf() 捕获器会在 Object.getPrototypeOf() 中被调用 对应的反射方法API是Reflect.getPrototypeOf()</p>
+    <code>
+      <pre>
+        const mygetPrototypeOf = {
+          foo: 'bar'
+        }
+    
+        const prox = new Proxy(mygetPrototypeOf, {
+          getPrototypeOf(target) {
+            console.log('getPrototypeOf');
+            return Reflect.getPrototypeOf(...arguments)
+          }
+        })
+    
+        Object.getPrototypeOf(prox) // getPrototypeOf
+      </pre>
+    </code>
+    <p>在获取prox的原型对象的时候 , 被拦截器拦截了所以返回了getPrototypeOf</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                      getPrototypeOf() 必须返回对象或null
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.getPrototypeOf( proxy )
+                                                       Reflect.getPrototypeOf( proxy )
+                                                       proxy.__proto__ 
+                                                       Object.prototype.isPrototyperOf(proxy)
+                                                       proxy instanceof Object
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+            捕获器不变式                                如果target 不可扩展,则Object.getPrototypeOf(proxy)  唯一有效的返回值就是Object.getPrototypeOf(target)的返回值 
+                                                       (不可扩展的对象就表示原型链已经是固定的了 , 代理的getPrototypeOf只能返回目标自己的真实原型)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>setPrototypeOf</h2>
+    <p>setPrototypeOf() 会在 Object.setPrototypeOf() 中被调用, 对应的反射API方法就是 Reflect.setPrototypeOf()</p>
+    <code>
+      <pre>
+        const mysetPrototypeOf = {}
+        const proXy = new Proxy(mysetPrototypeOf, {
+          setPrototypeOf() {
+            console.log('setPrototypeOf');
+            return Reflect.setPrototypeOf(...arguments)
+          }
+        })
+    
+        Object.setPrototypeOf(proXy, Array) // setPrototypeOf
+      </pre>
+    </code>
+    <p>把proXy的原型改为Array的原型的 ,但是被proXy的拦截器拦截了</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                      setPrototypeOf() 必须返回布尔值 表示原型赋值是否成功 返回非布尔值会被转换为布尔值
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.setPrototypeOf( target , prototype )
+                                                       Reflect.setPrototypeOf( target , prototype )
+    
+            捕获器处理程序参数                           target: 目标对象
+
+                                                       property: target的替代原型 , 如果是顶级原型为null
+    
+            捕获器不变式                                如果target 不可扩展,则唯一有效的prototype参数就是Object.getPrototypeOf(proxy)的返回值
+                                                       (因为对象不可扩展就表示了, 不能添加新属性，连原型链也被 “锁死” 了 —— 不能改成其他原型，
+                                                       必须保持原样。)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <script>
+
+    console.log('================================= ownkeys ===============================');
+
+    const myOwnKeys = {
+      foo: 'bar'
+    }
+
+    const proxy = new Proxy(myOwnKeys, {
+      ownKeys(target) {
+        console.log('ownkeys');
+        return Reflect.ownKeys(...arguments)
+      }
+    })
+
+    console.log(Object.keys(proxy));
+    // ownkeys
+    // ['foo']
+
+    console.log('============================== getPrototypeOf ===============================');
+
+    const mygetPrototypeOf = {
+      foo: 'bar'
+    }
+
+    const prox = new Proxy(mygetPrototypeOf, {
+      getPrototypeOf(target) {
+        console.log('getPrototypeOf');
+        return Reflect.getPrototypeOf(...arguments)
+      }
+    })
+
+    Object.getPrototypeOf(prox) // getPrototypeOf
+
+    console.log('============================= setPrototypeOf ============================');
+
+    const mysetPrototypeOf = {}
+    const proXy = new Proxy(mysetPrototypeOf, {
+      setPrototypeOf(target, propertye) {
+        console.log('setPrototypeOf');
+        return Reflect.setPrototypeOf(...arguments)
+      }
+    })
+
+    Object.setPrototypeOf(proXy, Array) // setPrototypeOf
+  </script>
+</body>
+
+</html>

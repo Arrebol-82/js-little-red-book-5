@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 用于查找的字符串
+    let str = 'cat, bat, sat, fat'
+    // 正则表达式
+    let patter = /.at/y
+
+    // 进行匹配
+    let matches = patter.exec(str)
+    console.log(matches);
+    // 从0索引开始查找
+    console.log(matches.index); //0         
+    // 返回找到的字符串
+    console.log(matches[0]); // cat
+    // 最后的索引
+    console.log(patter.lastIndex); //3
+
+    // 因为在往下查找 , 不符合条件
+    matches = patter.exec(str)
+    console.log(matches);
+    // 所以重置了返回了0
+    console.log(patter.lastIndex);
+
+    // 设置成5  表示从5索引开始查找
+    patter.lastIndex = 5
+    // 进行匹配
+    matches = patter.exec(str)
+    console.log(matches);
+    // 返回找到的第一个字符串
+    console.log(matches[0]);
+    // 返回最后的索引
+    console.log(patter.lastIndex);
+  </script>
+</body>
+
+</html>

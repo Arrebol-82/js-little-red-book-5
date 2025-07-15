@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>捕获器参数和反射API</h1>
+  <p>所有的捕获器都可以相应的参数 , 基于这些参数可以重建被捕获方法的原始行为 比如: get() 捕获器会接收到 <strong>目标对象 , 要查询的属性和代理对象</strong> 三个参数</p>
+  <code>
+    <pre>
+      const target = {
+        foo: 'bar'
+      }
+  
+      const handler = {
+        get(traTarget, property, received, vs) {
+          console.log(traTarget === target); // 目标对象
+          console.log(property);   // 访问的属性
+          console.log(property === 'foo');   // 访问的属性
+          console.log(received === proxy);  // 当前被操作的对象 , 通常是代理本身
+          return 'get'
+        }
+      }
+  
+      const proxy = new Proxy(target, handler)
+      console.log(proxy.foo);  
+    </pre>
+  </code>
+  <p>开发者并不需要手动创建原始行动 , 而是可以通过调用全局的 Reflect对象上 ( 封装了原始行为 )的同名方法来创建 <strong>意思就是当不需要自定义捕获器的时候 , 但是又要设置 set get delete 等等的
+      应该使用 反射给我们定义好的API 因为他不仅快速 , 还安全 , 规范</strong></p>
+  <strong>在处理程序对象中所有可以捕获的方法都有对应的反射(Reflect)API 这些方法与捕获器拦截的方法具有相同的名称和函数签名 , 而且也具有与被拦截方相同的行为
+    <i>人话就是 你捕获器有的 , 我反射API也有 , 默认情况下用反射API</i>
+  </strong>
+  <code>
+    <pre>
+      const tar = {
+        name: 'Arrebol'
+      }
+      const han = {
+        get(target, property, received) {
+          return Reflect.get(...arguments)
+        }
+      }
+  
+      const pro = new Proxy(tar, han)
+      console.log(pro.name);
+      console.log(tar.name);
+  
+      console.log('=================== 在简单一点 ===================');
+      const tarGer = {
+        name: '82'
+      }
+  
+      const HanDler = {
+        get: Reflect.get
+      }
+  
+      const proXy = new Proxy(tarGer, HanDler)
+      console.log(proXy.name);
+    </pre>
+  </code>
+  <p>直接通过反射API来解决问题</p>
+  <strong>当然如果想一次性设置全部捕获方法 然后将每个方法转发给对应反射API的空代理 , 甚至都不需要定义处理程序对象</strong>
+  <code>
+    <pre>
+      const TarGet = {
+        name: 'Arrebol'
+      }
+  
+      const prOxy = new Proxy(TarGet, Reflect)
+      console.log(prOxy.name);
+    </pre>
+  </code>
+  <p>此外还能配合自定义捕获器来开发 , <strong>就是自定义方法 + 反射API , 这样大大提升开发效率</strong> </p>
+  <code>
+    <pre>
+      const obj = {
+        foo: 'bar',
+        baz: 'qux'
+      }
+  
+      const processor = {
+        get(target, property, received) {
+          let decoration = '?'
+          if (property === 'foo') {
+            decoration = '!!!'
+          }
+          return Reflect.get(...arguments) + decoration
+        }
+      }
+  
+      const agency = new Proxy(obj, processor)
+  
+      console.log(agency.foo);
+      console.log(agency.baz);
+  
+      console.log(obj.foo);
+      console.log(obj.baz);
+    </pre>
+  </code>
+  <script>
+    const target = {
+      foo: 'bar'
+    }
+
+    const handler = {
+      get(traTarget, property, received, vs) {
+        console.log(traTarget === target); // 目标对象
+        console.log(property);   // 访问的属性
+        console.log(property === 'foo');   // 访问的属性
+        console.log(received === proxy);  // 当前被操作的对象 , 通常是代理本身
+        return 'get'
+      }
+    }
+
+    const proxy = new Proxy(target, handler)
+    console.log(proxy.foo);
+
+    console.log('======================== 重建 ======================');
+    const Target = {
+      foo: 'bar'
+    }
+
+    const Handler = {
+      get(target, property, received) {
+        return target[property] // === Target[foo]
+      }
+    }
+
+    const prox = new Proxy(Target, Handler)
+
+    console.log(prox.foo);
+    console.log(Target.foo);
+
+    console.log('========================== 使用反射API ======================');
+    const tar = {
+      name: 'Arrebol'
+    }
+    const han = {
+      get(target, property, received) {
+        return Reflect.get(...arguments)
+      }
+    }
+
+    const pro = new Proxy(tar, han)
+    console.log(pro.name);
+    console.log(tar.name);
+
+    console.log('=================== 在简单一点 ===================');
+    const tarGer = {
+      name: '82'
+    }
+
+    const HanDler = {
+      get: Reflect.get
+    }
+
+    const proXy = new Proxy(tarGer, HanDler)
+    console.log(proXy.name);
+
+
+    console.log('==================== 设置所有方法 ===============');
+    const TarGet = {
+      name: 'Arrebol'
+    }
+
+    const prOxy = new Proxy(TarGet, Reflect)
+    console.log(prOxy.name);
+
+    console.log('======================= 样板 ======================');
+    const obj = {
+      foo: 'bar',
+      baz: 'qux'
+    }
+
+    const processor = {
+      get(target, property, received) {
+        let decoration = '?'
+        if (property === 'foo') {
+          decoration = '!!!'
+        }
+        return Reflect.get(...arguments) + decoration
+      }
+    }
+
+    const agency = new Proxy(obj, processor)
+
+    console.log(agency.foo);
+    console.log(agency.baz);
+
+    console.log(obj.foo);
+    console.log(obj.baz);
+
+  </script>
+</body>
+
+</html>

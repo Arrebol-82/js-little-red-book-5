@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>对象解构</h1>
+  <p>对象解构可以让我们在同一条语句中使用嵌套数据实现一个或者多个赋值操作</p>
+  <ul>
+    <li>
+      <p>来观察以下的代码</p>
+      <code>
+        <pre>
+          let person = {
+            name: 'Matt',
+            age: 16
+          }
+      
+          let personName = person.name,
+            personAge = person.age
+      
+          console.log(personName);
+          console.log(personAge);
+
+          <strong>太麻烦了 ,所以推荐使用下面的语法</strong>
+
+          let { name: PersonName, age: PersonAge } = person
+          console.log(PersonAge);
+          console.log(PersonName);
+        </pre>
+      </code>
+      <strong>用对象里面的属性: 然后写变量</strong>
+      <p>当然还有更简单的</p>
+      <code>
+        <pre>
+          let { name, age } = person
+          console.log(name);
+          console.log(age);
+        </pre>
+      </code>
+      <p>如果变量名和属性名一样的话,直接写属性名就好了</p>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <p>还有就是解构赋值的时候,不一定要和属性名匹配 , 如果没有的话就返回undefined</p>
+      <code>
+        <pre>
+          let { name: Name, gander } = person
+          console.log(Name); // Arrebol
+          console.log(gander); //undefined
+        </pre>
+      </code>
+      <p>当然你也可以给默认值,就像函数给形参默认值一样</p>
+      <code>
+        <pre>
+          let { age: Age, Gander = '男' } = person
+          console.log(Age); // 16
+          console.log(Gander); // 男 
+        </pre>
+      </code>
+    </li>
+    <li>
+  </ul>
+  <strong>对线在解构的时候是会调用ToObject()将原始值装换为引用值的</strong>
+  <code>
+      <pre>
+        let { length } = 'hello'
+        console.log(length); //<strong>5</strong>
+        
+        let { a } = null
+        let { b } = undefined
+      </pre>
+    </code>
+  <p>调用ToObject() 会将对应的值装换为对应的包装类型 </p>
+  <p>包装对象可通过 .toString() 等方法，又能转回原始值（像 new Number(2).toString() 得到 '2' ，和原始值表现呼应 ），体现了 “包装 - 还原” 的闭环。</p>
+  <h2 class="pink">冷知识: 除了解构会调用ToObject() 还有包装类型 , Object()函数 , for...in 遍历 , in运算
+    ,正是因为会隐式调用ToObject()所以才会让人感觉原始值像引用值一样 然后你也就能理解为什么null 和 undefined会报错 记得不能显示调用</h2>
+  <ul>
+    <li class="circle">2 => new Number(2) => .tostring() => 2</li>
+    <li class="circle">'Arrebol' => new String('Arrebol') => .tostring() => 'Arrebol'</li>
+    <li class="circle">true => new Boolean(true) => .tostring() => true</li>
+    <li>
+      <p>在来看看这个代码</p>
+      <code>
+          <pre>
+            let { length } = 'hello'
+            console.log(length);
+        
+            let { constructor: n } = 8
+            console.log(n === Number);
+            console.log(typeof n);
+        
+            <strong>报错</strong>
+            let { a } = null
+            let { b } = undefined
+          </pre>
+        </code>
+    </li>
+    <li>
+      <strong>最后一个知识点:</strong>
+      <code>
+        <pre>
+          let first, second
+          let bracket = {
+            name: 'Arrebol',
+            age: 16
+          }
+      
+          { name: first, age: second } = bracket // <strong>报错因为引擎识别成了代码块</strong>
+          
+          ({ name: first, age: second } = bracket) <strong>所以要加一对括号</strong> 
+        </pre>
+      </code>
+      <strong>括号 () 的本质作用，是强制让内部代码被解析为「表达式」</strong>
+    </li>
+    <li>
+      <h2>接下来再看</h2>
+      <code>
+        <pre>
+          let definition = {
+            hoddy: {
+              palygame: 'ZZZ'
+            }
+          }
+      
+          let PersonCopy = {};
+          ({
+            foo: {
+              bar: a // TypeError: Cannot read properties of undefined (reading 'bar')
+            }
+          } = definition);
+      
+      
+          ({
+            hobby: {
+              palygame: PersonCopy.bar.title //TypeError: Cannot read properties of undefined (reading 'palygame')
+            }
+          })
+        </pre>
+      </code>
+      <p>因为一开始就嵌套太深了 , 而且title: personCopy.job 没有定义返回的自然就是undefined了 , 接着往下还要定义title , 那就是undefined.title 那肯定保存啊 ,
+        undefined本来表示的就是未定义(未赋值)的 , 现在完全明白撩 , 外层没有定义的话就会报错 , 因为在外层找没找到 , 返回undefined ,
+        而在内层嵌套太深 , 又没定义的话 , 也会返回undefined,跟外层一样的
+      </p>
+    </li>
+  </ul>
+  <section>
+    <h2>部分解构</h2>
+    <p>总结就是报错了之后后面的代码就会在执行 , 前面赋值的属性是不受影响的 ,但是一但报错就会终止执行 ,<strong>会在控制台报错, 后续的代码也不会执行</strong></p>
+    <code>
+      <pre>
+        let Person = {
+          name: 'Arrebol',
+          age: 16
+        }
+    
+        let perName, PerAge, PerBar;
+    
+        try {
+          ({ name: perName, foo: { bar: PerBar }, age: PerAge } = Person)
+        } catch (e) { }
+    
+        console.log(perName, PerBar, PerAge);
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h2>参数上下文匹配</h2>
+    <p>他还能再函数里面的形参里面定义, </p>
+    <code>
+      <pre>
+        let P = {
+          name: 'Z',
+          age: 16
+        }
+    
+        function printer1(foo, { name, age }, bar) {
+          console.log(arguments);
+          console.log(name, age);
+        }
+    
+        function printer2(foo, { name: personName, age: personAge }, bar) {
+          console.log(arguments);
+          console.log(personName, personAge);
+        }
+    
+        printer1('let', person, '2nd')
+         //  Arguments(3) ['let', {…}, '2nd', callee: (...), Symbol(Symbol.iterator): ƒ]
+         //  Matt 16
+        printer2('let', person, '2nd') 
+        //  Arguments(3) ['let', {…}, '2nd', callee: (...), Symbol(Symbol.iterator): ƒ]
+        //  Matt 16  
+
+        printer1() <strong>函数参数里的对象解构，要求对应的实参必须是 “可解构的对象”（不能是 undefined/null）</strong> 
+      </pre>
+    </code>
+  </section>
+  <script>
+    let person = {
+      name: 'Matt',
+      age: 16
+    }
+
+    let personName = person.name,
+      personAge = person.age
+
+    console.log(personName);
+    console.log(personAge);
+
+    let { name: PersonName, age: PersonAge } = person
+    console.log(PersonAge);
+    console.log(PersonName);
+
+    let { name, age } = person
+    console.log(name);
+    console.log(age);
+
+    let { name: Name, gander } = person
+    console.log(Name);
+    console.log(gander);
+
+    let { age: Age, Gander = '男' } = person
+    console.log(Age);
+    console.log(Gander);
+
+    console.log('========== 无法转换null和undefined ==========');
+    let { length } = 'hello'
+    console.log(length);
+
+    let { constructor: n } = 8
+    console.log(n === Number);
+    console.log(typeof n);
+
+
+    // let { a } = null
+    // let { b } = undefined
+
+    console.log('=============== 声明问题 ================');
+    let first, second
+    let bracket = {
+      name: 'Arrebol',
+      age: 16
+    };
+
+    ({ name: first, age: second } = bracket)
+
+    console.log('***************** 嵌套解构 *****************');
+    let son = {
+      nameValue: 'Arrebol',
+      ageValue: 16,
+      hobbyValue: {
+        playgame: 'COD'
+      }
+    }
+
+    let personCopy = {}
+    console.log(personCopy);
+
+
+    let { nameValue, ageValue, hobbyValue } = son
+    personCopy.name = nameValue
+    personCopy.age = ageValue
+    personCopy.hobby = hobbyValue
+    console.log(personCopy);
+
+    console.log(personCopy.hobby);
+    console.log(son.hobbyValue);
+
+    console.log('============= 修改 ============');
+
+
+    son.hobbyValue.playgame = 'ZZZ'
+    console.log(personCopy.hobby);
+    console.log(son.hobbyValue.playgame);
+    console.log(personCopy);
+    console.log(son);
+
+    console.log('=================== 嵌套解构 ====================');
+    let array = {
+      name: 'Matt',
+      age: 27,
+      job: {
+        title: 'Software engineer'
+      }
+    }
+
+    let { job: { title } } = array
+    console.log(title);
+
+    console.log('================== 没有定义情况 ================');
+    let definition = {
+      hoddy: {
+        palygame: 'ZZZ'
+      }
+    }
+
+    let PersonCopy = {};
+    // ({
+    //   foo: {
+    //     bar: a // TypeError: Cannot read properties of undefined (reading 'bar')
+    //   }
+    // } = definition);
+
+
+    // ({
+    //   hobby: {
+    //     palygame: PersonCopy.bar.title //TypeError: Cannot read properties of undefined (reading 'palygame')
+    //   }
+    // } = definition)
+
+
+    console.log('============================= 部分解构 ========================');
+
+    let Person = {
+      name: 'Arrebol',
+      age: 16
+    }
+
+    let perName, PerAge, PerBar;
+
+    try {
+      ({ name: perName, foo: { bar: PerBar }, age: PerAge } = Person)
+    } catch (e) { }
+
+    console.log(perName, PerBar, PerAge);
+
+    console.log('==================== 参数上下文匹配 ====================');
+    let P = {
+      name: 'Z',
+      age: 16
+    }
+
+    function printer1(foo, { name, age }, bar) {
+      console.log(arguments);
+      console.log(name, age);
+    }
+
+    function printer2(foo, { name: personName, age: personAge }, bar) {
+      console.log(arguments);
+      console.log(personName, personAge);
+    }
+
+    printer1('let', person, '2nd')
+    printer2('let', person, '2nd')
+    printer1() //函数参数里的对象解构，要求对应的实参必须是 “可解构的对象”（不能是 undefined/null）
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>继承基础</h1>
+  <p>ECMAscript 类只支持单继承 , 也就是只能有一个父类 , 使用extends关键字 <strong>可以继承任何有 [[Constructor]]和原型的对象</strong>,
+    这也就意味着不仅可以继承类,也可以继承普通的构造函数</p>
+  <code>
+      <pre>
+        class Vehicle { }
+
+        class Bus extends Vehicle { }
+    
+        let b = new Bus()
+        console.log(b instanceof Bus);     // true
+        console.log(b instanceof Vehicle); // true 继承了
+    
+        function Person() { }
+    
+        //继承普通构造函数
+        class Engineer extends Person { }
+    
+        let e = new Engineer
+        console.log(e instanceof Engineer); // true 
+        console.log(e instanceof Person); //true 继承了
+      </pre>
+    </code>
+  <h2>作为父类要被继承就要实现这两个特性</h2>
+  <ul>
+    <li><strong>[[Constructor]]指的是</strong> 可以通过new调用的函数 因为能被 new 的对象，必有 [[Construct]]；反之则无。</li>
+    <li><strong>具有原型对象</strong> 除了[[prototype]]属性为null的 , 因为这样继承的父类没有什么用,用不了object上的所有方法</li>
+  </ul>
+  <h2>派生类都会通过原型链访问到类和原型上定义的方法 this的值会反映调用相应方法的实例或者类</h2>
+  <code>
+    <pre>
+      class Veh {
+        identifyPrototype(id) {
+          console.log(id, this);
+        }
+  
+        static identifyClass(id) {
+          console.log(id, this);
+        }
+      }
+  
+      class Bu extends Veh { }
+  
+      let V = new Veh
+      let B = new Bu
+  
+      B.identifyPrototype('bus') // bus Bu{}
+      V.identifyPrototype('vehicle') // vehicle Veh{}
+  
+      Bu.identifyClass('bus')  // bus class Bu{}
+      Veh.identifyClass('vehicle') // vehicle class Veh{}
+  
+      let Bar = class extends Foo { }  // 也是可行的
+    </pre>
+  </code>
+  <h2>extends 关键字也可以在类表示式中使用,因此let Bar = class extends Foo { } 也是有效的语法</h2>
+  <script>
+    class Vehicle { }
+
+    class Bus extends Vehicle { }
+
+    let b = new Bus()
+    console.log(b instanceof Bus);     // true
+    console.log(b instanceof Vehicle); // true 继承了
+
+    function Person() { }
+
+    //继承普通构造函数
+    class Engineer extends Person { }
+
+    let e = new Engineer
+    console.log(e instanceof Engineer); // true 
+    console.log(e instanceof Person); //true 继承了
+
+    console.log('派生类都会通过原型链访问到类和原型上定义的方法 this的值会反映调用相应方法的实例或者类');
+
+    class Veh {
+      identifyPrototype(id) {
+        console.log(id, this);
+      }
+
+      static identifyClass(id) {
+        console.log(id, this);
+      }
+    }
+
+    class Bu extends Veh { }
+
+    let V = new Veh
+    let B = new Bu
+
+    B.identifyPrototype('bus') // bus Bu{}
+    V.identifyPrototype('vehicle') // vehicle Veh{}
+
+    Bu.identifyClass('bus')  // bus class Bu{}
+    Veh.identifyClass('vehicle') // vehicle class Veh{}
+
+    // let Bar = class extends Foo { }  // 也是可行的
+  </script>
+</body>
+
+</html>

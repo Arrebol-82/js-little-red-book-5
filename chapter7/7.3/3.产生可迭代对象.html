@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        li {
+            list-style: decimal;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>使用*号，可以增强可迭代对象，让他能够迭代一个可迭代对像 ， 从而一次输出一个值</h1>
+    <ul>
+        <li>他的本质是语法糖</li>
+        <li>将后面可迭代对象，进行迭代时一次输出一个可迭代元素</li>
+    </ul>
+    <code>
+        <pre>
+            function* foo()  {
+                yield* [1,2,3]
+            }
+
+            const g = foo()[Symbol.iterator]()
+
+            console.log(g.next())  // {value: 1, done: false}
+            console.log(foo().next()); // {value: 1, done: false}
+
+            for(const k of foo()) {
+                console.log(k);
+            }
+
+            // 1
+            // 2
+            // 3
+        </pre>
+    </code>
+    <p>两侧的空格是不会影响 * 的行为</p>
+    <code>
+        <pre>
+            // 他是跟生成器的写法时一样的 * 的两侧空格是不会影响行为的
+            function* generatorFn() {
+                    yield* [1,2]
+                    yield *[1,2]
+                    yield * [1,2]
+            }
+        </pre>
+    </code>
+
+    <h2>对于生成器产生的迭代器来说，这个值就是生成器返回的值</h2>
+    <code>
+        <pre>
+            console.log('生成器产生的迭代器');
+
+            function* innerGeneratorFn() {
+                    yield 'foo'
+                    return 'bar'
+            }
+
+            function* outerGeneratorFn(genobj) {
+                console.log('iter value',yield* innerGeneratorFn());
+                // console.log('iter value',yield* innerGeneratorFn() = bar);
+            }
+
+            for(const k of outerGeneratorFn()) {
+                console.log('value',k);
+            }
+            <strong> 因为第一次调用就暂停了 ， 直接返回foo ，之后整个表达式的返回值是bar</strong>
+            // value：foo
+            // iter value bar
+        </pre>
+    </code>
+    <h2>这是一个很特色的用法 ， 用yield* 去迭代<i>可迭代对象或者是生成器</i></h2>
+    <script>
+            function* foo()  {
+                yield* [1,2,3]
+            }
+
+            const g = foo()[Symbol.iterator]()
+
+            console.log(g.next())
+            console.log(foo().next());
+
+            for(const k of foo()) {
+                console.log(k);
+            }
+
+            // 他是跟生成器的写法时一样的 * 的两侧空格是不会影响行为的
+            console.log(' 他是跟生成器的写法时一样的 * 的两侧空格是不会影响行为的');
+            function* generatorFn() {
+                    yield* [1,2]
+                    yield *[1,2]
+                    yield * [1,2]
+            }
+
+            for(const x of generatorFn()) {
+                console.log(x);
+            }
+
+            // 其实yield就是将一个可迭代对象，序列化一连串可单独产出的值，所以跟返到循环里面没什么不同
+            console.log('就是一个可迭代对象');
+            function* generatorFnA(){
+                // 就是想当于把他放进循环
+                for(const x of [1,2,3]) {
+                        yield x
+                }
+            }
+
+            for(const k of generatorFnA()) {
+                console.log(k);
+            }
+
+            function*　　generatorFnB() {
+                    yield* [1,2,3]
+            }
+
+            for(const k of generatorFnB()){
+                console.log(k);
+            }
+
+            function* generatorFn() {
+                console.log('iter value:',yield* [1,2,3]);
+            }
+
+            for(const x of generatorFn()) {
+                console.log('value',x);
+            }
+            
+            console.log('生成器产生的迭代器');
+
+            function* innerGeneratorFn() {
+                    yield 'foo'
+                    return 'bar'
+            }
+
+            function* outerGeneratorFn(genobj) {
+                console.log('iter value',yield* innerGeneratorFn());
+                // console.log('iter value',yield* innerGeneratorFn() = bar);
+            }
+
+            for(const k of outerGeneratorFn()) {
+                console.log('value',k);
+            }
+            // 因为第一次调用就暂停了 ， 直接返回foo ，之后整个表达式的返回值是bar
+            // foo
+            // iter value bar
+    </script>
+</body> 
+</html>

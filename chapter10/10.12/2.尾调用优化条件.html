@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>尾调用优化的条件</h1>
+  <p>尾调用优化的条件就是确定外部栈帧真的没有必要存在的时候</p>
+  <ul>
+    <li>代码一定要在严格模式下运行</li>
+    <li>外部函数的返回值是对尾调用函数的调用</li>
+    <li>尾调用函数返回后不需要执行额外的逻辑</li>
+    <li>尾调用函数不是引用外部函数作用域中自由变量的闭包</li>
+  </ul>
+  <p>例如这些代码都是不符合要求的</p>
+  <code>
+    <pre>
+          // 无优化  没有进行return ( 返回 )
+          function outerFunction() {
+            innerHeight()
+          }
+
+          // 无优化 尾调用没有直接返回
+          function outerFuncti() {
+            let innerFunctionResult = innerFunction()
+            return innerFunctionResult;
+          }
+
+          // 无优化  尾调用返回后必须转型为字符串
+          function outerF() {
+            return innerFunction.toString()
+          }
+
+          // 无优化 尾调用是一个闭包
+
+          function outerFun() {
+            let foo = 'bar'
+            function innerFunction() { return foo; }
+
+            return innerFunction()
+          }
+    </pre>
+  </code>
+  <p>接下来是符合要求的代码</p>
+  <code>
+  <pre>
+   // 有优化 栈帧销毁前执行参数计算
+    function outerFunc(a, b) {
+      return innerFunction(a + b)
+    }
+
+    // 有优化 初始返回值不涉及栈帧
+    function outerFunC(a, b) {
+      if (a < b) {
+        return a
+      }
+      return innerFunction(a + b)
+    }
+
+    // 有优化: 两个内部函数都在尾部
+    function outerFunction(condition) {
+      return condition ? innerFunctionA() : innerFunctionB()
+    }
+  </pre>
+</code>
+  <h2>引擎并不会区分是函数是自身的还是其他函数 , 之所以要在严格模式下 才能使用 就是因为非严格模式下 f.argument 和 f.caller 而它们都会引用外部函数的栈帧 显然这意味着不能应用优化了</h2>
+
+  <script>
+    'use strict'
+
+
+    // 无优化  没有进行return ( 返回 )
+    function outerFunction() {
+      innerHeight()
+    }
+
+    // 无优化 尾调用没有直接返回
+    function outerFuncti() {
+      let innerFunctionResult = innerFunction()
+      return innerFunctionResult;
+    }
+
+    // 无优化  尾调用返回后必须转型为字符串
+    function outerF() {
+      return innerFunction.toString()
+    }
+
+    // 无优化 尾调用是一个闭包
+
+    function outerFun() {
+      let foo = 'bar'
+      function innerFunction() { return foo; }
+
+      return innerFunction()
+    }
+
+    // 有优化 栈帧销毁前执行参数计算
+    function outerFunc(a, b) {
+      return innerFunction(a + b)
+    }
+
+    // 有优化 初始返回值不涉及栈帧
+    function outerFunC(a, b) {
+      if (a < b) {
+        return a
+      }
+      return innerFunction(a + b)
+    }
+
+    // 有优化: 两个内部函数都在尾部
+    function outerFunction(condition) {
+      return condition ? innerFunctionA() : innerFunctionB()
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>FinalizationRegistry</h1>
+  <h2>主要用于在对象被回收时执行清理操作（如释放资源、记录日志、通知其他系统等）</h2>
+  <h2>register</h2>
+  <p>register(绑定事件的元素, 传进去的值, 令牌); 注册</p>
+  <p>这个令牌是用于清楚取消注册事件的</p>
+  <code>
+    <pre>
+      let obj = { name: 'Arrebol' }
+      console.log('开始执行');
+      
+      let finalizationRegistry = new FinalizationRegistry((heldvalue) => {
+      console.log(`回收机制发力了:${heldvalue}`);
+      console.log('回收完毕');
+      
+      })
+      
+      finalizationRegistry.register(obj, '我的对象')
+      
+      obj = null
+    </pre>
+  </code>
+  <p>注册了回收事件,等待被回收完时,会执行事件</p>
+  <h2>unregister</h2>
+  <p>unregister(令牌) 取消注册</p>
+  <code>
+    <pre>
+      let Obj = { name: 'Matter' }
+      // 令牌
+      let token = {}
+      let FinaliZationRegiStry = new FinalizationRegistry((heldvalue) => {
+      console.log(`回收机制发力了:${heldvalue}`);
+      console.log('回收完毕');
+      })
+      注册
+      FinaliZationRegiStry.register(Obj, 'My held value', token)
+      注销
+      FinaliZationRegiStry.unregister(token)
+      
+      Obj = null
+    </pre>
+  </code>
+  <p>这里也注册了事件 ,但是后面注销了事件,所以是不会执行的</p>
+  <script>
+    /*  第一段代码
+     这里的这串代码主要是将obj绑定FinaliZationRegiStry事件, 然后当obj被回收掉的时候会去执行绑定的事件就是finalizationRegistry */
+
+    let obj = { name: 'Arrebol' }
+    console.log('开始执行');
+
+    let finalizationRegistry = new FinalizationRegistry((heldvalue) => {
+      console.log(`回收机制发力了:${heldvalue}`);
+      console.log('回收完毕');
+
+    })
+
+    finalizationRegistry.register(obj, '我的对象')
+
+    obj = null
+
+
+    // 这段代码是不会执行的因为在回收机制之前 , unregister就已经注销事件了,所以是不会执行的
+
+    let Obj = { name: 'Matter' }
+    // 令牌
+    let token = {}
+    let FinaliZationRegiStry = new FinalizationRegistry((heldvalue) => {
+      console.log(`回收机制发力了:${heldvalue}`);
+      console.log('回收完毕');
+    })
+
+    FinaliZationRegiStry.register(Obj, 'My held value', token)
+
+    FinaliZationRegiStry.unregister(token)
+
+    Obj = null
+
+  </script>
+</body>
+
+</html>

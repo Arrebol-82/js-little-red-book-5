@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>默认参数值</h1>
+  <p>在旧版本的ECMAscript中 , 实现默认参数的一种常见方式检测是否为undefined , 是的话就意味这个参数没有接收实参</p>
+  <code>
+    <pre>
+      function makeKing(name) {
+        name = (typeof name !== 'undefined' ? name : 'Arrebol')
+        return `Kong ${name}`
+      }
+  
+      console.log(makeKing())
+      console.log(makeKing("aer"))  
+    </pre>
+  </code>
+  <p>但是这样太麻烦了 , 所以有更简单的方法</p>
+  <code>
+    <pre>
+      function meake(name = 'Arrebol') {
+        return `this is ${name}`
+      }
+  
+      console.log(meake());
+      console.log(meake(82));  
+    </pre>
+  </code>
+
+  <strong>给参数传 undefined 相当于没有传值 , 不过这样可以利用多个独立的默认值</strong>
+  <code>
+    <pre>
+      function makeK(name = 'Arrebol', number = 'VIII') {
+        return `Omar ${name} ${number}`
+      }
+  
+      console.log(makeK(undefined));
+      console.log(makeK('82'));
+      console.log(makeK('不知道', '08')); 
+    </pre>
+  </code>
+  <p>在使用默认参数的时候 <strong>argument 对象的值不反映参数的默认值 ,吗 只反映传给函数的参数</strong> 当然跟严格模式是一样的 修改命名参数
+    是不会影响 argument 对象 , 他始终调用函数时传入的值为准 <strong>这个在前面说过啦</strong></p>
+  <code>
+      <pre>
+        function mekeKing(name = 'Henry') {
+          name = 'Arrebol'
+          return `King ${arguments[0]}`
+        }
+    
+        console.log(mekeKing());
+        console.log(mekeKing('adv'));
+      </pre>
+    </code>
+  <p>默认参数当然不止 原始值和引用值 函数的返回值也是可以的</p>
+  <code>
+      <pre>
+        let romaNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI']
+        let index = 0
+        function getNameberals() {
+          return romaNumerals[index++]
+        }
+    
+        function makeJnk(name = 'Henry', numberals = getNameberals()) {
+          return `King ${name} ${numberals}`
+        }
+        console.log(makeJnk());  // King Henry I
+        console.log(makeJnk('Arrebol', 'VIX'));    // King Arrebol VIX
+        console.log(makeJnk());    // King Henry II
+        console.log(makeJnk());    // King Henry III
+        console.log(makeJnk());    // King Henry IV    
+      </pre>
+    </code>
+  <strong>函数参数只有在调用的时候才会求值 , 不会在函数定义时求值 , 而且计算默认值的函数只有在被调用 , 并且未传相应的参数的时候才会被调用</strong>
+  <p>箭头函数也是可以使用默认参数的 , 但是一定要加括号</p>
+  <code>
+    <pre>
+      let make = (name = 'Arrebol') => `King ${name}`
+      
+      console.log(make()); // King Arrebol
+    </pre>
+  </code>
+  <h1>默认参数作用域与暂时性死区</h1>
+  <p>因为在求值默认的时 可以定义对象 , 也可以动态调用函数 所以函数参数实在某个作用域中求值的</p>
+  <strong>给多个参数定义默认值实际上跟使用let 关键字顺序声明变量是一样的 </strong>
+  <code>
+    <pre>
+      function Default(name = 'Arrebol', numerals = 'VIII') {
+        return `King ${name} ${numerals}`
+      }
+      console.log(Default());
+    </pre>
+  </code>
+  <p>这里的默认参数会按照定义它们的顺序 , 依次被实例化</p>
+  <code>
+    <pre>
+      function Defaulting() {
+        let name = 'Arrebol'
+        let numberals = 4
+  
+        return `king ${name} ${numberals}`
+      }
+  
+      console.log(Defaulting());
+    </pre>
+  </code>
+  <strong>因为参数是按顺序初始化的 所以后定义默认值的参数可以引用先定义的参数</strong>
+  <code>
+    <pre>
+      function Defaulping(name = 'Arr', numeralse = name) {
+        return `king ${name} ${numeralse}`
+      }
+  
+      console.log(Defaulping());
+    </pre>
+  </code>
+  <p>后面的numeralse 使用前面name 定义的参数</p>
+  <strong>参数初始化顺序遵循 '暂时性死区' 规则 既前面定义的参数不能引用后面定义的参数</strong>
+  <code>
+    <pre>
+      console.log(' 参数初始化顺序遵循 ');
+      function Mak(name = numberals, numberals = 'VIII') {
+        return `king ${name} ${numberals}`
+      }
+      console.log(Mak());  // ReferenceError: Cannot access 'numberals' before initialization  
+    </pre>
+  </code>
+  <p>其实就是跟let 一样 , 还未声明前就使用 不过可以传第一个参数 , 把默认参数顶替掉就好了</p>
+  <strong>参数也存在于自己的作用域中 , 它们不能引用函数体的作用域</strong>
+  <code>
+    <pre>
+      function action(name = 'Arrebol', numeralse = defuler) {
+        let defuler = 'VIII'
+        return `King ${name} ${defuler}`
+      }
+  
+      action() // ReferenceError: defuler is not defined
+    </pre>
+  </code>
+  <p>作用链的原因 , 所以是不能访问里面子层作用域里面的变量的</p>
+  <script>
+    function makeKing(name) {
+      name = (typeof name !== 'undefined' ? name : 'Arrebol')
+      return `Kong ${name}`
+    }
+
+    console.log(makeKing())
+    console.log(makeKing("aer"))
+
+
+    function meake(name = 'Arrebol') {
+      return `this is ${name}`
+    }
+
+    console.log(meake());
+    console.log(meake(82));
+
+    function makeK(name = 'Arrebol', number = 'VIII') {
+      return `Omar ${name} ${number}`
+    }
+
+    console.log(makeK(undefined));
+    console.log(makeK('82'));
+    console.log(makeK('不知道', '08'));
+
+    console.log('=============================== 使用默认 =================================');
+    function mekeKing(name = 'Henry') {
+      name = 'Arrebol'
+      return `King ${arguments[0]}`
+    }
+
+    console.log(mekeKing());
+    console.log(mekeKing('adv'));
+
+    console.log('============================== 返回值为默认值 =============================');
+    let romaNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI']
+    let index = 0
+    function getNameberals() {
+      return romaNumerals[index++]
+    }
+
+    function makeJnk(name = 'Henry', numberals = getNameberals()) {
+      return `King ${name} ${numberals}`
+    }
+    console.log(makeJnk());  // King Henry I
+    console.log(makeJnk('Arrebol', 'VIX'));    // King Arrebol VIX
+    console.log(makeJnk());    // King Henry II
+    console.log(makeJnk());    // King Henry III
+    console.log(makeJnk());    // King Henry IV
+
+    console.log('======================== 箭头函数默认值 ====================');
+    let make = (name = 'Arrebol') => `King ${name}`
+
+    console.log(make());  // King Arrebol
+
+    console.log('****************************** 默认参数作用与暂时性死区 **********************************');
+
+    function Default(name = 'Arrebol', numerals = 'VIII') {
+      return `King ${name} ${numerals}`
+    }
+
+    console.log(Default());
+
+    console.log(' 这里的默认参数会按照定义它们的顺序 , 依次被实例化 ');
+    function Defaulting() {
+      let name = 'Arrebol'
+      let numberals = 4
+
+      return `king ${name} ${numberals}`
+    }
+
+    console.log(Defaulting());
+
+    console.log(' 因为参数是按顺序初始化的 所以后定义默认值的参数可以引用先定义的参数 ');
+    function Defaulping(name = 'Arr', numeralse = name) {
+      return `king ${name} ${numeralse}`
+    }
+
+    console.log(Defaulping());
+
+    console.log(' 参数初始化顺序遵循 ');
+    function Mak(name = numberals, numberals = 'VIII') {
+      return `king ${name} ${numberals}`
+    }
+    // console.log(Mak());  // ReferenceError: Cannot access 'numberals' before initialization
+
+    console.log('========================= 作用域 =========================');
+    function action(name = 'Arrebol', numeralse = defuler) {
+      let defuler = 'VIII'
+      return `King ${name} ${defuler}`
+    }
+
+    action() // ReferenceError: defuler is not defined
+  </script>
+</body>
+
+</html>

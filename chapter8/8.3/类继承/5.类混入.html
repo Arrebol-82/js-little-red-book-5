@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>类混入</h1>
+  <p>把不同类的行为集中到一个类是一种常见的 javascript 虽然 ECMAscript 没有显示支持多类继承 , 但通过现有特性可以轻松地模拟这种行为</p>
+  <p><strong>注意</strong> Object.assign() 方法是为了混入对象行为而设计 , 只有在需要混入类的行为时才有必要使用混入模式</p>
+  <code>
+    <pre>
+      class Vehicle { }
+
+      function getParentClass() {
+        console.log('evaluate expression');
+        return Vehicle
+      }
+  
+      class Bus extends getParentClass() { }
+    </pre>
+  </code>
+  <p>在代码中继承中 , 只要是函数 并且 原型对象不为空 , 那就是符合继承条件的 , 所以上面继承getParentClass() 是没有任何问题的</p>
+  <p>来看看真正的混入模式 </p>
+  <code>
+    <pre>
+      class Person { }
+
+      let FooMixin = (SuperClass) => class extends SuperClass {
+        foo() {
+          console.log('foo', this);
+        }
+      }
+  
+      let BarMixin = (SuperClass) => class extends SuperClass {
+        bar() {
+          console.log('bar', this);
+        }
+      }
+  
+      let BazMixin = (SuperClass) => class extends SuperClass {
+        baz() {
+          console.log('baz', this);
+        }
+      }
+  
+      class Bu extends FooMixin(BarMixin(BazMixin(Person))) { }
+  
+      // 可以写一个辅助函数, 可以把嵌套调用展开
+      function mix(BaseClass, ...Mixins) {
+        return Mixins.reduce((accumulator, current) => current(accumulator), BaseClass)
+      }
+  
+      class Buse extends mix(Person, FooMixin, BarMixin, BazMixin) { }
+  
+      let B = new Bu
+      B.foo()
+      B.bar()
+      B.baz()
+    </pre>
+  </code>
+  <p>这里之所以使用箭头函数表达式就是因为他可以实现多次复用 就像最后的Bu 把前面的表达式一同添加进去就行了</p>
+  <strong>现在有很多框架已经弃用 混用模式了 , 改为了 组合模式 <i class="pink">组合胜过继承</i></strong>
+  <h3>组合模式 = 编程世界的乐高积木</h3>
+  <p>本身就是大盒子套小盒子 , 小盒子在套小盒子 , 但是每个盒子可能又有不同的独立的方法</p>
+  <script>
+    class Vehicle { }
+
+    function getParentClass() {
+      console.log('evaluate expression');
+      return Vehicle
+    }
+
+    class Bus extends getParentClass() {
+    }
+
+    console.log('============================== 混合模式 ==================================');
+    class Person { }
+
+    let FooMixin = (SuperClass) => class extends SuperClass {
+      foo() {
+        console.log('foo', this);
+      }
+    }
+
+    let BarMixin = (SuperClass) => class extends SuperClass {
+      bar() {
+        console.log('bar', this);
+      }
+    }
+
+    let BazMixin = (SuperClass) => class extends SuperClass {
+      baz() {
+        console.log('baz', this);
+      }
+    }
+
+    class Bu extends FooMixin(BarMixin(BazMixin(Person))) { }
+
+    // 可以写一个辅助函数, 可以把嵌套调用展开
+    function mix(BaseClass, ...Mixins) {
+      return Mixins.reduce((accumulator, current) => current(accumulator), BaseClass)
+    }
+
+    class Buse extends mix(Person, FooMixin, BarMixin, BazMixin) { }
+
+    let B = new Bu
+    B.foo()
+    B.bar()
+    B.baz()
+
+
+  </script>
+</body>
+
+</html>

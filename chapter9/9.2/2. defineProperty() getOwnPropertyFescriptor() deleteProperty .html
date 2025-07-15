@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>defineProperty() , getOwnPropertyDescriptor() , deleteProperty()</h1>
+  <section>
+    <h1>defineProperty()</h1>
+    <p>defineProperty() 捕获器会在 Object.defineProperty() 中被调用 , 对应的反射API方法为Reflect.defineProperty()</p>
+    <code>
+      <pre>
+        const myTarget = {
+          foo: ''
+        }
+    
+        const proxy = new Proxy(myTarget, {
+          defineProperty(target, property, descritpor) {
+            console.log('defineProperty');
+            return Reflect.defineProperty(...arguments)
+          }
+        })
+    
+        Object.defineProperty(proxy, 'foo', { value: 'bar' })
+      </pre>
+    </code>
+    <p>这里返回defineProperty , 而不是foo 是因为被proxy拦截了</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                     defineProperty()必须返回布尔值 , 表示属性是否定义成功 ,返回非布尔值会被转换为布尔值
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.defineProperty(target, property, descritpor)
+                                                       Reflect.defineProperty(target, property, descritpor)
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+                                                       property: 引用的目标上的字符串键属性
+    
+                                                       descritpor: 包含可选 enumerable writable configurable value get set 定义的对象
+    
+            捕获器不变式                                如果目标对象不可扩展 , 则无法定义属性
+                                                  
+                                                       如果目标对象有一个可配置的属性 则不能添加同名的不可配置属性 (不能通过代理将原本可配置的
+                                                       属性降级为不可配置属性)
+
+                                                       如果目标对象有一个不可配置属性 则不能添加同名的可配置属性 (同理)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>getOwnPropertyDescriptor()</h2>
+    <p>getOwnPropertyDescriptor() 捕获器会在 Object.getOwnPropertyDescriptor() 中被调用 对应的反射API是
+      Reflect.getOwnPropertyDescriptor()</p>
+    <code>
+      <pre>
+        const myGetOwnPropertyDescriptor = {
+          foo: 'bar'
+        }
+    
+        const proxy = new Proxy(myGetOwnPropertyDescriptor, {
+          getOwnPropertyDescriptor() {
+            console.log('getOwnPropertyDescriptor');
+            return Reflect.getOwnPropertyDescriptor(...arguments)
+          }
+        })
+    
+        const a = Object.getOwnPropertyDescriptor(pro, 'foo')
+        // getOwnPropertyDescriptor
+      </pre>
+    </code>
+    <p>这里返回getOwnPropertyDescriptor, 而不是a 是因为被proxy拦截了</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                      getOwnPropertyDescriptor() 必须返回对象 , 或者属性不存在时返回undefined
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.getOwnPropertyDescriptor( target, property )
+                                                       Reflect.getOwnPropertyDescriptor( target, property )
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+                                                       property: 引用的目标上的字符串键属性
+    
+    
+            捕获器不变式                                如果自有的 target.property 存在且不可配置 , 则处理程序必须返回一个表示该属性存在的对象
+    
+                                                       如果自有的 target.property 存在且可配置,则处理程序必须返回表示该属性可配置的对象
+
+                                                       如果自有的 target.property 存在且target不可扩展 , 则处理程序必须返回一个表示该属性存在的对象
+
+                                                       如果 target.property 不存在且 target 不可扩展 , 则处理程序必须返回 undefined 表示该属性不存在 (
+                                                       本身它对象上就没有这个属性，而且对象是不可扩展的，那就是说明对象不能添加新的属性，所以要返回 
+                                                       undefined，明确表示没有定义，没有这个属性。)
+
+                                                       如果 target.property 不存在 , 则处理程序不能返回表示该属性可配置的对象 (而第二个方法你本来这个属性
+                                                       它就不存在了，所以你就不能返回一个它可配置的假象给你，因为你这个属性它没有啊)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>deleteProperty</h2>
+    <p>deleteProperty() 捕获器会在delete操作符中被调用 对应的反射API方法就是 Reflect.deleteProperty()</p>
+    <code>
+      <pre>
+            
+        const mydeletproperty = {
+          foo: 'qux'
+        }
+
+        const proxy = new Proxy(mydeletproperty, {
+          deleteProperty() {
+            console.log('deletproperty');
+            return Reflect.deleteProperty(...arguments)
+          }
+        })
+
+        delete proXy.foo //  deletpropertys
+      </pre>
+    </code>
+    <p>这里返回deletproperty, 是因为被proxy拦截了</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                     deletproperty() 必须返回布尔值 , 表示是否删除成功, 返回非布尔值会被转换为布尔值
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    delete property.proxy
+                                                       delete property[proxy] 
+                                                       Reflect.deletproperty( proxy , property )
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+                                                       property: 引用的目标上的字符串键属性
+    
+    
+            捕获器不变式                                如果自有的 target.property 存在且不可配置 则处理程序不能删除这个属性
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <script>
+    console.log('========================= defineProperty =====================');
+
+    const myTarget = {
+      foo: ''
+    }
+
+    const proxy = new Proxy(myTarget, {
+      defineProperty(target, property, descritpor) {
+        console.log('defineProperty');
+        return Reflect.defineProperty(...arguments)
+      }
+    })
+
+    Object.defineProperty(proxy, 'foo', {
+      value: 'bar'
+    })
+
+    console.log('========================= getOwnPropertyDescriptor ===================');
+    const myGetOwnPropertyDescriptor = {
+      foo: 'bar'
+    }
+
+    Object.defineProperty(myGetOwnPropertyDescriptor, 'foo', {
+      configurable: false
+    })
+
+    const pro = new Proxy(myGetOwnPropertyDescriptor, {
+      getOwnPropertyDescriptor() {
+        console.log('getOwnPropertyDescriptor');
+        return Reflect.getOwnPropertyDescriptor(...arguments)
+      }
+    })
+
+    const a = Object.getOwnPropertyDescriptor(pro, 'foo')
+    // getOwnPropertyDescriptor
+
+    console.log(a.configurable);
+
+
+    console.log('========================= deleteProperty ========================');
+
+    const mydeletproperty = {
+      foo: 'qux'
+    }
+
+    const proXy = new Proxy(mydeletproperty, {
+      deleteProperty() {
+        console.log('deletproperty');
+        return Reflect.deleteProperty(...arguments)
+      }
+    })
+
+    delete proXy.foo //  deletpropertys
+
+  </script>
+</body>
+
+</html>

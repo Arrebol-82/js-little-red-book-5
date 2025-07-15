@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>静态初始化</h1>
+  <p>在静态初始化比较重要的时候 ,类也支持通过 <strong>静态初始化块</strong>来编写复杂的代码以初始化静态成员</p>
+  <code>
+    <pre>
+      class Person {
+        static name = 'Arrebol'
+        static age
+  
+        static {
+          this.age = 30
+        }
+      }
+  
+      console.log(Person.age);
+    </pre>
+  </code>
+  <h2>静态初始化块提供了一种方式在类求值期间声明和执行任意初始化逻辑,在必须计算复杂静态值或检查已有静态值的情况下 , 初始化块就可以派上用场了</h2>
+  <p class="pink">注意 !!!</p>
+  <ul>
+    <li>
+      <strong>可以在类中使用任意多个初始化块,按出现的顺序来进行求值</strong>
+      <code>
+        <pre>
+          class Person {
+            static {
+              this.age = 44
+            }
+
+            static {
+              this.name = 'Arrebol'
+              this.age = 55
+            }
+          }
+
+          Person.age // 55 
+          Person.name // Arrebol
+        </pre>
+      </code>
+    </li>
+    <li>
+      <strong>初始化块必须同步求值</strong>
+      <p>也就是不能在初始化块里面写异步函数(如 await、setTimeout 等) 原因: 初始化块在实例创建过程中同步执行，JS 引擎要求它必须立即完成计算，不能中断。</p>
+    </li>
+    <li>
+      <strong>初始化块的作用域按正常词法作用域对待</strong>
+      <p>初始化作用域是块级作用域 (支持 let/const 块级变量)</p>
+    </li>
+    <li><strong>初始化块中的this引用类的构造函数</strong>
+      <p>他的this指向跟构造函数的this指向是一样的 (也就是指向实例对象)</p>
+    </li>
+    <li class="circle">
+      <h1>注意!!!</h1>
+      <h2 class="pink">static 里面的this是指向类定义的名称的 只有像constructor 和直接使用类字段 this就是指向实例对象的 还有这也就说的通了 , 为什么调用静态方法要使用 类名了
+        因为他就是指向类定义的名称的</h2>
+    </li>
+  </ul>
+  <script>
+    class Person {
+      static name = 'Arrebol'
+      static age
+
+      static {
+        this.age = 30;
+        this.year = this.age + 6
+      }
+
+      static {
+        this.age = 44
+      }
+    }
+
+    console.log(Person.age); // 44
+    console.log(Person.year); // 36
+    console.log(Person.name); // Arrebol
+    let a = new Person
+    console.log(a.age);
+
+  </script>
+</body>
+
+</html>

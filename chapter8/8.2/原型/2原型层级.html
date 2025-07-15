@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h2>原型层级</h2>
+  <p>在通过对象访问属性的时候,会按照这个属性开始搜索. 搜索开始于对象的实例本身 如果这个对象实例上发现了给定的名称 , 则返回该名称的值
+    如果没有找这个属性 , 则搜索会沿着指针进入原型对象 , 然后在原型对象上找到属性后 , 在返回对应的值
+  </p>
+  <p><strong>白话文就是:</strong> <i>所以一句话总结就是会在自身上先找方法 , 找的到的话就返回 , 找不到的话就沿着 [[prototyp]] 往继承的对象的原型对象身上去找
+      找到就返回找不到就返回null</i></p>
+  <section>
+    <h2>看看一下代码</h2>
+    <code>
+      <pre>
+        function Person() {
+          Person.prototype.name = 'Arrebol'
+          Person.prototype.age = 29
+          Person.prototype.job = 'coding'
+          Person.prototype.sayName = function () {
+            console.log(this.name);
+          }
+        }
+    
+        const person1 = new Person
+    
+        /* person1.sayName = function () {
+          console.log(111);
+        } */
+    
+        console.log(person1.sayName());
+      </pre>
+    </code>
+    <p>在person1.sayName()时 , 会发生两步搜索 首先,javascript引擎会检查:'person1实例对象 有sayName吗属性' 并没有 , 然后实例对象就会沿着
+      <strong>[[prototype]]:继承对象的原型对象</strong> 继续查找 , 找到了就返回
+    </p>
+  </section>
+  <section>
+    <h2>几个重点</h2>
+    <ul>
+      <li>
+        <strong>虽然可以通过实例访问到原型对象里面的值 , 但是不能通过实例重写这些值 , 如果在实例和原型对象上同时添加一个相同的属性 , 那么实例上的属性会覆盖掉原型对象上的属性</strong>
+        <code>
+          <pre>
+            function Person() {
+              Person.prototype.name = 'Arrebol'
+              Person.prototype.age = 29
+              Person.prototype.job = 'coding'
+              Person.prototype.sayName = function () {
+                console.log(this.name);
+              }
+            }
+        
+            const Person1 = new Person
+            const Person2 = new Person
+        
+            Person1.name = 'ZJS'
+        
+            console.log(Person1.name); // ZJS 实例对象的覆盖掉了原型对象的
+            console.log(Person2.name);  // Arrebol  实例对象没有 去原型对象上找
+          </pre>
+        </code>
+        <p>Person1.name 定义在了实例对象上 , 就不会往原型对象上找了 , 而Person2实例对象没有 去原型对象上找 :: <br>
+          <strong>总结: <i>如果实例对象身上有这个方法,那就会再去原型对象上查找了</i></strong>
+          即使这个属性设置成了null , 还是不会去原型对象身上找 , 除非实例对象没有这个属性 , 哎 那么就可以使用delete操作符把实例对象的属性删除掉 , 这样就会去原型对象身上找了
+        </p>
+      </li>
+      <li>
+        <h2>delete操作符</h2>
+        <code>
+          <pre>
+            function Delete() { }
+
+            Delete.prototype.name = 'Arrebol'
+            Delete.prototype.age = 17
+            Delete.prototype.job = 'code'
+            Delete.prototype.sayName = function () {
+              console.log(this.name);
+            }
+        
+        
+            const D1 = new Delete
+            const D2 = new Delete
+        
+            D1.name = 'Object'
+            console.log(D1.name); // Object
+            console.log(D2.name); // Arrebol
+        
+            delete D1.name
+        
+            console.log(D1.name); // Arrebol        
+          </pre>
+        </code>
+        <p>原来的D1实例对象 , 是拥有name属性的是不会去访问原型对象的 但是经过delete删除之后实例对象就没有了 , 就会去原型对象身上访问了 <strong>所以就有了hasOwnProperty()
+            看当前的实例是否拥有这个属性</strong></p>
+      </li>
+      <li>
+        <h2>hasOwnProperty</h2>
+        <code>
+          <pre>
+            const D1 = new Delete
+            const D2 = new Delete
+            console.log(D1.hasOwnProperty('name')); //false
+            
+            
+            D1.name = 'Object'
+            console.log(D1.name); // Object
+            console.log(D1.hasOwnProperty('name')); //true
+            
+            console.log(D2.name); // Arrebol
+            console.log(D2.hasOwnProperty('name'));
+            
+            delete D1.name
+            
+            console.log(D1.name); // Arrebol
+            console.log(D1.hasOwnProperty('name'));// false
+          </pre>
+        </code>
+        <ul>
+          <li>通过hasOwnProperty() 可以很清楚的看到这个属性是在实例身上还是在原型对象身上 true就是当前对象上的 false就不是了</li>
+          <li class="circle">第一次检测D1的时候实例对象是没有这个属性的 所以返回false</li>
+          <li class="circle">第二次检测D1的时候实例对象是有这个属性的 所以返回true 因为D1.name = '...' 添加了属性</li>
+          <li class="circle">第三次检测D1的时候实例对象是没有这个属性的 所以返回false 因为经过了delete删除属性 所以实例对象那也就没了</li>
+        </ul>
+        <h2>Object.hasOwn()是 Object.hasOwnProperty的简化方法</h2>
+        <p>hasOwn 就是用来替换hasOwnPrototype的 , 因为 hasOwnPrototype 处理不了null / undefined 而且会被重写 , 把原来方法替换掉
+          还有就是hasOwnPrototype是通过原型链访问的 而hasOwn是直接访问内部机制的</p>
+        <h3>Object.getOwnPropertyDescriptor() </h3>
+        <code>
+          <pre>
+                                  Object.hasOwn                         Object.hasOwnProperty()
+            返回值              boolean (true/false)                   属性描述符对象 或 undefined
+            目的                检查属性是否存在于自身                     获取属性的完整元数据
+            返回的数据内容            是/否 true/false            { value, writable, enumerable, configurable }
+            使用场景                快速存在性检查                     深度操作属性（如修改特性、克隆属性等）
+          </pre>
+        </code>
+      </li>
+    </ul>
+  </section>
+  <script>
+    function Person() {
+      Person.prototype.name = 'Arrebol'
+      Person.prototype.age = 29
+      Person.prototype.job = 'coding'
+      Person.prototype.sayName = function () {
+        console.log(this.name);
+      }
+    }
+
+    const person1 = new Person
+
+    /* person1.sayName = function () {
+      console.log(111);
+    } */
+
+    console.log(person1.sayName());
+
+    console.log('=================================== 实例不能重写这些值 =====================================');
+
+
+    function Person() {
+      Person.prototype.name = 'Arrebol'
+      Person.prototype.age = 29
+      Person.prototype.job = 'coding'
+      Person.prototype.sayName = function () {
+        console.log(this.name);
+      }
+    }
+
+    const Person1 = new Person
+    const Person2 = new Person
+
+    Person1.name = 'ZJS'
+
+    console.log(Person1.name); // ZJS 实例对象的覆盖掉了原型对象的
+    console.log(Person2.name);  // Arrebol  实例对象没有 去原型对象上找
+
+    console.log('=============================== delete操作符 ================================');
+    function Delete() { }
+
+    Delete.prototype.name = 'Arrebol'
+    Delete.prototype.age = 17
+    Delete.prototype.job = 'code'
+    Delete.prototype.sayName = function () {
+      console.log(this.name);
+    }
+
+
+    const D1 = new Delete
+    const D2 = new Delete
+    console.log(D1.hasOwnProperty('name')); //false
+
+
+    D1.name = 'Object'
+    console.log(D1.name); // Object
+    console.log(D1.hasOwnProperty('name'));  //true
+
+    console.log(D2.name); // Arrebol  
+    console.log(D2.hasOwnProperty('name'));
+
+    delete D1.name
+
+    console.log(D1.name); // Arrebol
+    console.log(D1.hasOwnProperty('name')); // false
+
+
+    console.log();
+
+  </script>
+</body>
+
+</html>

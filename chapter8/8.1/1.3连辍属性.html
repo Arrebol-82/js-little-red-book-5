@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>连辍属性</h1>
+    <ul>
+        <li>
+            <h2>属性链</h2>在对象里面嵌套另一个对象，从父元素访问子对象的属性非常简单 ， 只要连续写出属性名即可 ，这就是<strong>属性链</strong>
+            <code>
+                <pre>
+                    const Person = {
+                        name: 'Alice',
+                        address: {
+                            city: 'Chicago',
+                            street: '1060 W Addison St'
+                        }
+                    }
+                </pre>
+            </code>
+        </li>
+        <li>
+            <strong>所以可以在拿取属性之前先判断是否有这个值</strong>
+            <code>
+                <pre>
+                    if (Person.address) {
+                        if (Person.address.postalCode) {
+                            console.log(Person.address.postalCode.length);
+                        }
+                    }
+                </pre>
+            </code>
+            <p>在拿去属性之前判断一下属性里面有没有这个属性 ， 有的话就直接打印 ， 没的话就不执行了 ， 但是会造成代码冗余 ，</p>
+            <strong>解决方案:</strong>
+            <h2 class="pink">使用 ?. </h2>
+            <p class="skyblue">他会判断里面是否有这个属性,然后去判断返回的是null 还是 undefined,是的其一话直接返回undefined 后面的表达式也不会在执行了</p>
+            <code>
+                <pre>
+                    if (Person.address) {
+                        if (Person.address.postalCode) {
+                            console.log(Person.address.postalCode.length);
+                        }
+                    }
+                
+                    <strong>等价于</strong>
+
+                    console.log(Person.address?.postalCode?.length)
+                </pre>
+            </code>
+            <p>但是要注意他只会判断当前的 , 如果后面还是有访问不到的属性 ,还是会报错</p>
+            <code>
+                <pre>
+                    console.log(Person.address?.postalCode.length);
+
+                    <strong>因为属性里面没有postalCode.length ,只有前面使用了?. 而后面没有 ,所以还是会报错</strong>
+                </pre>
+            </code>
+        </li>
+    </ul>
+</body>
+<script>
+    const person = {
+        name: 'Arrebol',
+        age: 16,
+        hobby: {
+            playgame: '绝区零(ZZZ)',
+            Shooting_game: 'COD'
+        }
+    }
+
+    console.log(person.hobby.playgame);
+
+    const Person = {
+        name: 'Alice',
+        address: {
+            city: 'Chicago',
+            street: '1060 W Addison St'
+        }
+    }
+
+    console.log(Person.address.city);
+    console.log(Person.address.postalCode);
+
+
+    console.log('报错');
+    console.log(Person?.address?.postalCode?.length)
+
+    console.log(' 相当于 ');
+    const address = Person.address
+    console.log(address.city);
+
+    console.log('============== Person ================');
+
+    if (Person.address) {
+        if (Person.address.postalCode) {
+            console.log(Person.address.postalCode.length);
+        }
+    }
+
+    console.log('=============== 等价于 ==================');
+    console.log(Person.address?.postalCode?.length);
+
+    console.log('报错');
+    console.log(Person.address?.postalCode.length);
+
+
+</script>
+
+</html>

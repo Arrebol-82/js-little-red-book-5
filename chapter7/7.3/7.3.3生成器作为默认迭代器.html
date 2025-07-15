@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>生成器作为默认迭代器 (因为他们都实现了迭代器协议) </h1>
+  <h2 style="color: pink;">平时开发的话先使用生成器 , 除非要特定功能 , 因为生成器更高效</h2>
+  <p>生成器和默认迭代器在被调用之后都会产生迭代器,所以生成器适合作为默认迭代器</p>
+  <code>
+    <pre>
+      class Foo {
+        constructor() {
+        this.value = [1, 2, 3]
+      }
+      
+      *[Symbol.iterator]() {
+        yield* this.value
+        }
+      }
+      
+      
+      for (const k of new Foo()) {
+        console.log(k);
+      }
+      
+      
+      console.log(' 默认使用迭代器 ');
+      
+      
+      const arr = [1, 2, 3]
+      
+      for (const k of arr) {
+        console.log(k);
+      }
+    </pre>
+  </code>
+  <p>这段代码 , 就是使用了*[Symbol.iterator]() 生成器 ,并且是 [Symbol.iterator]() 是迭代器协议,还可以隐式调用 , 而且也不需要在手动写next方法了</p>
+  <p>因为生成器就是高级的迭代器 , 所以说像for-of 那些接收可迭代对象的方法 都是可以直接使用的</p>
+  <script>
+    class Foo {
+      constructor() {
+        this.value = [1, 2, 3]
+      }
+
+      *[Symbol.iterator]() {
+        yield* this.value
+      }
+    }
+
+
+    for (const k of new Foo()) {
+      console.log(k);
+    }
+
+
+    console.log(' 默认使用迭代器 ');
+
+
+    const arr = [1, 2, 3]
+
+    for (const k of arr) {
+      console.log(k);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>代理捕获器与反射方法</h1>
+  <p>代理可以捕获13种不同的基本操作 , 这些操作有各自不同的反射API , 参数 , 关联ECMAscript操作和不变式 </p>
+  <strong>不过对于代理对象上执行的任何一种操作 , 只会有一个捕获器处理程序被调用 , 不会存在重复捕获的情况 只要在代理上调用,所有捕获器都会拦截他们对应的反射API操作</strong>
+  <h2>人话就是 1: 每个代理中 , 每种操作都有对应的一个捕获器 , 不会出现重复的捕获器 , 2: 有捕获器就有对应的反射API</h2>
+</body>
+
+</html>

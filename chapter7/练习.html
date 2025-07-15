@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    console.log('======================= 迭代器 =========================');
+
+    class squareIterator {
+      constructor(arr) {
+        this.arr = arr
+      }
+      [Symbol.iterator]() {
+        const arr = this.arr
+        let index = 0
+        return {
+          next() {
+            while (index < arr.length) {
+              const connect = arr[index]
+              index++
+              return { value: connect * connect, done: false }
+            }
+            return { value: undefined, done: true }
+          }
+        }
+      }
+    }
+
+    const array = [1, 2, 3, 4, 5]
+
+    const sq = new squareIterator(array)
+    const sqiterator = sq[Symbol.iterator]()
+    console.log(sqiterator.next());
+    console.log(sqiterator.next());
+    console.log(sqiterator.next());
+    console.log(sqiterator.next());
+    console.log(sqiterator.next());
+    console.log(sqiterator.next());
+
+    for (const k of sq) {
+      console.log(k);
+    }
+
+
+    console.log('======================== 生成器 =========================');
+
+    class dynamicSquareGenerator {
+      constructor(max) {
+        this.max = [...max]
+        this.index = 0
+      }
+      // 添加
+      addItme(item) {
+        this.max.push(item)
+      }
+      // 重置  
+      reset() {
+        this.index = 0
+      }
+      *[Symbol.iterator]() {
+        while (this.index < this.max.length) {
+          const currentitem = this.max[this.index++] ** 2
+          yield currentitem
+        }
+      }
+    }
+
+    const dy = new dynamicSquareGenerator(array)
+  /*   const Dy = dy[Symbol.iterator]()
+    console.log(Dy.next()) */;
+
+    for (const k of dy) {
+      console.log(k);
+    }
+
+
+    console.log('======================= 异步迭代 ====================');
+    class fetchDataStream {
+      constructor(arr) {
+        this.arr = [...arr]
+        this.index = 0
+      }
+
+      // 计算总和的
+
+
+      /* adding() {
+        let sum = 0
+        while (this.index < this.arr.length) {
+          const currentitem = this.arr[this.index++]
+          sum = sum + currentitem
+        }
+        return sum
+
+
+      }
+
+
+      async *[Symbol.asyncIterator]() {
+        yield new Promise(value => { setTimeout(() => { value(this.adding()) }, 1000) })
+      }
+ */
+
+      // 每个迭代
+
+      getNextItem() {
+        if (this.index < this.arr.length) {
+          return this.arr[this.index++]; // 每次产出一个元素
+        }
+        return null; // 没有更多元素
+      }
+
+      async *[Symbol.asyncIterator]() {
+        while (true) {
+          const item = this.getNextItem();
+          if (item === null) {
+            return { done: true }; // 迭代结束
+          }
+          // 模拟异步延迟（1秒后返回值）
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          yield { value: item, done: false }; // 标准异步迭代格式
+        }
+      }
+    }
+
+
+
+    const fetchDate = new fetchDataStream(array);
+    (async function () {
+      for await (const k of fetchDate) {
+        console.log(k);
+      }
+    })()
+
+
+    console.log('==================== 分批计算总和 ===================');
+    class FetchDataStream {
+      constructor(arr, batchSize = 2) {
+        this.arr = [...arr];
+        this.index = 0;
+        this.batchSize = batchSize; // 每批处理2个元素
+      }
+
+      // 计算当前批次的总和
+      getBatchSum() {
+        let sum = 0;
+        let count = 0;
+        while (this.index < this.arr.length && count < this.batchSize) {
+          sum += this.arr[this.index++];
+          count++;
+        }
+        return sum || null; // 没有元素时返回 null
+      }
+
+      async *[Symbol.asyncIterator]() {
+        while (true) {
+          const batchSum = this.getBatchSum();
+          if (batchSum === null) {
+            return { value: undefined, done: true };
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          yield { value: batchSum, done: false };
+        }
+      }
+    }
+
+    // 测试
+    (async () => {
+      const stream = new FetchDataStream([1, 2, 3, 4, 5], 2);
+      /*  for await (const k of fetchDate) {
+         console.log(k);
+       } */
+      for await (const { value } of stream) {
+        console.log('批次总和:', value);
+        // 输出：
+        // （延迟1秒）批次总和: 3 (1+2)
+        // （延迟1秒）批次总和: 7 (3+4)
+        // （延迟1秒）批次总和: 5 (5)
+      }
+    })();
+  </script>
+</body>
+
+</html>

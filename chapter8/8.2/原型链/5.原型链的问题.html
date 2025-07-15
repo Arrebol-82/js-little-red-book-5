@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>原型链的问题</h2>
+    <p>原型链虽然是强大的,但是他也有问题 主要问题就是原型中包含引用值的时候 , 前面谈到原型的时候也提到过 , 原型中包含的引用值会在所以实例间共享,
+        这也是为什么属性通常会在构造函数中而不是原型中定义 在使用原型实现继承的时候
+        , 原型实际上变成了另一个类型的实例, 这意味着原先的实例变成了原型属性</p>
+    <strong><i>在使用原型实现继承的时候 , 原型实际上变成了另一个类型的实例, 这意味着原先的实例变成了原型属性</i>解释 :: 在要继承父类的原型对象的时候 , ( SubType.prototype = new
+        SuperType() )
+        让子类的原型对象等于父类的实例 , 因为这样两个原型就不会互相影响了 , 相互独立了 , 然后这也表示了父类的实例就相当于子类的原型对象里面的一个属性</strong>
+    <code>
+            <pre>
+                function SuperType() {
+                    this.color = ['red', 'greed', 'blue']
+                }
+        
+                function SubType() { }
+        
+                SubType.prototype = new SuperType() // 使用父类的实例就会干扰到父类的原型对象
+        
+                console.log(new SuperType());
+        
+        
+                let instancel1 = new SubType()
+                instancel1.color.push('black') //更子类的原型对象里面的属性
+                console.log(instancel1.color);
+                ['red', 'greed', 'blue', 'black']
+        
+                let instancel2 = new SubType()
+                console.log(instancel2.color); //此时的 ins2 也受到了影响
+                ['red', 'greed', 'blue', 'black']
+            </pre>
+        </code>
+    <p>其实就是说在 let instancel1 = new SubType() 想传参数给父元素 , 那就是不可行的了 , 因为此时是子元素的原型对象 , 如果整的要传参也只能是在SubType.prototype = new
+        SuperType() 这个时候传 , 但是这样的话后面代码继承都是一样的参数了 , 这样就少了灵活性了 , 所以才会说在继承的时候 , 子元素的实例是无法向父元素的构造函数传承的 , 因为此时他们是靠子元素创建的实例 ,
+        而不是父元素 , 对吗 , 你认真帮我看看</p>
+    <script>
+        function SuperType() {
+            this.color = ['red', 'greed', 'blue']
+        }
+
+        function SubType() { }
+
+        SubType.prototype = new SuperType() // 使用父类的实例就会干扰到父类的原型对象
+
+        console.log(new SuperType());
+
+
+        let instancel1 = new SubType()
+        instancel1.color.push('black') //更子类的原型对象里面的属性
+        console.log(instancel1.color);
+
+        let instancel2 = new SubType()
+        console.log(instancel2.color); //此时的 ins2 也受到了影响
+
+
+    </script>
+</body>
+
+</html>

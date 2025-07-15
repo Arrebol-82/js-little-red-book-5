@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>提前终止迭代器 (这里的return() 方法其实是当迭代器提前终止的时候引擎会自动触发)</h1>
+  <p>在提前知道还有值,并且不想继续执行的情况下就是适合使用return()方法</p>
+  <ul>
+    <li>一般情况包括for-of 循环通过break,continue,return或者throw</li>
+    <li>解构操作并未消费所有值(就是还有剩余的值) 就是还有剩余的值没被解构的话,就终止迭代器,调用reutrn方法</li>
+    <li><strong>return()方法必须返回一个有效的 {value: , done: } , 最简单情况下可以返回 {done:true}</strong></li>
+    <li><strong>如果迭代器没有关闭,那么下次迭代就会从上一次终止的位置,继续迭代 (例如数组就是不会关闭的) </strong></li>
+  </ul>
+  <h3>观察一下</h3>
+  <code>
+    <pre>
+      console.log('=========== 迭代器打开 =========');
+      
+      let arr = [1, 2, 3, 4, 5]
+      let iter = arr[Symbol.iterator]()
+      // 因为这里是创建了iter的工厂函数,下面的of循环是用同一个工厂函数的
+      for (const k of iter) {
+      console.log(k);
+      if (k > 2) {
+      break;
+      }
+      }
+      
+      for (const k of iter) {
+      console.log(k);
+      }
+      
+      console.log('========= 不一样的 ========');
+      // 而这里的arr是原数组,所以每次调用的时候都会创建新的工厂函数
+      for (const k of arr) {
+      console.log(k);
+      if (k > 2) {
+      break;
+      }
+      }
+      
+      for (const k of arr) {
+      console.log(k); }
+    </pre>
+  </code>
+  <p>这就是公用同一个工厂函数 , 和直接使用原数组的区别</p>
+  <ul>
+    <li>迭代器协议不强制实现 return()，大多数内置迭代器（如数组）没有实现，属于 “不可关闭”。</li>
+    <li>即使给无 return() 的迭代器手动添加该方法，它依然是 “不可关闭的”，因为引擎只识别原生实现。</li>
+    <li>迭代提前终止时，引擎自动调用 return()（若存在），用于执行清理逻辑，但不影响迭代状态（状态由 next() 的 done 控制）。</li>
+    <li>
+      <p>是否复用同一个迭代器实例决定了遍历是否延续上次位置，与 return() 无关。</p>
+      工厂函数（[Symbol.iterator]）每次调用产生新实例，状态独立。
+    </li>
+    <li>
+      <h1>return() 是清理工具，不是开关</h1>
+    </li>
+  </ul>
+
+  <h2>最后!最后!!最最后!!!, &nbsp;<i>只要是终止了迭代器,引擎就会自动调用return()方法</i>&nbsp;&nbsp; 无需手动调用</h2>
+  <script>
+    class Count {
+      constructor(limit) {
+        this.limit = limit
+      }
+
+      [Symbol.iterator]() {
+        let index = 1,
+          limit = this.limit
+
+        return {
+          next() {
+            if (index <= limit) {
+              return { value: index++, done: false }
+            } else {
+              return { value: undefined, done: true }
+            }
+          },
+          return() {
+            console.log('Exiting early');
+            return { done: true }
+          }
+        }
+      }
+    }
+
+    let counter1 = new Count(5)
+
+    for (const k of counter1) {
+      if (k > 2) {
+        // 因为这里的break提前终止的迭代,所以引擎会自动调用return()
+        break;
+      }
+      console.log(k);
+    }
+
+    console.log('======== erreo ========');
+
+    let counter2 = new Count(5)
+    for (const k of counter2) {
+      if (k > 2) {
+        // throw '用于测试的'
+      }
+      console.log(k);
+    }
+
+    console.log('========= 解构 ========');
+
+
+    let [a, b] = new Count(5)
+
+    let counter3 = new Count(5)
+    let [c, d] = counter3
+    // console.log([a, b]);
+
+    // 如果迭代器没有关闭, 那么下次迭代就会从上一次终止的位置, 继续迭代(例如数组就是不会关闭的)
+    console.log('=========== 迭代器打开 =========');
+
+    let arr = [1, 2, 3, 4, 5]
+    let iter = arr[Symbol.iterator]()
+    // 因为这里是创建了iter的工厂函数,下面的of循环是用同一个工厂函数的
+    for (const k of iter) {
+      console.log(k);
+      if (k > 2) {
+        break;
+      }
+    }
+
+    for (const k of iter) {
+      console.log(k);
+    }
+
+    console.log('========= 不一样的 ========');
+    // 而这里的arr是原数组,所以每次调用的时候都会创建新的工厂函数
+    for (const k of arr) {
+      console.log(k);
+      if (k > 2) {
+        break;
+      }
+    }
+
+    for (const k of arr) {
+      console.log(k);
+    }
+  </script>
+</body>
+
+</html>

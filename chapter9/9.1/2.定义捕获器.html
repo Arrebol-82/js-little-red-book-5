@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>定义捕获器</h1>
+  <p>使用代理的主要目的是可以定义捕获器 , 就是在每个处理器上有对应的捕获器来进行处理值 代理会在获取目标对象里面的值之前 , 执行处理器里面的捕获器</p>
+  <strong>这个捕获器是从操作系统中借用的概念 看代码</strong>
+  <code>
+    <pre>
+      const target = {
+        foo: 'far',
+        name: ' Arrebol'
+      }
+  
+      const handler = {
+        get() {
+          return 'handler override'
+        }
+      }
+  
+      const proxy = new Proxy(target, handler)
+
+      <strong>代理访问的</strong>
+      console.log(proxy.foo);  // handler override
+      console.log(proxy.name); // handler override
+  
+      console.log(target.foo);  // far
+      console.log(target.name); // Arrebol
+    </pre>
+  </code>
+  <p>只要是 <strong>通过代理对象访问目标对象的属性 那么就会触发处理器里面的get() (在拥有get捕获器的情况下) , 其他的捕获器也是同理</strong> ,
+    但是如果是直接通过目标对象访问的话 , 那就不会触发处理器 , 因为没有进行代理 , 而是直接访问得到的
+  </p>
+  <script>
+    const target = {
+      foo: 'far',
+      name: ' Arrebol'
+    }
+
+    const handler = {
+      get() {
+        return 'handler override'
+      }
+    }
+
+    const proxy = new Proxy(target, handler)
+    console.log(proxy.foo);
+    console.log(proxy.name);
+
+    console.log(target.foo);
+    console.log(target.name);
+
+  </script>
+</body>
+
+</html>

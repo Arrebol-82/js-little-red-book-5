@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用弱映射</h1>
+  <p>因为WeakMap不会妨碍垃圾回收,所以非常适合关联元数据</p>
+  <div id="login"></div>
+  <code>
+    <pre>
+      const m = new Map()
+      
+      const loginButton = document.querySelector('#login')
+      
+      m.set(loginButton, { disabled: true })
+      console.log(m.get(loginButton));
+      
+      <strong>当 DOM 节点被删除后，Map 中的键值对不会被自动销毁，因为 Map 对键（DOM 节点）的引用是强引用，会导致内存泄漏。</strong> 
+
+      const LoginButton = document.querySelector('#login')
+      
+      M.set(LoginButton, { disabled: true })
+      console.log(M.get(LoginButton));
+      console.log(M.has(LoginButton));
+      
+      <strong>当 DOM 节点被删除后，且没有其他地方强引用该节点，WeakMap 中的键值对会被自动回收，释放内存。</strong>
+      <strong>在键值对被销毁了之后就这里的代码,全都会被回收器回收掉相当于没写过</strong>
+    </pre>
+  </code>
+  <script>
+    const m = new Map()
+
+    const loginButton = document.querySelector('#login')
+
+    m.set(loginButton, { disabled: true })
+    console.log(m.get(loginButton));
+
+    // 当 DOM 节点被删除后，Map 中的键值对不会被自动销毁，因为 Map 对键（DOM 节点）的引用是强引用，会导致内存泄漏。
+
+    const M = new WeakMap()
+
+    const LoginButton = document.querySelector('#login')
+
+    M.set(LoginButton, { disabled: true })
+    console.log(M.get(LoginButton));
+    console.log(M.has(LoginButton));
+
+    //当 DOM 节点被删除后，且没有其他地方强引用该节点，WeakMap 中的键值对会被自动回收，释放内存。
+  </script>
+</body>
+
+</html>

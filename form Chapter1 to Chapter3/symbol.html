@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Symbol()</h1>
+  <p>Symbol() 每次创建都是创建新的,且不重复的,适合用于创建不重复的标识</p>
+  <h1>Symbol.for()</h1>
+  <p>而Symbol.for()他是在全局注册表创建的,在次调用的话是会在全局注册表查找的,有的话就直接拿来用</p>
+  <h1>Symbol符号类型的属性名，而符号不能直接用点号（.）访问，只能通过方括号 [] 动态计算获取。 (重要)</h1>
+  <script>
+    let genge = Symbol();
+    console.log(genge);
+
+    let foost = Symbol('footer');
+    console.log(foost);
+
+    console.log(foost == genge);
+
+
+    // 唯一的
+    let s1 = Symbol('text')
+    let s2 = Symbol('text')
+    console.log(s1 === s2);//false
+    console.log(s1 == s2);//false
+
+    // Symbol.for() 和 Symbol() 的区别
+  </script>
+</body>
+
+</html>

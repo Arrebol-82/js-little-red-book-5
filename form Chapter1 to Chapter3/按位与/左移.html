@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let o = 2;
+    let n = o << 2
+    console.log(n);
+    // 这个左移符号是(2^左移多少位就×多少次幂) 左移完后的剩余将用0来填上 , 让结果是完整的32位数值
+
+    // 这个右移符号是(2/右移多少位就×多少次幂) 左移完后的剩余将用0来填上 , 让结果是完整的32位数值 
+    // 如果是负数的话,在前面补得的-1 , 正数的话补的是0
+    let nn = o >> 2
+    console.log(n);
+
+    // 这个右移符号是(2/右移多少位就×多少次幂) 左移完后的剩余将用0来填上 , 让结果是完整的32位数值
+    // 无论如何补的都是 0
+    let nnn = o >>> 2
+    console.log(n);
+
+  </script>
+</body>
+
+</html>

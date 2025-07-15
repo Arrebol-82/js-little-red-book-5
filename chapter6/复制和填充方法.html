@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>复制和填充方法</h1>
+  <h2>他们都是左闭右开 并且都不会改变原数组的大小</h2>
+  <h3>fill 他是会修改原数组的值</h3>
+  <p>使用fill() 可以向指定的索引插入指定的值 填充的对象是浅拷贝</p>
+  <ul>
+    <li>默认是全替换</li>
+    <li>第一个数是指定开始的位置（索引） <strong>包含开头</strong> :可选</li>
+    <li>第二个数是指定结束的范围 （索引）<strong>不含结尾</strong> :可选</li>
+    <li>fill()会忽略超出数组边界,零长度方向相反的索引范围</li>
+  </ul>
+  <code>
+    <pre>
+      let array = [0, 0, 0, 0, 0, 0];
+      
+      array.fill(5) <strong>把所有的值改为5</strong>
+      console.log(array); <strong> 5,5,5,5,5,5</strong>
+      array.fill(0) <strong>重置</strong> 
+      
+      array.fill(6, 3) <strong>大于等于3的数改为6 (左闭右开)</strong>
+      console.log(array); <strong> 0,0,0,6,6,6</strong>
+      array.fill(0) <strong> 重置</strong>
+      
+      array.fill(7, 3, 5) <strong>大于等于3的数改为6 (左闭右开)</strong>
+      console.log(array); <strong>0,0,0,7,7,0</strong> 
+      array.fill(0) <strong> 重置</strong>
+      
+      <strong>如果是负数就会经过计算在返回值 如:</strong> 
+      <strong>-5 = array.length + -5 = 6 + -5 = 1</strong> 
+      <strong>-1 = array.length + -1 = 6 + -1 = 5</strong> 
+      array.fill(8, 1, 5) === array.fill(8, -5, -1)
+      
+      array.fill(8, -5, -1) <strong>大于等于3的数改为6 (左闭右开)</strong>
+      console.log(array); <strong>0,8,8,8,8,0</strong> 
+      array.fill(0) <strong>重置</strong>
+
+      array.fill(8, -1, -10)
+      console.log(array); [0, 0, 0, 0, 0, 0]
+      array.fill(0)
+      
+       <strong>记住负数是由数组长度加上负数 , 有被选中的部分就会填充可用的部分</strong> 
+      array.fill(8, -1, 10)
+      console.log(array);  <strong>0,0,0,0,0,8</strong>
+      array.fill(0) <strong>重置</strong>
+      
+      
+      array.fill(8, -10, -7)  <strong>索引过低,忽略</strong>
+      console.log(array);  <strong>0,0,0,0,0,0</strong> 
+      array.fill(0)  <strong>重置</strong>
+      
+      array.fill(8, 7, 12)  <strong>索引过高,忽略</strong>
+      console.log(array); <strong>0,0,0,0,0,0</strong> 
+      array.fill(0) <strong>重置</strong>
+    </pre>
+  </code>
+  <h3>copyWitthin</h3>
+
+  <p>第一个参数表示的就是 粘贴的起始位置 ,<br>
+    而第二个参数就是要复制内容的起始位置,(第二个参数（start）是复制内容的起始位置，若不写，默认从索引 0 开始复制)<br>
+    第三个参数就是复制内容的结束位置 (不写的就是从复制内容的起始位置到数组的结尾)</p>
+  <h3>如果复制完以后,还有空位的话,就会显示原数组 如:</h3>
+  <code>
+    <pre>
+      let inst;
+      reset = () => inst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      reset()
+
+      <h4>粘贴到3索引 , 从8索引开始复制 到了数组的尽头之后就会显示原数组</h4>
+      inst.copyWithin(3, 8); //[0, 1, 2, <strong>8, 9</strong>, 5, 6, 7, 8, 9]
+      console.log(inst);
+
+      // 第三个元素表示结束位置
+      inst.copyWithin(4, 0, 3);
+      console.log(inst); [0, 1, 2, 3, <strong>0, 1, 2,</strong> 7, 8, 9]
+      reset()
+    </pre>
+  </code>
+  <p>JavaScript 引擎会先完整复制指定范围的元素，再进行粘贴覆盖，不会出现复制过程中部分元素被重写的情况 。</p>
+  <p>像负索引值 超出数组边界,零长度方向相反的索引范围 跟fill() 的处理方法是一致的</p>
+  <script>
+    let array = [0, 0, 0, 0, 0, 0];
+
+    array.fill(5) //把所有的值改为5
+    console.log(array); // 5,5,5,5,5,5
+    array.fill(0) // 重置
+
+    array.fill(6, 3) //大于等于3的数改为6 (左闭右开)
+    console.log(array); // 0,0,0,6,6,6
+    array.fill(0) // 重置
+
+    array.fill(7, 3, 5) //大于等于3的数改为6 (左闭右开)
+    console.log(array); // 0,0,0,7,7,0
+    array.fill(0) // 重置
+
+    // 如果是负数就会经过计算在返回值 如: 
+    // -5 = array.length + -5 = 6 + -5 = 1
+    // -1 = array.length + -1 = 6 + -1 = 5
+    array.fill(8, 1, 5) === array.fill(8, -5, -1)
+
+    array.fill(8, -5, -1) //大于等于3的数改为6 (左闭右开)
+    console.log(array); // 0,8,8,8,8,0
+    array.fill(0) // 重置
+
+    array.fill(8, -1, -10)
+    console.log(array);
+    array.fill(0)
+
+    // 记住负数是由数组长度加上负数 , 有被选中的部分就会填充可用的部分
+    array.fill(8, -1, 10)
+    console.log(array); //0,0,0,0,0,8
+    array.fill(0)//重置
+
+
+    array.fill(8, -10, -7) //索引过低,忽略
+    console.log(array); // 0,0,0,0,0,0
+    array.fill(0) //重置
+
+    array.fill(8, 7, 12)  //索引过高,忽略
+    console.log(array);// 0,0,0,0,0,0
+    array.fill(0)//重置
+
+    console.log('copyWithin   =================================');
+    let inst;
+    reset = () => inst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    reset()
+    console.log(inst);
+    inst.copyWithin(5)     // 表示从5索引的位置开始粘贴
+    console.log(inst);
+    reset() //重置
+
+
+    inst.copyWithin(3, 8);
+    console.log(inst);
+    reset()
+
+    // 第三个元素表示结束位置
+    inst.copyWithin(4, 0, 3);
+    console.log(inst);// [0, 1, 2, 3, 0, 1, 2, 7, 8, 9]
+    reset()
+
+
+  </script>
+</body>
+
+</html>

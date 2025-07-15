@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>代理另一个代理</h1>
+  <p>代理可以拦截反射API操作 , 而这意味着完全可以创建一个代理 , 通过他去代理另一个代理 , 这个就可以在一个目标对象上构建多层拦截网</p>
+  <strong>本质上就是一层层的代理</strong>
+  <code>
+    <pre>
+      const traget = {
+        foo: 'bar'
+      }
+  
+      const firstProxy = new Proxy(traget, {
+        get() {
+          console.log('first Proxy');
+          return Reflect.get(...arguments)
+        }
+      })
+  
+      const secondProxy = new Proxy(firstProxy, {
+        get() {
+          console.log('second Proxy');
+          return Reflect.get(...arguments)
+        }
+      })
+  
+  
+      console.log(secondProxy.foo)
+    </pre>
+  </code>
+  <script>
+    const traget = {
+      foo: 'bar'
+    }
+
+    const firstProxy = new Proxy(traget, {
+      get() {
+        console.log('first Proxy');
+        return Reflect.get(...arguments)
+      }
+    })
+
+    const secondProxy = new Proxy(firstProxy, {
+      get() {
+        console.log('second Proxy');
+        return Reflect.get(...arguments)
+      }
+    })
+
+
+    console.log(secondProxy.foo)
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>转换方法</h1>
+  <p>这里是alert来打印是因为alert会去自动调用tostring()方法,用来格式化数组</p>
+  <ul>
+    <li>toString() 将对象转换为字符串的通用方法。 将元素用逗号链接</li>
+    <li>toLocaleString() 根据本地语言环境将对象转换为字符串，用于国际化场景。 </li>
+    <li>valueOf() 返回对象的原始值（Primitive Value），用于数学运算或比较。</li>
+    <li>如果值是 null和undefined 再join() toString() toLocaleString() valueOf() 都是显示空</li>
+  </ul>
+  <code>
+    <pre>
+      方法             主要用途                           返回值类型                        典型场景
+      toString()   转为通用字符串                           字符串                      日志输出、模板字符串
+      toLocaleString() 按本地语言环境格式化字符串            字符串                    国际化显示（日期、货币等）
+      valueOf()   返回原始值用于运算                    原始值或对象本身                  数学运算、比较操作
+    </pre>
+  </code>
+  <h2>join()</h2>
+  <h3>join方法只能用于数组</h3>
+  <p>的作用是将数组的所有元素连接成一个字符串，并使用指定的分隔符（默认为逗号 ,） 如果join()里面是空的或者是undefined , 就以空值分开</p>
+  <script>
+    let colors = ['red', 'greed', 'blue'];
+    console.log(colors.join(undefined));
+    console.log(colors.join());
+    console.log(colors.join('||'));
+    console.log(colors.join('-'));
+
+
+    console.log(colors);
+    console.log(colors.toString());
+    console.log(colors.toLocaleString());
+    console.log(colors.valueOf());
+    alert(colors.toString());
+    alert(colors.toLocaleString());
+    alert(colors.valueOf());
+
+    let per1 = {
+      toLocaleString() {
+        return 'Matthen'
+      },
+      toString() {
+        return 'Matt'
+      }
+    }
+
+    let per2 = {
+      toLocaleString() {
+        return 'Grid'
+      },
+      toString() {
+        return 'flex'
+      }
+    }
+
+
+    let people = [per1, per2, ,];
+    console.log(people);
+    console.log(people.toString());
+    console.log(people.toLocaleString());
+
+
+  </script>
+</body>
+
+</html>

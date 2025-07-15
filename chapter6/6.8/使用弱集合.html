@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用弱集合</h1>
+
+  <h1>不可迭代值</h1>
+  <h2>因为WeakSet是不可迭代的,所以也是访问不到除了自身之外的值,所以就没有clear方法了</h2>
+  <h2>weakSet之所以要键为引用值而不是原始值就是因为 原始值太混乱了 , 而引用值是唯一的</h2>
+  <div id="login"></div>
+  <script>
+    const seT = new Set()
+
+    const loginButton = document.querySelector('#login')
+    console.log(loginButton); //强引用
+
+
+    seT.add(loginButton)
+
+    // < strong > 当 DOM 节点被删除后，Set 中的集合对不会被自动销毁，因为 Set 对键（DOM 节点）的引用是强引用，会导致内存泄漏。</ >
+
+    const diset = new WeakSet()
+
+    const LoginButton = document.querySelector('#login')
+
+    diset.add(LoginButton) // 弱引用
+
+
+    /* < strong > 当 DOM 节点被删除后，且没有其他地方强引用该节点，WeakSet 中的集合会被自动回收，释放内存。</>
+          <strong>在集合被销毁了之后就这里的代码,全都会被回收器回收掉相当于没写过</strong> */
+  </script>
+</body>
+
+</html>

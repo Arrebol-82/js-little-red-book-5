@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>迭代器协议</h1>
+  <p>迭代器是一次性的, 用于迭代相关的对象. 要是想知道当前的迭代元素,那就要使用next() ,否则就不知道当前的元素</p>
+  <strong>next()API放回的迭代器结果就是 value() 和 done() :: value表示当前的元素 , done表示还有没有元素(true的话就表示没有了 , 而false表示还没有)</strong>
+  <h1>只要是属性名[Symbol,iterator]()就表示生成迭代器</h1>
+  <h2>next()方法是在[Symbol.iterator]里面定义的,所以要访问的话就要先执行[Symbol.iterator]()</h2>
+  <p>示例</p>
+  <code>
+    <pre>
+      // 打印迭代工厂函数
+      console.log(arr[Symbol.iterator]); // values() { [native code] }
+      // 生成iter迭代器
+      let iter = arr[Symbol.iterator]()
+      console.log(iter); // Array Iterator {}
+      
+      console.log(iter.next()); // {value: 'foo', done: false}
+      console.log(iter.next()); // {value: 'bar', done: false}
+      console.log(iter.next()); // {value: 'undefined', done: true}
+      console.log(iter.next()); // {value: 'undefined', done: true}
+
+      <strong>因为迭代器是一次性的,所以执行完之后就拿不到值了,就会一直返回{value: 'undefined', done: true}</strong>
+
+      console.log(iter.next()); // {value: 'undefined', done: true}
+      console.log(iter.next()); // {value: 'undefined', done: true}
+      // 返回true表示迭代完了
+    </pre>
+  </code>
+  <h2>迭代器并不知道怎么从迭代对象获取下一个值,也不知道迭代对象多大</h2>
+  <ul>
+    <li>在前面就说过了迭代器和迭代对象是相分离的互不干预的</li>
+    <li>迭代器他是啥都不知道(无脑执行者)</li>
+    <li>迭代器只会执行通过闭包传递的([Symbol.iterator]里面的规则和初始对象)</li>
+    <li>next()返回的也是当前元素的值,并不会关心其他的,返回其他的,</li>
+  </ul>
+  <h1>总结一下:: 其实迭代器他是啥都不知道,
+    他只知道傻傻的去执行通过闭包传递的([Symbol.iterator]里面的规则和初始对象),而且next()返回的也是当前元素的值,
+    并不会关心其他的,返回其他的,迭代器唯一干的就是执行通过闭包传进来的规则</h1>
+  <h2>迭代器是用游标标记的,不是定格在创建的瞬间 , 这样迭代器就是可变的,灵活的了</h2>
+  <h2>迭代器是维护着迭代对象的引用值,因此迭代器会阻止引擎回收迭代对象</h2>
+  <script>
+    let arr = ['foo', 'bar']
+
+    // 打印迭代工厂函数
+    console.log(arr[Symbol.iterator]); // values() { [native code] }
+    // 生成iter迭代器
+    let iter = arr[Symbol.iterator]()
+    console.log(iter); // Array Iterator {}
+
+    console.log(iter.next()); //  {value: 'foo', done: false}
+    console.log(iter.next()); //  {value: 'bar', done: false}
+    console.log(iter.next()); //  {value: 'undefined', done: true}
+    console.log(iter.next()); //  {value: 'undefined', done: true}
+    console.log(iter.next()); //  {value: 'undefined', done: true}
+    console.log(iter.next()); //  {value: 'undefined', done: true}
+
+    console.log('for...of');
+    for (const k of arr) {
+      console.log(k);
+    }
+
+    // 返回true表示迭代完了
+
+    //每个迭代器都是互不干预的,即使是同一个引用值
+
+    let iter1 = arr[Symbol.iterator]()
+    let iter2 = arr[Symbol.iterator]()
+    console.log('iter1');
+
+    console.log(iter1.next());
+    console.log(iter2.next());
+    console.log(iter1.next());
+    console.log(iter2.next());
+    console.log(iter1.next());
+    console.log(iter2.next());
+
+
+    let Arr = ['foo', 'bar']
+
+    const Iter = Arr[Symbol.iterator]()
+    console.log(Iter.next());
+
+    Arr.splice(1, 0, 'baz')
+    // 向数组添加元素
+    console.log(Iter.next());
+    console.log(Iter.next());
+
+    // 显示迭代器
+    console.log('显示迭代器');
+
+
+    class Foo {
+      [Symbol.iterator]() {
+        return {
+          next() {
+            return { done: false, value: 'foo' }
+          }
+        }
+      }
+    }
+
+    let foo = new Foo()
+
+    console.log(foo[Symbol.iterator]());
+    console.log(foo[Symbol.iterator]().next());
+
+    let array = [1, 2, 3]
+    console.log(array[Symbol.iterator]());
+    console.log(array[Symbol.iterator]().next());
+
+    // 原生迭代器
+  </script>
+</body>
+
+</html>

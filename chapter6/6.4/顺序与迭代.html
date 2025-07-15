@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>顺序与迭代</h1>
+  <p>Map() 会严格按照插入顺序存储和迭代键值对</p>
+  <ul>
+    <li>entries() 返回当前的Map里面所有键值对 迭代器</li>
+    <li>m[Symbol.iterator]() 返回当前的Map里面所有键值对
+      <p>只是访问的方式不一样</p>
+    </li>
+    <li>keys() 拿取键 </li>
+    <li>values() 拿取值</li>
+  </ul>
+  <script>
+    const m = new Map([['key1', 'val1'],
+    ['key2', 'val2'],
+    ['key3', 'val3']])
+
+    console.log(m.entries());
+    console.log(m[Symbol.iterator]());
+    console.log(m.entries === m[Symbol.iterator]);
+
+    console.log(' entries ');
+
+    for (const pair of m.entries()) {
+      console.log(pair);
+    }
+
+    console.log(' Symbol ');
+
+    for (const pair of m[Symbol.iterator]()) {
+      console.log(pair);
+    }
+
+    const ma = new Map([
+      ['key1', 'val1'],
+      ['key2', 'val2'],
+      ['key3', 'val3']
+    ])
+
+    console.log([...ma]);
+    console.log(ma);
+
+    // 用遍历的方法获取每一个值
+    m.forEach((x, y) => console.log(`${x} -> ${y}`))
+
+    // 拿取键
+    for (const key of m.keys()) {
+      console.log(key);
+    }
+
+    // 拿取值
+    for (const key of m.values()) {
+      console.log(key);
+    }
+
+    const m1 = new Map([
+      ['key', 'val']
+    ])
+
+    for (let key of m1.keys()) {
+      key = 'newKey'
+      console.log(key);
+      console.log(m1.get('key'));
+    }
+
+    const keyobj = { id: 1 }
+    const map = new Map([
+      [keyobj, '007']
+    ])
+
+    for (let key of map.keys()) {
+      // 修改keyobj的值
+      key.id = 'newKey';
+      console.log(key);
+      console.log(map.get(key));
+    }
+
+    console.log(keyobj);
+
+
+  </script>
+</body>
+
+</html>

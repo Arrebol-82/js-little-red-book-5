@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 对象池
+
+
+    /* 我们先了解一下 , 什么就做对象池 其实就是定义了一个尽量不变的对象 , 让我们后期重复使用 ,
+     使用完就放回去 */
+
+
+    //  这是一个构造函数
+    function Vector() {
+      this.x = 0;
+      this.y = 0;
+    }
+
+    // 创建对象池
+    const objectPool = {
+      // 用于存储要服用的对象方法
+      pool: [],
+
+      acquire() {
+        // 如果长度为0就new 一个Vector函数, 给予使用, 有的话就放回最后一个新的
+        if (this.pool.length > 0) {
+          return this.pool.pop()
+        }
+        return new Vector()
+      },
+
+      // 将刚刚使用完的构造函数重置 , 并放回去
+      release(obj) {
+        obj.x = 0;
+        obj.y = 0;
+        this.pool.push(obj)
+      }
+    }
+
+    // 使用对象池
+    function addVector(a, b) {
+      // 拿出来使用
+      const resultant = objectPool.acquire();
+      resultant.x = a.x + b.x;
+      resultant.y = a.y + b.y;
+      return resultant
+    }
+
+    const VectorA = new Vector()
+    VectorA.x = 1;
+    VectorA.y = 2;
+    const VectorB = new Vector()
+    VectorB.x = 3;
+    VectorB.y = 4;
+
+    const result = addVector(VectorA, VectorB)
+    console.log(result.x, result.y);
+
+    // 静态分配
+
+
+    // 其实在js中并没有静态分配 , 都是动态分配的 所以这里所说的静态分配其实是 , 因为使用的是对象池 ,所以是复用
+    // 同一个的对象 本质上是没有创建新的 , 所以在内存中并不会发生变化这样就 非常想c 和 c++ 的静态分配 ， 还有昂
+    // js是在确定变量值的时候，才会分配内存的
+
+    //还有在这里科普一下贪婪算法 , 他的本质意义其实就是 , 在每次的计算中取最优值
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>没有重载</h1>
+  <p>ECMAscript不像传统编程那样 , 因为ECMAscript没有签名 , 那自然也没有重载</p>
+  <strong>所以在ECMAscript中如果定义两个同名的函数 , 后面定义的会覆盖先定义 (后来者居上)</strong>
+  <code>
+    <pre>
+      function addSomeNumber(sum) {
+        return 100 + sum
+      }
+      function addSomeNumber(sum) {
+        return 200 + sum
+      }
+  
+      // 覆盖了前面定义的方法
+      console.log(addSomeNumber(100)); // 300  
+    </pre>
+  </code>
+  <strong>当然使用函数表达式 , 也还是一样的 </strong>
+  <code>
+    <pre>
+      let addSomeNunber = function (sum) {
+        return sum + 100
+      }
+  
+      addSomeNunber = function (sum) {
+        return sum + 200
+      }
+  
+      let result = addSomeNunber(100)
+      console.log(result);  // 300
+    </pre>
+  </code>
+  <script>
+    function addSomeNumber(sum) {
+      return 100 + sum
+    }
+    function addSomeNumber(sum) {
+      return 200 + sum
+    }
+
+    // 覆盖了前面定义的方法
+    console.log(addSomeNumber(100)); // 300
+
+    console.log('================= 重新赋值 ==================');
+    let addSomeNunber = function (sum) {
+      return sum + 100
+    }
+
+    addSomeNunber = function (sum) {
+      return sum + 200
+    }
+
+    let result = addSomeNunber(100)
+    console.log(result);  // 300
+
+  </script>
+</body>
+
+</html>

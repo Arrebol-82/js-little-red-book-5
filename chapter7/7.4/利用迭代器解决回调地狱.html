@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>回调地狱的传统写法</h1>
+  <code>
+    <pre>
+      // 回调地狱的传统写法
+      function getdrink(fn) {
+        setTimeout(() => {
+          /* 因为在延迟函数里面用return是会直接返回undefined ,
+          所以要使用回调函数,把值返回出去 */
+          fn('喝水')
+        }, 2000)
+      }
+  
+      function javaScript(foo) {
+        setTimeout(() => {
+          foo('编码')
+        }, 3500)
+      }
+  
+      //  回调地狱!!! 
+      getdrink(function (data) {
+        console.log(data);
+        javaScript(function (data) {
+          console.log(data);
+          javaScript(function (data) {
+            console.log(data);
+            javaScript(function (data) {
+              console.log(data);
+              javaScript(function (data) {
+                console.log(data);
+                javaScript(function (data) {
+                  console.log(data);
+                })
+              })
+            })
+          })
+        })
+      })
+  
+  
+      console.log('Promise 是基石 没有 Promise，就没有 async/await。');
+  
+  
+      function Getdrink() {
+        return new Promise((value) => {
+          setTimeout(() => {
+            value('喝水')
+          }, 2000)
+        })
+      }
+  
+  
+      function javaScript() {
+        return new Promise((value) => {
+          setTimeout(() => {
+            value('编码')
+          }, 5000)
+        })
+      }
+  
+      async function main() {
+        try {
+          const data1 = await Getdrink()
+          console.log(data1);
+          const data2 = await javaScript()
+          console.log(data2);
+          const data3 = await javaScript()
+          console.log(data2);
+          const data4 = await javaScript()
+          console.log(data2);
+          const data5 = await javaScript()
+          console.log(data2);
+          const data6 = await javaScript()
+          console.log(data2);
+        } catch (eve) {
+          console.log(`出错了 ${eve}`);
+        }
+      }
+  
+      main()
+  
+      console.log('===================== 里面是可以传参的 ========================');
+  
+      function drink() {
+        return '喝水'
+      }
+      function java() {
+        return '编码'
+      }
+  
+  
+      console.log(' 回调地狱 ');
+  
+      function getdrink(fn) {
+        setTimeout(() => { fn(drink()) }, 1000)
+      }
+  
+  
+      function javascript(data) {
+        setTimeout(() => { data(java()) }, 2500)
+      }
+  
+      getdrink(function (data) {
+        console.log(data);
+        javascript(function (data) {
+          console.log(data);
+          javascript(function (data) {
+            console.log(data);
+            getdrink(function (data) {
+              console.log(data);
+            })
+          })
+        })
+      })
+  
+      console.log('async/await ');
+  
+      function Getdrink() {
+        return new Promise(value => { setTimeout(() => { value(drink()) }, 1500) })
+      }
+      function JavaScript() {
+        return new Promise(value => { setTimeout(() => { value(java()) }, 2500) })
+      }
+  
+  
+      async function main() {
+        try {
+          const data1 = await Getdrink()
+          console.log(data1);
+          const data2 = await JavaScript()
+          console.log(data2);
+          const data3 = await JavaScript()
+          console.log(data3);
+          const data4 = await Getdrink()
+          console.log(data4);
+          const data5 = await JavaScript()
+          console.log(data5);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+  
+      main()
+    </pre>
+  </code>
+  <script>
+    // 回调地狱的传统写法
+    function getdrink(fn) {
+      setTimeout(() => {
+        /* 因为在延迟函数里面用return是会直接返回undefined ,
+        所以要使用回调函数,把值返回出去 */
+        fn('喝水')
+      }, 2000)
+    }
+
+    function javaScript(foo) {
+      setTimeout(() => {
+        foo('编码')
+      }, 3500)
+    }
+
+    //  回调地狱!!! 
+    getdrink(function (data) {
+      console.log(data);
+      javaScript(function (data) {
+        console.log(data);
+        javaScript(function (data) {
+          console.log(data);
+          javaScript(function (data) {
+            console.log(data);
+            javaScript(function (data) {
+              console.log(data);
+              javaScript(function (data) {
+                console.log(data);
+              })
+            })
+          })
+        })
+      })
+    })
+
+
+    console.log('Promise 是基石 没有 Promise，就没有 async/await。');
+
+
+    function Getdrink() {
+      return new Promise((value) => {
+        setTimeout(() => {
+          value('喝水')
+        }, 2000)
+      })
+    }
+
+
+    function javaScript() {
+      return new Promise((value) => {
+        setTimeout(() => {
+          value('编码')
+        }, 5000)
+      })
+    }
+
+    async function main() {
+      try {
+        const data1 = await Getdrink()
+        console.log(data1);
+        const data2 = await javaScript()
+        console.log(data2);
+        const data3 = await javaScript()
+        console.log(data2);
+        const data4 = await javaScript()
+        console.log(data2);
+        const data5 = await javaScript()
+        console.log(data2);
+        const data6 = await javaScript()
+        console.log(data2);
+      } catch (eve) {
+        console.log(`出错了 ${eve}`);
+      }
+    }
+
+    main()
+
+    console.log('===================== 里面是可以传参的 ========================');
+
+    function drink() {
+      return '喝水'
+    }
+    function java() {
+      return '编码'
+    }
+
+
+    console.log(' 回调地狱 ');
+
+    function getdrink(fn) {
+      setTimeout(() => { fn(drink()) }, 1000)
+    }
+
+
+    function javascript(data) {
+      setTimeout(() => { data(java()) }, 2500)
+    }
+
+    getdrink(function (data) {
+      console.log(data);
+      javascript(function (data) {
+        console.log(data);
+        javascript(function (data) {
+          console.log(data);
+          getdrink(function (data) {
+            console.log(data);
+          })
+        })
+      })
+    })
+
+    console.log('async/await ');
+
+    function Getdrink() {
+      return new Promise(value => { setTimeout(() => { value(drink()) }, 1500) })
+    }
+    function JavaScript() {
+      return new Promise(value => { setTimeout(() => { value(java()) }, 2500) })
+    }
+
+
+    async function main() {
+      try {
+        const data1 = await Getdrink()
+        console.log(data1);
+        const data2 = await JavaScript()
+        console.log(data2);
+        const data3 = await JavaScript()
+        console.log(data3);
+        const data4 = await Getdrink()
+        console.log(data4);
+        const data5 = await JavaScript()
+        console.log(data5);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    main()
+  </script>
+</body>
+
+</html>

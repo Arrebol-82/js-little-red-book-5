@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>在函数主要看的是否还有值在引用,有的话就不会被回收,没有的话就会被回收 , 而作用域只是引用的范围</h1>
+  <h2>如果函数里的元素是window的那就无法被回收</h2>
+  <script>
+    function createPerson(name) {
+      let loca = new Object();
+      loca.name = name;
+      return loca
+    }
+
+    let name = createPerson('老六')
+
+    console.log(name);
+
+    name = null
+    console.log(name);
+    console.log(null);
+
+
+    const add = {
+      uanem: 'gogogo',
+      age: 16,
+      gender: '男'
+    }
+
+    // hasOwnProperty这个方法只会放回自身的属性 , 不会去检测继承的属性 , 所以说验证的属性如果不是自身的就会返回false
+    console.log(add.hasOwnProperty('age'));
+
+
+    let fun = function () {
+      console.log(111);
+    }
+
+    fun = null
+    // 会被回收
+
+    function ab(a) {
+      console.log(a);
+    }
+
+    let string = ab('Arrebol')
+
+    string = null
+    // 不会内回收 
+  </script>
+</body>
+
+</html>

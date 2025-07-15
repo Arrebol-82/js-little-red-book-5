@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  冷知识: 在eage浏览器中控制台显示的正则表达式返回的是 橙色的<br>
+  正则表达式的 模式<br>
+  g 表示全局模式 : 表示查找字符串的全部内容 , 并不是找到第一个就结束(返回的是数组) <br>
+  g属性是会在第二次查的时候 , 在第一次查找的索引往下继续查找<br>
+  配合nxec()和test()配合 他们找不到的话就会直接重头开始 既重头从0索引开始找<br>
+  与match()等方法配合 的话找不到的话 直接返回按数组的形式 , 放回你要匹配的内<br>
+  i 表示不区分大小写 : 表示在匹配的时候是忽略字符串的大小<br>
+  m 表示多行文本查找: 表示查找到第一行的末尾的时候, 会继续查找<br>
+  y 粘性模式: 表示从指定的位置开始查找 let str = 'dfsf' str.lastIndex = 1 let reg = /fs/y 此时是从1开始查找<br>
+  u Unicode : 表示可以按Unicode编码匹 配<br>
+  s 单行匹配 : 表示通符,会匹配换行符<br>
+  d: 表示匹配的结果应该包含包含捕获组开头和末尾的索引 (书上的)<br>
+  他首先会先打印原制符 , 然后按照所写的正则 去匹配, 他会返回对的正则的索引(全部) (我写的)
+  <script>
+    // 冷知识: 在eage浏览器中控制台显示的正则表达式返回的是 橙色的
+
+    // 正则表达式的 模式
+    // g 表示全局模式 : 表示查找字符串的全部内容 , 并不是找到第一个就结束(返回的是数组)
+    //                         g属性是会在第二次查的时候 , 在第一次查找的索引往下继续查找
+    //                        配合xec()和test()配合 他们找不到的话就会直接重头开始 既重头从0索引开始找 
+    //                        与match()等方法配合 的话找不到的话 直接返回按数组的形式 , 放回你要匹配的内容
+    // i 表示不区分大小写 : 表示在匹配的时候是忽略字符串的大小
+    // m 表示多行文本查找: 表示查找到第一行的末尾的时候, 会继续查找
+    // y 粘性模式: 表示从指定的位置开始查找 let str = 'dfsf' str.lastIndex = 1 let reg = /fs/y 此时是从1索引开始查找
+    // u Unicode : 表示可以按Unicode编码匹配
+    // s 单行匹配 : 表示通符,会匹配换行符
+    // d: 表示匹配的结果应该包含包含捕获组开头和末尾的索引 (书上的)
+    // 他首先会先打印原制符 , 然后按照所写的正则 去匹配, 他会返回对的正则的索引(全部) (我写的)
+    let str = '123-456-7890';
+    let regex = /(\d{3})-(\d{3})-(\d{4})/d;
+    let result = str.match(regex)
+    console.log(result);
+    console.log(result.indices);
+    // valueOf() 返回的是正则表达式的本身
+    console.log(regex.valueOf());
+    console.log(regex.toString());
+    console.log(regex.toLocaleString());
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>展开方法</h1>
+  <p>用于展开多维数组</p>
+  <h2>来看看正常写展开方法的数组</h2>
+  <code>
+    <pre>
+      <strong>因为这里flaatenedArray = [] 只在函数创建了一次, 而在递归时,只是引用他</strong> 
+
+      function flatten(sourceArray, flaatenedArray = []) {
+      for (const element of sourceArray) {
+      if (Array.isArray(element)) {
+      flatten(element, flaatenedArray)
+      }
+      else {
+      flaatenedArray.push(element)
+      }
+      }
+      return flaatenedArray
+      }
+      
+      const arr = [[0], 1, 2, [3, [4, 5]], 6]
+      console.log(flatten(arr));
+      
+      
+      <strong>深度控制</strong> 
+      <strong>要主道外部flattener(), 和内部的 flattener() 他们两个函数里的形参是互不影响的,</strong> 
+      <strong>当内部的flattener() 会拿到对应的depth值去执行函数,符合条件就继续更深层的递归,不符合的话就跳出来,执行外面的flattener()函数</strong> 
+      <strong>主要:: 是利用递归可以调用自己 , 并且函数的形参是互不影响的</strong> 
+
+
+      function flattener(sourceArray, depth, flaatenedArray = []) {
+      for (const element of sourceArray) {
+      if (Array.isArray(element) && depth > 0) {
+      flattener(element, depth - 1, flaatenedArray)
+      }
+      else {
+      flaatenedArray.push(element)
+      }
+      }
+      return flaatenedArray
+      }
+      const ar = [[0], 1, 2, [3, [4, 5]], 6]
+      console.log(flattener(ar, 1));
+    </pre>
+  </code>
+  <h3>如果每次都要手写展开方法,那不得麻烦死了 flat() flatMap() 有了这两个方法</h3>
+  <p>来一起看看吧</p>
+  <h1>flat()</h1>
+  <p>flat() 接受一个深度参数 flat(n) 里面的值表示展开的深度 <strong>默认的深度是 1 </strong></p>
+  <h1>flatMap()</h1>
+  <p>这个方法会在执行展开数组之前,进行映射 等价与 array.map().flat(1)</p>
+  <p>记住这个方法只能展开一层数组,不能进行深层展开</p>
+  <h3>flatMap()非常适合用处理非数组队象的方法 例如那些像split()的方法</h3>
+  <p></p>
+  <script>
+    // 因为这里flaatenedArray = [] 只在函数创建了一次, 而在递归时,只是引用他
+    function flatten(sourceArray, flaatenedArray = []) {
+      for (const element of sourceArray) {
+        if (Array.isArray(element)) {
+          flatten(element, flaatenedArray)
+        }
+        else {
+          flaatenedArray.push(element)
+        }
+      }
+      return flaatenedArray
+    }
+
+    const arr = [[0], 1, 2, [3, [4, 5]], 6]
+    console.log(flatten(arr));
+
+
+    // 深度控制 
+    // 要主道外部flattener(), 和内部的 flattener() 他们两个函数里的形参是互不影响的,
+    // 当内部的flattener() 会拿到对应的depth值去执行函数,符合条件就继续更深层的递归,不符合的话就跳出来,执行外面的flattener()函数
+    // 主要:: 是利用递归可以调用自己  ,  并且函数的形参是互不影响的
+    function flattener(sourceArray, depth, flaatenedArray = []) {
+      for (const element of sourceArray) {
+        if (Array.isArray(element) && depth > 0) {
+          flattener(element, depth - 1, flaatenedArray)
+        }
+        else {
+          flaatenedArray.push(element)
+        }
+      }
+      return flaatenedArray
+    }
+    const ar = [[0], 1, 2, [3, [4, 5]], 6]
+    console.log(flattener(ar, 1));
+
+
+    let sum = 0
+    function fn(a) {
+      for (let i = 0; i < a; i++) {
+        if (i === 3) {
+          fn(i)
+        } else {
+          console.log(a);
+        }
+      }
+    }
+
+    console.log(fn(4));
+
+    const array = [[0], 1, 2, [3, [4, 5]], 6]
+    console.log(array.flat(1));
+
+    console.log(array.flat(2));
+
+    const arra = [[0], 1, 2, [3, [4, 5]], 6];
+
+    // 这是因为经过了push之后arra的最后一值就是自己数组的引用
+    // 所以每次的深度展开都是会不停的对自己结构, 不停的循环下去
+    // [[0], 1, 2, [3, [4, 5]], 6, arra] 结构到arra的时候 变成了[[0], 1, 2, [3, [4, 5]], 6, [[0], 1, 2, [3, [4, 5]], 6, arra]]
+    // 他里面还有, 是因为arra的最后一值就是自己数组的引用, 所以展开的深度更大, 那数组就很多
+
+    arra.push(arra)
+    console.log(arra)
+
+    console.log(arra.flat(1));
+    console.log(arra.flat(2));
+    console.log(arra.flat(3));
+
+    const arr1 = [[1], [3], [5]]
+    console.log(JSON.stringify(arr1.map(([x]) => [x, x + 1]).flat(1)))
+    // let a = arr1.map(([x]) => [x, x + 1])
+    // let b = a.flat(1)
+    // let c = JSON.stringify(b)
+    // console.log(c);
+
+
+    //因为这样太复杂了 所以有了简单的写法
+    console.log(JSON.stringify(arr1.flatMap(([x]) => [x, x + 1])))
+
+    const br = ['Lorem ipsum dolor sit amet,', 'consectetur asipiscing elit.']
+
+    /*     先flatMap((x) => x.split(/\W+/)) 分隔数组, 但是里面有特殊符号, 被转换'' 空值, 后来在经过flatMap(x => x || []),
+     检测到'' 为空就会创建空数组, 而空数组在展开的时候是会给抹除掉的了, 所以实现了去掉 '' 空值 */
+    console.log(br.flatMap((x) => x.split(/\W+/)).flatMap(x => x || []));
+
+
+  </script>
+</body>
+
+</html>

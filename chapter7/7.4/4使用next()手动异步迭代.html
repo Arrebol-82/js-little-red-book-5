@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>使用next() 手动异步迭代</h1>
+    <p>其实就是因为他是遵循迭代器协议的， 所以可以使用next（） 来获取异步迭代器里面的值，
+        但是里面的值只能返回 {value：proimse , done: false} 就是只会返回promise</p>
+    <script>
+            class Emiiter {
+            constructor(max) {
+                this.max = max
+                this.index = 0
+            }
+            async *[Symbol.asyncIterator]() {
+                while (this.max > this.index) {
+                    if (this.index < 3) {
+                        yield this.index++
+                    } else {
+                        throw '超出了'
+                    }
+                }
+            }
+        }
+
+        const emitter = new Emiiter(5)
+
+        const asyncIt =emitter[Symbol.asyncIterator]()
+        console.log(asyncIt.next());
+        console.log(asyncIt.next());
+        console.log(asyncIt.next());
+        console.log(asyncIt.next());
+        console.log(asyncIt.next());
+
+    </script>
+</body>
+
+</html>

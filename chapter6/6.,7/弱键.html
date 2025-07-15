@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h2>弱键</h2>
+  <h1>弱键 = 引用类型（对象） + 弱引用机制(WeakMap)</h1>
+  <p>键是弱引用，当键被垃圾回收机制回收时，相应的键值对就从 WeakMap 中移除了，值也就无法再通过该 WeakMap 访问
+    <strong>所以一句话就是: 值是依赖着弱键的 , 弱键还在就能用 , 弱键不在就不能用</strong>
+  </p>
+  <script>
+    const wm = new WeakMap()
+
+    wm.set({}, 'val') //临时创建的{},立即回收
+    console.log(wm.get({})); //已经被回收掉了
+
+    const key = {}
+    const Wm = new WeakMap()
+    Wm.set(key, 16)
+    console.log(Wm.get(key));
+
+    // 在看一个
+    const vm = new WeakMap()
+    const container = {
+      key: {}
+    }
+
+    vm.set(container.key, 16)
+    console.log(vm.has(container.key));
+    console.log(vm.get(container.key));
+
+    function removeReference() {
+      container.key = null
+    }
+
+    // 像这里就没有清除弱键了 ,所以值一直可以使用
+  </script>
+</body>
+
+</html>

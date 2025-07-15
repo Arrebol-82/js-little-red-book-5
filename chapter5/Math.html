@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    section {
+      margin: 15px 0;
+    }
+
+    img {
+      width: 600px;
+      height: 780px;
+      position: relative;
+      transform: rotate(-90deg) translateY(15%);
+    }
+
+    li {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Math() 方法</h1>
+  <h2>Math是ECMAscript提供的一种计算方法,他的计算效率是比用js计算要快的 , 因为Math对象上的计算机使用javascript引擎中更高效的实现和处理器指令</h2>
+  <strong>但是但是: 使用Math() 会因为计算机的浏览器 指令值 操作系统 硬件不同 , 所以他们的精度也是不一样的</strong>
+  <section>
+    <h1>那要怎么解决Math()精度的解决问题呢</h1>
+    <h4> 1. 装换成整数在进行计算,计算完之后再转换成小数</h4>
+    <h4> 2. 引入高精度计算的计算库</h4>
+    <h4> 3. 了解不同环境的差异,进行测试</h4>
+  </section>
+  <section>
+    <h1>Math对象属性</h1>
+    <p>这些都是用于当作计算值使用的</p>
+    <img src="./image/微信图片_20250516094424.jpg" alt="">
+    <div>
+      <ul>
+        <li style="list-style: none;">
+          <h3>与对数相关</h3>
+        </li>
+        <li>Math.E：自然对数的底数，是个无限不循环小数，约等于 2.71828 。在描述一些自然增长、衰减规律的数学模型里会用到，像银行里的连续复利计算就会涉及它。</li>
+        <li>Math.LN10：以自然对数的底数 e 为底，10 的对数。简单理解就是，要问 e 的多少次方等于 10 ，这个 “多少次方” 的数值就是 Math.LN10 ，约为 2.302585 。</li>
+        <li>Math.LN2：以 e 为底，2 的对数 。即 e 的多少次方等于 2 ，约是 0.693147 。</li>
+        <li>Math.LOG2E：以 2 为底，e 的对数 。意思是 2 的多少次方等于 e ，约为 1.442695 。</li>
+        <li>Math.LOG10E：以 10 为底，e 的对数 。也就是 10 的多少次方等于 e ，约为 0.434294 。</li>
+        <li style="list-style: none;">
+          <h3>几何相关</h3>
+        </li>
+        <li>Math.PI：圆周率，圆的周长与直径的比值，是个无限不循环小数，约等于 3.141593 。计算圆的周长（周长 = 直径 ×Math.PI ）、面积（面积 = Math.PI× 半径的平方
+          ）等圆相关的几何量时都会用到。</li>
+        <li style="list-style: none;">
+          <h3>平方根相关</h3>
+        </li>
+        <li>Math.SQRT1_2：1/2的平方根 ,也就是根号2分之2，约等于 0.707107 。在等腰直角三角形里，直角边和斜边的比例</li>
+        <li>Math.SQRT2：2 的平方根 ，约等于 1.414214 。比如在计算正方形对角线长度（对角线长度 = 边长 ×Math.SQRT2 ）时会用到。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h1>取最大值 Math() max()</h1>
+    <div>
+      <p>// 求最大值
+        console.log(Math.max(24, 64, 456, 6775, 23));</p>
+      <p>
+        //求最小值
+        console.log(Math.min(24, 64, 456, 6775, 3));
+      </p>
+      <p>还能用于数组,不使用的时候接的用展开运算符,获得数据 因为Math.max() / min()是用于计算的如果你直接传入数组是无法计算的,所以返回NaN</p>
+    </div>
+  </section>
+  <section>
+    <h1>舍入方法</h1>
+    <div>
+      专门用于四舍五入的
+      <p>Math.ceil(25.1) === 26 始终向上舍入最大值 , 既如果有小数点就直接往上舍入</p>
+      <p>Math.floor(25.9) === 25 始终向下舍入最大值 , 既如果有小数点就直接往下舍入</p>
+      <p>Math.round(25.5) === 26 Math.round(25.1) === 25; 四舍五入 </p>
+      <p>Math.fround(0.4) === 0.4000000059604645 返回最接近的单精度 浮点值 但是会造成进度丢失 </p>
+    </div>
+  </section>
+  <section>
+    <h1>获得随机数Math.random() 默认0到1 左开右合</h1>
+    因为获得的是是小数,所以我们通常都是匹配Math.floor来使用的
+    <p>热知识: 他返回的0(包含)到1(不包含)的小数</p>
+    <p>因为他是返回不一样且基于0到1之间的数,在乘后面的数就可以取得随机数了 (记得要向下取整,不要破坏它,左开右合的特性)</p>
+  </section>
+
+  <section>
+    <h1>window.crypto.getRandomValues(arr) 方法</h1>
+    <p>相比于Math.random() 的随机数 ，window.crypto.getRandomValues(arr) 跟靠谱 安全 </p>
+    <p>通常配合Uint8Array Uint16Array 只要是...Array 就可以配合使用</p>
+    冷知识: 返回都是数字喔
+  </section>
+  <h3>Math 还有一堆的方法() 具体的话参考124页吧</h3>
+  <script>
+    // 求最大值
+    console.log(Math.max(24, 64, 456, 6775, 23));
+    //求最小值
+    console.log(Math.min(24, 64, 456, 6775, 3));
+
+    let array = [23, 23, 5, 34245, 4, 62345,]
+    console.log(array);
+    console.log(...array);
+    // 因为Math.max() / min()是用于计算的如果你直接传入数组是无法计算的,所以返回NaN
+    console.log(Math.max(...array))
+
+
+    console.log('舍入方法')
+    // 向上舍入
+
+    console.log(Math.ceil(25.1));
+    console.log(Math.ceil(25.9));
+    console.log(Math.ceil(25.5));
+
+    console.log('floor');
+
+    console.log(Math.floor(25.9));
+    console.log(Math.floor(25.4));
+    console.log(Math.floor(25.1));
+
+
+    console.log('round');
+
+    console.log(Math.round(25.5));
+    console.log(Math.round(25.1));
+    console.log(Math.round(25.0));
+
+    console.log('');
+    console.log(Math.fround(0.4));
+    console.log(Math.fround(0.5));
+    console.log(Math.fround(25.9));
+
+    console.log(Math.random());
+    console.log(Math.floor(Math.random() * 10 + 1));
+    console.log(Math.floor(Math.random() * 11 + 1));
+    // 这样是2到9
+    console.log(Math.floor(Math.random() * 9 + 2));
+    console.log('=================================');
+
+
+    // 同理我们还可以将他封装函数
+    function seletion(lower, upper) {
+      let rander = upper - lower + 1
+      return Math.floor(Math.random() * rander + lower)
+    }
+
+    let str = seletion(2, 10)
+    console.log(str);
+
+
+    // 举多点例子就好了
+
+    // function slll(lo, up) {
+    //   let rander = up - 1
+    //   return Math.floor(Math.random() * rander + lo)
+    // }
+
+    // let o = slll(2, 10)
+    // console.log(o);
+
+    let arra = ['qer', 'ert', 'ert', 'fdh', 'sdfs', 'cvb', 'jhk'];
+    let color = arra[seletion(0, arra.length - 1)]
+    console.log(color);
+
+
+    let arr = new Uint8Array(3)
+    window.crypto.getRandomValues(arr)
+    console.log(arr);
+
+  </script>
+</body>
+
+</html>

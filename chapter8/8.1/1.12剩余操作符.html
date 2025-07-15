@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>剩余操作符</h1>
+    <p>在重新构造对象时 ， 可以使用剩余操作符把蓑鲉未明确列出的可枚举属性都收集到一个对象中 ， 来看下面的列子</p>
+    <h2>在每个字面量中只能使用一次剩余操作符 ， 必须放在最后面。因为每个对象字面量只能一个剩余操作符 </h2>
+    <strong>所以就有了嵌套剩余操作符的可能 。 在嵌套的时候 ， 因为不存在把某个属性子的元素分配到任意指定的剩余操作符的问题，
+        所以得到的对象永远不会出现内容重叠的情况
+    </strong>
+    <code>
+        <pre>
+            const person = {
+                name: 'Matt',
+                age: 27,
+                hobby: 'playgame:ZZZ'
+            }
+    
+            const { name, ...remainingDate } = person
+    
+            console.log(name);
+            console.log(remainingDate);
+        </pre>
+    </code>
+    <p>是每个对象里面只能出现一个剩余操作符 ， 如果使用嵌套对象里面在使用剩余操作符，那就不一样了</p>
+    <code>
+        <pre>
+            const {name:Name , hobby:{playGame , ...remaining} , ...Remaining} = person
+            console.log(Name);      //  Matt
+            console.log(playGame);  //  ZZZ
+            console.log(remaining); //  game：'COD'
+            console.log(Remaining); //  {age:27 , number：Array(5)}
+    
+            const {...a , hooby} = person //  Rest element must be last element 
+        </pre>
+    </code>
+    <h2 class="pink">我总结一下剩余操作符 ， 会自动收集多的参数 ，返回的是一个对象 ， 一定要放在最后面 ， 不能在前面 ， 而且每个对象里面只能有一个剩余操作符 ，如果时嵌套对象 ， 你可能就会看到这种情况
+        const {name:Name , hobby:{playGame , ...remaining} , ...Remaining} = person 但是是正常的因为里面的hobby的变量就是一个对象 ，
+        所以可以使用剩余操作符</h2>
+    <h3>剩余操作符在对象期间执行的是浅拷贝，因此对象的引用会被拷贝 ， 而不是克隆整个对象</h3>
+    <p>看下面的列子</p>
+    <code>
+        <pre>
+            const Person = {
+                name: 'Arrebol',
+                age: 16,
+                hobby: {
+                    playGame: 'ZZZ',
+                    Time: 'night'
+                }
+            }
+    
+            const {...RemainingDate} = Person
+    
+            console.log(Person);                    // {name: 'Arrebol', age: 16, hobby: {…}}
+            console.log(RemainingDate);             // {name: 'Arrebol', age: 16, hobby: {…}}
+    
+            console.log(Person === RemainingDate);  //false
+    
+            console.log(Person.hobby === RemainingDate.hobby);  //true
+        </pre>
+        <p>因为是浅拷贝，所以俩对象存储的地址值时不一样的 ，但是内部的对象是一样的用的是同一个地址值</p>
+    </code>
+    <h2>剩余操作符会将可枚举属性收集 ，如果是不可枚举属性那么就不会进行收集</h2>
+    <code>
+        <pre>
+            const s = Symbol()
+            const foo = { a: 1, [s]: 2, b: 3 }
+            Object.defineProperty(foo, 'nonEnum', {
+                value: 100,
+                enumerable: false
+            })
+            const { a, ...courrent } = foo
+            console.log(foo); // {a: 1, b: 3, nonEnum: 100, Symbol(): 2}
+            console.log(courrent); //{b: 3, Symbol(): 2}
+        </pre>
+    </code>
+    <p>nonEnum是不可枚举的 ， 所以剩余操作符，并不会收集他</p>
+    <script>
+        const person = {
+            name: 'Matt',
+            age: 27,
+            hobby: {
+                playGame: 'ZZZ',
+                Game: 'COD'
+            },
+            number: [1, 2, 3, 4, 5]
+        }
+
+        const { name, ...remainingDate } = person
+
+        console.log(name);
+        console.log(remainingDate);
+
+        console.log('=============== 多个操作符 =============');
+        const { name: Name, hobby: { playGame, ...remaining }, ...Remaining } = person
+        console.log(Name);
+        console.log(playGame);
+        console.log(remaining);
+        console.log(Remaining);
+
+        // const {...a , hooby} = person //  Rest element must be last element 
+
+        console.log('=================== 浅拷贝 ==================');
+
+        const Person = {
+            name: 'Arrebol',
+            age: 16,
+            hobby: {
+                playGame: 'ZZZ',
+                Time: 'night'
+            }
+        }
+
+        const { ...RemainingDate } = Person
+
+        console.log(Person);
+        console.log(RemainingDate);
+
+        console.log(Person === RemainingDate);  //false
+
+        console.log(Person.hobby === RemainingDate.hobby);  //true
+
+        console.log('==================== 枚举 ===================');
+        const s = Symbol()
+        const foo = { a: 1, [s]: 2, b: 3 }
+        Object.defineProperty(foo, 'nonEnum', {
+            value: 100,
+            enumerable: false
+        })
+        const { a, ...courrent } = foo
+        console.log(foo); // {a: 1, b: 3, nonEnum: 100, Symbol(): 2}
+        console.log(courrent); //{b: 3, Symbol(): 2}
+    </script>
+</body>
+
+</html>

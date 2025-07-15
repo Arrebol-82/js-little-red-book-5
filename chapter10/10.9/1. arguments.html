@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>arguments</h1>
+  <p>他是一个类数组 , 包含传入时的所有参数 , 除了箭头函数没有之外 , 其他的普通函数都是有的 , 在argument对象里面还有一个 callee 属性 ,
+    是一个指向argument 对象所在函数的指针 </p>
+  <code>
+      <pre>
+        function factorial(num) {
+          if (num <= 1) {
+            return 1
+          } else {
+            return num * factorial(num - 1)
+          } 1
+        }
+
+        console.log(factorial(4));
+      </pre>
+    </code>
+  <p>阶段计算是递归性的 , 只要给函数一个名称 而且这个名称不会变 但是这个函数要正确执行必须保证函数名是factorial 从而导致了紧密耦合
+    使用 argument.callee可以让函数逻辑与函数名解藕
+  </p>
+  <code>
+    <pre>
+      function fact(num) {
+            if (num <= 1) {
+              return 1
+            } else {
+              return num * arguments.callee(num - 1)
+            } 1
+        }
+    console.log(fact(4));
+    </pre>
+  </code>
+  <p>这里的argument.callee 是指向函数名 , 也正好配合递归使用 替换了硬编码 fact() 现在不管函数名怎么变都是正确指向函数名的</p>
+  <code>
+    <pre>
+   let trueFactor = fact
+
+    function factorial() {
+      return 0arguments.callee
+    }
+
+    console.log(trueFactor(4)); // 24
+    console.log(factorial(4)); // 0
+    </pre>
+  </code>
+  <p>这里面将fact的函数名赋值给了 , trueFactor 但是因为里面的值是 arguments.callee 指向函数名 不管怎么改最终还是指向函数名 ,
+    而这里的 factorial 里面的函数体被重写了 所以就只会返回 0 <strong>通过argument.callee 实现了解耦 , 完美的实现不管怎么变都可正常运行</strong>
+  </p>
+  <p><strong class="black">注意一下</strong>: arguments.callee 在 <strong>严格模式下禁用</strong> , <strong>性能损耗</strong> ,
+    <strong>可读性也不太好</strong> 解决方法 : 函数表达式 const factorial = function calculate(n){calculate() }
+  </p>
+  <script>
+    function factorial(num) {
+      if (num <= 1) {
+        return 1
+      } else {
+        return num * factorial(num - 1)
+      } 1
+    }
+
+    console.log(factorial(4));
+
+
+    function fact(num) {
+      if (num <= 1) {
+        return 1
+      } else {
+        return num * arguments.callee(num - 1)
+      } 1
+    }
+
+    console.log(fact(4));
+
+    let trueFactor = fact
+
+    function factorial() {
+      return 0
+    }
+
+    console.log(trueFactor(4)); // 24
+    console.log(factorial(4)); // 0
+
+  </script>
+</body>
+
+</html>

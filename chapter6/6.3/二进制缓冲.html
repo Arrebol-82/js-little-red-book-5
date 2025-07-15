@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>定型数组</h1>
+  <h2>ArrayBuffer() 就是一个普通的构造函数,用于在内存分配特定的数量字节空间 (固定长度的原始二进制缓冲区)</h2>
+  <p>ArrayBuffer() 一但创建了，就不能在更改了，但是可以用slice() 复制全部或者一部分到的实列中</p>
+  <code>
+    <pre>
+      const buf = new ArrayBuffer(16)
+      console.log(buf);
+      console.log(buf.byteLength);
+      
+      const buf2 = buf.slice(4, 12)  
+      const buf3 = buf.slice(0)
+      console.log(buf2);
+      console.log(buf3);
+    </pre>
+  </code>
+  <ul>
+    <li>ArrayBuffer分配失败的时候会报错</li>
+    <li>ArrayBuffer分配的内存最大不能超过Number.MAX_SAFE_INTRGER(2^53 - 1)字节</li>
+    <li>ArrayBuffer会将所有的二进制初始化为0</li>
+    <li>ArrayBuffer在不使用的时候会自动释放被垃圾回收机制回收掉</li>
+  </ul>
+  <h2>当然只有ArrayBuffer() 他是不能进行访问的存储的,就要通过视图</h2>
+  <script>
+    const buf = new ArrayBuffer(16)
+    console.log(buf);
+    console.log(buf.byteLength);
+
+    const buf2 = buf.slice(4, 12)
+    const buf3 = buf.slice(0)
+    console.log(buf2);
+    console.log(buf3);
+
+  </script>
+</body>
+
+</html>

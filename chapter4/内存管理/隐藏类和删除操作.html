@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+
+    // 每当对象创建的时候 , 引擎都会给它创建一个隐藏类 , 在运行的期间 , 引擎会跟踪对象的属性是否变化
+    // 以便于共享同一个隐藏类 , 因为这样可以方便引擎去查找属性 , 而有相同的隐藏类引擎会把他放在一起
+    // 方便了查找和复用
+
+
+    function Peares() {
+      this.uname = uname
+      this.title = 'olalalala,hahaha'
+    }
+
+    // 这里这两个就共用了一个隐藏类因为共用的属性是一样的
+    let peares1 = new Peares()
+    let peares2 = new Peares()
+
+
+    // 1 .
+    // 此时的p2 添加了 gender属性 所以引擎会新建一个隐藏类给他
+    // peares2.gender = '女'
+
+
+    // 这就是删除类
+    // 2 .
+    // 如果直接删除的话也会所以引擎会新建一个隐藏类给他 , 并且跟消耗性能
+    // ×.  delete peares2.title
+    // √.  peares2.title = null
+  </script>
+</body>
+
+</html>

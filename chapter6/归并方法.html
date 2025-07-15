@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>归并方法 (累加器)</h1>
+  <ul>
+    <li>第一个元素是数组的第一种值,如果设置了初始值 ,就是初始值</li>
+    <li>第二个值是当前的元素,如果第一个值不是初始值的话,那就是第二个值</li>
+    <li>第三个值是表示当前的索引 (可选)</li>
+    <li>第三个值是表示当前数组 (可选)</li>
+  </ul>
+  <h2>recude()</h2>
+  <p></p>
+  <h2>recudeRight()</h2>
+  <h3>就是表示反着来 从数组的末尾开始</h3>
+
+  <h1 style="color: pink;">如果没有定义初始值,并且数组为空,就会报错 :: 如果数组为空，你有初始值就直接返回初始值。如果没有初始值，数组里面只有一个元素，那它就直接返回那一个元素。</h1>
+
+  <h1>细节</h1>
+  <h2>回调函数</h2>
+  <p>一个函数当做参数,传入到了,另外一个函数中,并且在内部被调用</p>
+  <p>看下面这段代码</p>
+  <code>
+    <pre>
+      let sum = value.reduce((prev, cur, index, array) => prev + cur, 0)
+    </pre>
+  </code>
+  <h2>reduce()中在逗号前面(prev, cur, index, array) => prev + cur就是一个回调函数 , 逗号后面就是初始值</h2>
+  <script>
+    let value = [1, 2, 3, 4, 5]
+    let sum = value.reduce((prev, cur, index, array) => prev + cur, 0)
+    console.log(sum);
+
+    // 从数组末尾开始遍历
+    let dum = value.reduceRight((prev, cur, index, array) => prev + cur)
+    //                            5      4
+    console.log(dum);
+
+  </script>
+</body>
+
+</html>

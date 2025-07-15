@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>原型和in操作符</h1>
+  <p>有两种方式使用in操作符: 单独使用和在for-in 循环使用 单独使时 in操作符会在可以通过对象访问指定属性时返回true , 无论该属性上还是该实例上</p>
+  <h2>in操作符</h2>
+  <ul>
+    <li>
+      <code>
+        <pre>
+          function Person() { }
+          
+          Person.prototype.name = 'Arrebol'
+          Person.prototype.age = 18
+          Person.prototype.job = 'coding'
+          Person.prototype.sayName = function () {
+          console.log(this.name);
+          }
+          
+          
+          const person1 = new Person
+          const person2 = new Person
+          
+          console.log(person1.hasOwnProperty('name')); // fasle 实例对象身上并没有这个方法
+          console.log('name' in person1); // true 因为这个方法在原型链身上
+          
+          person1.name = 'ZJS'
+          console.log(person1.name); //ZJS
+          console.log(person1.hasOwnProperty('name')); // true
+          console.log('name' in person2); //true
+          
+          console.log(person2.name); // Arrebol
+          console.log(person2.hasOwnProperty('name')); // false
+          console.log('name' in person2); // true
+          
+          delete person1.name
+          console.log(person1.name); //Arrebol
+          console.log(person1.hasOwnProperty('name')); // false
+          console.log('name' in person1); //true
+        </pre>
+      </code>
+    </li>
+    <li class="circle">in 操作符是用于<strong>检查对象上或者整个原型链上</strong> 是否用于这个属性</li>
+    <li class="circle">如果遇到null 和 undefined 会报错</li>
+    <li>
+      <h3>创建一个用来检查原型上的函数</h3>
+      <code>
+        <pre>
+          function hasPrototypeProperty(object, name) {
+            return !object.hasOwnProperty(name) && (name in object)
+          }      
+        </pre>
+      </code>
+      <p>只要是通过对象访问的属性, in操作符就返回 true, 而hasPrototypeProperty() 只有属性存在于实例上才会返回true <strong>所以只要hasPrototypeProperty()
+          放回false就表示不存在对象实例上 , 而 in Object 通过就表示她可以通过对象来访问, 放到原型上了</strong></p>
+      <code>
+        <pre>
+          function Per() { }
+
+          Per.prototype.name = 'Arrebol'
+          Per.prototype.age = 18
+          Per.prototype.job = 'coding'
+          Per.prototype.sayName = function () {
+            console.log(this.name);
+          }
+      
+          let person = new Per
+          console.log(hasPrototypeProperty(person, 'name'));  //true
+      
+          person.name = 'ZJS'
+          console.log(hasPrototypeProperty(person, 'name')); //false
+        </pre>
+      </code>
+      <p>实际用途, 看到了只要不是实例对象身上的属性就返回true , 是的话就返回false</p>
+    </li>
+    <li>
+      <h2>for-in中的in</h2>
+      <p>在for-in循环中使用in操作符时 , 可以通过对象访问且可以被枚举的属性都会返回,包括实例属性和原型属性 遮盖原型中不可枚举( ([[Enumerable]])特性设置为false) 属性的实例性也会在 for-in
+        循环中返回, 因为默认情况下我们手动定义的属性都是可枚举的</p>
+      <strong>说大白话就是 :: 就是for-in循环他只会遍历可枚举属性 , 不可枚举的话是不会返回 , 在原型对象中的不可以枚举的属性 和 实例对象中的可枚举属性有同名的话那么就会取实例上的 ,
+        而一般我们在实例上定义的都是可枚举 , 所以最终还是可以被for - in 遍历到的</strong>
+    </li>
+    <li>
+      <h2>Object.keys() 和 for-in 的区别</h2>
+      <ul>
+        <li class="circle">Object.keys()是遍历自身 for-in遍历原型和自身</li>
+        <li class="circle">Object.keys()性能好 for-in性能差</li>
+        <li class="circle">而且检测是不是可枚举属性的方式不一样 keys() 先获取所以属性在检查 , 而for-in实时判断的</li>
+      </ul>
+    </li>
+    <li>
+      <h2>Object.hasOwnPropertyName()</h2>
+      <p>如果想返回所有的属性( 包括不可以枚举属性 ) 就可以使用Object.hasOwnPropertyName() </p>
+      <code>
+        <pre>
+          let all = Object.getOwnPropertyNames(circulation.prototype)
+          console.log(all); // ['constructor', 'name', 'age', 'job', 'sayName']
+        </pre>
+      </code>
+      <p class="pink">Object.hasOwnPropertyName 和 Object.keys 在适当的时候可以用来替代掉 for-in 循环</p>
+    </li>
+    <li>
+      <h2>Object.getOwnPrototypeSymbols()</h2>
+      <p>如果键是以符号来命名的属性 , 是没有名称的概念的 例如 [a]: 'holleworld' 这样以 [Symbol] 属性命名的 就要使用Object.getOwnPrototypeSymbols()了</p>
+      <code>
+        <pre>
+          let k1 = Symbol('k1'),
+          k2 = Symbol('K2')
+          
+          let o = {
+          [k1]: 'k1',
+          [k2]: 'k2'
+          }
+          
+          console.log(Object.getOwnPropertySymbols(o));
+        </pre>
+      </code>
+      <p>如果里面的属性键是以 Symbol类型命名的就要使用Object.getOwnPrototypeSymbols()的 , 就像里面的[K1] 和 [k2] 一样</p>
+    </li>
+  </ul>
+  <script>
+    function Person() { }
+
+    Person.prototype.name = 'Arrebol'
+    Person.prototype.age = 18
+    Person.prototype.job = 'coding'
+    Person.prototype.sayName = function () {
+      console.log(this.name);
+    }
+
+
+    const person1 = new Person
+    const person2 = new Person
+
+    console.log(person1.hasOwnProperty('name')); // fasle 实例对象身上并没有这个方法
+    console.log('name' in person1); //  true 因为这个方法在原型链身上
+
+    person1.name = 'ZJS'
+    console.log(person1.name);  //ZJS
+    console.log(person1.hasOwnProperty('name')); // true
+    console.log('name' in person2); //true
+
+    console.log(person2.name); // Arrebol
+    console.log(person2.hasOwnProperty('name')); // false
+    console.log('name' in person2); // true
+
+    delete person1.name
+    console.log(person1.name); //Arrebol
+    console.log(person1.hasOwnProperty('name')); // false
+    console.log('name' in person1); //true
+
+    console.log('================================ 用于检测属性是否在原型上 =======================================');
+
+    function hasPrototypeProperty(object, name) {
+      return !object.hasOwnProperty(name) && (name in object)
+    }
+
+    function Per() { }
+
+    Per.prototype.name = 'Arrebol'
+    Per.prototype.age = 18
+    Per.prototype.job = 'coding'
+    Per.prototype.sayName = function () {
+      console.log(this.name);
+    }
+
+    let person = new Per
+    console.log(hasPrototypeProperty(person, 'name'));  //true
+
+    person.name = 'ZJS'
+    console.log(hasPrototypeProperty(person, 'name')); //false
+
+    console.log('============================== for-in =========================================');
+
+    function circulation() { }
+    circulation.prototype.name = 'Arrebol'
+    circulation.prototype.age = 16
+    circulation.prototype.job = 'coding'
+    circulation.prototype.sayName = function () {
+      console.log(this.name);
+    }
+
+    // 获取原型对象上面的值 
+    let keys = Object.keys(circulation.prototype)
+    console.log(keys);
+
+    let c1 = new circulation
+    c1.name = 'zJs'
+    c1.age = 17
+
+    console.log(Object.keys(c1));
+
+    console.log('=============================== Object.hasOwnPropertyName ===================================');
+
+    console.log(circulation.prototype);
+
+    let all = Object.getOwnPropertyNames(circulation.prototype)
+    console.log(all);  // ['constructor', 'name', 'age', 'job', 'sayName']
+
+    console.log('==================================== Object.getOwnPrototypeSymbols ===============================');
+
+    let k1 = Symbol('k1'),
+      k2 = Symbol('K2')
+
+    let o = {
+      [k1]: 'k1',
+      [k2]: 'k2'
+    }
+
+    console.log(Object.getOwnPropertySymbols(o));
+
+  </script>
+</body>
+
+</html>

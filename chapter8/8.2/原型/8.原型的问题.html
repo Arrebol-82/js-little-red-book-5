@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>原型的问题</h1>
+  <p>原型模式也不是没有问题。首先，它弱化了向构造函数传递初始化参数的能力，会导致所有实列默认都取得相同的属性值。虽然这会带来不便，但还不是原型的最大问题。原型最主要的问题源自它的共享特性。</p>
+  <code>
+    <pre>
+      function Person() { }
+
+      Person.prototype = {
+        constructor: Person,
+        name: "Arrebol",
+        age: 16,
+        gander: '男',
+        hobby: ['ZZZ', '银河类', '肉鸽', '...'],
+        job: {
+          one: 'coding',
+          two: 'playgame'
+        }
+      }
+  
+      let perosn1 = new Person
+      let perosn2 = new Person
+  
+      perosn1.hobby.push('running')
+  
+      console.log(perosn1.hobby); // ['ZZZ', '银河类', '肉鸽', '...', 'running']
+      console.log(perosn2.hobby); // ['ZZZ', '银河类', '肉鸽', '...', 'running']
+      console.log(perosn1.hobby === perosn2.hobby); // true
+      
+      <strong>可以很清楚的看到我在perosn1更改了hobby ,最后打印出来发现perosn2也会受到影响,说明他们是公用一个地址值</strong>
+    </pre>
+  </code>
+  <p>总所周知: 原型上的属性在实例之间是共享 , 这对函数来说比较合适, 如果是原始值的属性还好 , 毕竟是单独存储的 , 如果是引用值的话就是公用一个地址值</p>
+  <strong>定义在原型上面的值是确定的了 , 如果要改的话就要等实例话之后 , 在获取要更改的属性,在更改 , 这样间接的去更改就弱化了向构造函数传递初始化参数的能力</strong>
+  <script>
+    function Person() { }
+
+    Person.prototype = {
+      constructor: Person,
+      name: "Arrebol",
+      age: 16,
+      gander: '男',
+      hobby: ['ZZZ', '银河类', '肉鸽', '...'],
+      job: {
+        one: 'coding',
+        two: 'playgame'
+      }
+    }
+
+    let perosn1 = new Person
+    let perosn2 = new Person
+
+    perosn1.hobby.push('running')
+
+    console.log(perosn1.hobby);
+    console.log(perosn2.hobby);
+    console.log(perosn1.hobby === perosn2.hobby);
+
+
+    // function a() { }
+    // a.prototype.name = 'arrebol'
+
+    // let A = new a()
+    // console.log(A.name);
+
+  </script>
+</body>
+
+</html>

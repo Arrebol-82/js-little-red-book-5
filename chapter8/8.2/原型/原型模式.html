@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>原型模式</h1>
+  <strong class="pink">每个函数都会创建一个 prototype属性 , 这个属性是一个对象 , 包含应该由特定引用类型的实例共享和方法. 实际上,这个对象就是通过调用构造函数创建的对象原型
+    使用原型对象的好处就是,在这上面定义的属性和方法可以被对象共享, 原来在构造函数中直接赋值给对象的实例的值 , 可以直接赋值给他们的原型</strong>
+  <h2>特定引用类型的实例共享和方法 :: 所以这段话是指对线那些自带的API 都是在原型上的 ,这样才能实现公用 , 也就是 Object.call( ) 这个call( ) 方法就是挂载到原型上面</h2>
+  <ul>
+    <li><strong>要想访问方法就要实例话</strong></li>
+    <li>因为构造函数是一个 '仓库' 用于存放方法和属性 , 而实例化就要 '使用者' 他们是想互分离的</li>
+    <li class="circle">实例通过 __proto__ 连接到原型对象 , 而构造函数是不能直接访问到原型方法的</li>
+    <li class="circle">原型方法需要正确的 this 上下文 , 而构造函数的this没人调用的话是指向window的</li>
+  </ul>
+  <h2 class="skyblue">函数表达式</h2>
+  <code>
+    <pre>
+      let Person1 = function () { }
+
+      Person1.prototype.name = 'Arrebol82'
+      Person1.prototype.age = 16
+      Person1.prototype.job = 'coding'
+      Person1.prototype.sayName = function () {
+        console.log(this.name);
+      }
+  
+      const P1 = new Person1
+      P1.sayName()
+    </pre>  
+  </code>
+  <ul>
+    <li>这样就把原型方法挂载到了 Person1身上了</li>
+    <li>所以得实例都可以共享这个方法了</li>
+    <li>不过还是需要理解原型的,来接下来继续吧</li>
+  </ul>
+  <script>
+    function Person() {
+      Person.prototype.name = 'Arrebol'
+      Person.prototype.age = 16
+      Person.prototype.job = 'coding'
+      Person.prototype.sayName = function () {
+        console.log(this.name);
+      }
+    }
+
+    let person1 = new Person  // 可以加() 也可以不加 看心情
+    let person2 = new Person()
+    console.log(person1);
+    console.log(person1.constructor);
+    console.log(person1.__proto__);
+
+    person1.sayName()
+    person2.sayName()
+
+    console.log(person1.sayName === person2.sayName);
+
+    console.log('===================== 使用函数表达式 ====================');
+    let Person1 = function () {
+      this.n = function () {
+        console.log(1);
+      }
+    }
+
+    Person1.prototype.name = 'Arrebol82'
+    Person1.prototype.age = 16
+    Person1.prototype.job = 'coding'
+    Person1.prototype.sayName = function () {
+      console.log(this.name);
+    }
+
+    const P1 = new Person1
+    P1.sayName()
+    P1.n()
+
+
+  </script>
+
+</body>
+
+</html>

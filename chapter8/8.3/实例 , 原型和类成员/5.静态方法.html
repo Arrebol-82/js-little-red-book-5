@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>静态方法</h1>
+    <p>可以在类上定义静态成员. 这些成员通常都是用于执行不特定于实例的操作, 也不要求存在类的实例 , 与原型成员类似,静态成员每个类上只能有一个</p>
+    <strong>静态类成员在类中定义中使用stactic 关键字作为前缀 , 在静态方法中,this引用类自身 , 其他所有约定跟原型成员一样</strong>
+    <code>
+        <pre>
+            class Person {
+                // 静态属性 定义在类上
+                static species = 'species'
+                // 每个实例都有
+                constructor() {
+                    // 添加this的话 , 所以的内容都会存在于不同实例上
+                    this.locate = () => console.log('instance', this);
+                }
+    
+                // 定义在原型上 , 可以实现共享
+                locate() {
+                    console.log('prototype', this);
+                }
+    
+                //定义在类上
+                static locate() {
+                    console.log('class', this);
+                }
+            }
+    
+    
+            let p = new Person
+    
+            console.log(Person.species);  // species
+    
+            p.locate();  // instance Person {locate: ƒ  会先从实例身上找 }
+            Person.prototype.locate()   // prototype {locate: ƒ}
+            Person.locate();    // class class Person { ... }
+        </pre>
+    </code>
+    <h2>静态方法适合作为实例工厂</h2>
+    <code>
+        <pre>
+            console.log('=================== 实例工厂 ===============');
+            class Per {
+                constructor(age) {
+                    this.age_ = age
+                }
+                sayAge() {
+                    console.log(this.age_);
+                }
+    
+                static create() {
+                    return new Per(Math.floor(Math.random() * 100))  // 这是返回一个实例
+                }
+            }
+    
+            let a = new Per(66)
+            console.log(a.sayAge());
+    
+            console.log(Per.create()); // 他返回的是一个实例    
+        </pre>
+    </code>
+    <h2>实例工厂就是可以帮你把原来在外部实例的代码 , 在类里面实例好了 ,可以直接拿来用 , 这样更方便 , 快捷</h2>
+    <strong>static create() 他返回的是一个实例 跟let a = new Per(随机数) 是一样的 区别就在没人接收</strong>
+    <script>
+        class Person {
+            // 静态属性 定义在类上
+            static species = 'species'
+            // 每个实例都有
+            constructor() {
+                // 添加this的话 , 所以的内容都会存在于不同实例上
+                this.locate = () => console.log('instance', this);
+            }
+
+            // 定义在原型上 , 可以实现共享
+            locate() {
+                console.log('prototype', this);
+            }
+
+            //定义在类上
+            static locate() {
+                console.log('class', this);
+            }
+        }
+
+
+        let p = new Person
+
+        console.log(Person.species);  // species
+
+        p.locate();  // instance Person {locate: ƒ  会先从实例身上找
+        Person.prototype.locate()   // prototype {locate: ƒ}
+        Person.locate();    // class class Person { ... }
+
+        console.log('=================== 实例工厂 ===============');
+        class Per {
+            constructor(age) {
+                this.age_ = age
+            }
+            sayAge() {
+                console.log(this.age_);
+            }
+
+            static create() {
+                return new Per(Math.floor(Math.random() * 100))  // 这是返回一个实例
+            }
+        }
+
+        let a = new Per(66)
+        console.log(a.sayAge());
+
+        console.log(Per.create()); // 他返回的是一个实例
+
+
+    </script>
+</body>
+
+</html>

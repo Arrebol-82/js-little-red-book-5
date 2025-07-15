@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let str = '1o2o3o';
+    // 因为这个方法是String实例自带的 , 所以可以用
+    let str1 = str.substring(2);
+    console.log(str);
+
+    console.log(str1);
+    let s1 = 'some text';
+    // 而在javascript中是不允许给原始值创建方法和属性的
+    s1.color = 'red'; //看着他其实是会创建的 , 但是创建完了之后 就会删除  在实践中并没有意义
+    console.log(s1.color); //undefined
+
+
+    // 接着往下看
+    let sum = '25';
+    let number = Number(sum); //这里是number
+    console.log(number);
+    // 因为这里实施例化 , 所以他是基于对象的 
+    let obj = new Number(sum); // 这里是Object
+    console.log(obj);
+
+    // 还有咋们写俩例子
+    // 此时因为他是new 的 所以呢他是obj 一个对象 , 众所周知 只要对象里面不是null , 就会返回true (别说你不知道昂)
+    // 还有昂 , 他是基于对象的
+    let objbool = new Boolean(false);
+    console.log(objbool && true); // true
+
+    // 他是基于boolean的
+    let bool = false;
+    console.log(bool && true);// false
+
+    let num = 10;
+    // Eage浏览器最大支持100位小数
+    console.log(num.toFixed(100));
+
+    let Num = 99;
+    // 表示保留一位数字
+    console.log(Num.toPrecision(1)); // 1e+2
+    // 这里是科学计数法 表示 1 * 10 的 2次方 因为 e 代表的是10
+
+
+    // String
+    let str3 = 'lajlafa';
+    // 长度是从1开始算的
+    // 即使是双字符的ASCII码表 , 显示的长度还是1 毕竟很多的汉字都是双字符
+    console.log(str3.length); //7
+
+    // chatat()
+    console.log(str3.charAt(1)); //里面填的是索引 , 会去在字符串中找到对应的值 :: a
+    console.log(str3.charCodeAt(1)); //里面填的是索引 , 会编译成对应的ASCII码表 :: 97
+    console.log(String.fromCharCode(99)); //里面UTF-16编码 , 会转译成对应的字符串 :: c 
+
+    // 增补平面字符
+    let message = 'ab😊de'
+
+    console.log(message.length);
+    console.log(message.charAt(1));
+    console.log(message.charAt(2));
+    console.log(message.charAt(3));
+    console.log(message.charAt(4));
+
+    // charAt() 和 charCodeAt()：这两个方法基于 UTF - 16 编码中的 16 位码元进行操作
+    console.log(message.charCodeAt(1));
+    console.log(message.charCodeAt(2));
+    console.log(message.charCodeAt(3));
+    console.log(message.charCodeAt(4));
+
+
+    // codePointAt() 和 fromCodePoint()：这两个方法是基于 Unicode 码点的概念来处理字符的
+    console.log(String.fromCodePoint(0xD83D, 0XDE0A));
+
+
+    console.log(message.codePointAt(2));
+    console.log(String.fromCodePoint(128522));
+
+    // 展开运算符 , 将字符串的每一个字符分别放到数组里面
+    console.log([...'ab😊de']);
+
+    // 这是分位3种编码方式
+    // 虽然他们输出是一样的 ,但是他们是互不相等的
+    console.log(String.fromCharCode(0x00c5));
+    console.log(String.fromCharCode(0x212b));
+    console.log(String.fromCharCode(0x0041, 0x030A));
+    console.log(String.fromCharCode(0x0041, 0x030A) === String.fromCharCode(0x212b));
+    console.log('====================');
+
+    // Unicode编码
+    /*     他其实是有四种编码方式
+        NFD（Normalization Form D - 分解规范化形式 ）
+        将原来的一个字符, 将他分开编码例如字符 “é”（U +00E9 ），在 NFD 形式下会被分解为 “e”（U +0065 ）和 “打不出来”（U +0301 ） 。
+
+        NFC（Normalization Form C - 合成规范化形式 ）
+        将原来的字符拆开, 拼起来 例如，将 “e” 和 “ 打不出来 ́” 组合成 “é” 。
+
+        NFKD（Normalization Form KD - 分解兼容规范化形式 ）
+        在 NFD 的基础上，进一步对一些兼容字符进行分解。它不仅分解复合字符，还会把一些在语义上等价但形式不同的字符，转换为更基本的形式。
+        例如，一些特殊的排版字符或旧体字符，会被转换为更常用的等价字符 。
+
+        NFKC（Normalization Form KC - 合成兼容规范化形式 ）
+        基于 NFC ，同时对兼容字符进行处理。它会先将字符组合成复合字符，然后再对一些兼容字符进行转换，使其成为更标准、更通用的形式 。
+        例如，将一些特殊的、具有兼容性差异的字符，转换为最常见的表示形式 。 */
+
+    // ** NFC（合成规范化形式）** 是最常用的
+
+    // 他的主要方法是将字符串规范化成这四种方式
+    // 他这种方式是保持文本的一致性
+    let a1 = String.fromCharCode(0x00c5),
+      a2 = String.fromCharCode(0x212b),
+      a3 = String.fromCharCode(0x0041, 0x030A)
+    console.log(a1 === a1.normalize('NFD'));//false
+    // 表示这串字符已经是NFC方式了
+    console.log(a1 === a1.normalize('NFC'));//true
+    console.log(a1 === a1.normalize('NFKD'));//false
+    // 表示这串字符已经是NFKC方式了
+    console.log(a1 === a1.normalize('NFKC'));//true
+
+
+    // 表示这串字符是未规范化的
+    console.log(a2 === a2.normalize('NFD'));//false
+    console.log(a2 === a2.normalize('NFC'));//FALSE
+    console.log(a2 === a2.normalize('NFKD'));//false
+    console.log(a2 === a2.normalize('NFKC'));//FALSE
+
+    console.log(a3 === a3.normalize('NFD'));//true
+    console.log(a3 === a3.normalize('NFC'));//FALSE
+    // 表示这串字符已经是NFKC方式了
+    console.log(a3 === a3.normalize('NFKD'));//true
+    console.log(a3 === a3.normalize('NFKC'));//FALSE
+
+    console.log(a1.normalize('NFD'));
+    console.log(a2.normalize('NFD'));
+    console.log(a1.normalize('NFD') === a2.normalize('NFD'));
+    console.log(a1.normalize('NFC') === a2.normalize('NFC'));
+    console.log(a1.normalize('NFKD') === a2.normalize('NFKD'));
+    console.log(a1.normalize('NFKC') === a2.normalize('NFKC'));
+
+
+
+  </script>
+</body>
+
+</html>

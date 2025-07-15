@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>函数作为值</h1>
+  <p>因为函数名在ECMAscript中就是变量 , 所以函数可以用在任何可以使用变量的地方 , 这意味着不仅仅可以把函数作为参数传给另一个函数 ,
+    还可以在一个函数中返回另一个函数</p>
+  <code>
+      <pre>
+          function callSomeFunction(someFunction, someArgument) {
+            return someFunction(someArgument)
+          }
+      </pre>
+    </code>
+  <p>这个函数接收两个参数第一个是函数 , 第二个传给函数的参数值 任何函数都可以像下面这样作为参数传递</p>
+  <code>
+      <pre>
+        function add10(num) {
+          return num + 10
+        }
+
+        let result = callSomeFunction(add10, 10)
+
+        console.log(result); 20
+
+        function getGreeting(name) {
+        return 'Hello: ' + name
+        }
+        
+        let result2 = callSomeFunction(getGreeting, 'Arrebol')
+        console.log(result2);
+      </pre>
+    </code>
+  <strong>要注意的是 如果是访问函数而不是调用括号 那必须不带括号 所以传给callSomeFunction() 的参数都是 add10 getGreeting ... 都是不加括号的 </strong>
+  <p>从一个函数返回另一个函数也是可以的 , 所以我们可以定义个sort的方法用来进行排序 来看看</p>
+  <code>
+    <pre>
+      function createComparisonFunction(propertyName) {
+        return function (Object1, Object2) {
+          let value1 = Object1[propertyName]
+          let value2 = Object2[propertyName]
+
+          if (value1 < value2) {
+            return -1
+          } else if (value1 > value2) {
+            return 1
+          } else {
+            return 0
+          }
+        };
+     }
+    </pre>
+  </code>
+  <p>这个函数看着复杂 但是实际就是函数返回另一个函数 , 而且前面不是写过了吗 , 这里就是配合sort使用</p>
+  <code>
+    <pre>
+       
+        function createComparisonFunction(propertyName) {
+          return function (Object1, Object2) {
+            let value1 = Object1[propertyName]
+            let value2 = Object2[propertyName]
+
+            if (value1 < value2) {
+              return -1
+            } else if (value1 > value2) {
+              return 1
+            } else {
+              return 0
+            }
+          };
+        }
+
+        let data = [
+          { name: 'Bob', age: 28 },
+          { name: 'Arrebol', age: 29 }
+        ]
+
+        data.sort(createComparisonFunction('name'))
+        console.log(data[0].name);
+
+        data.sort(createComparisonFunction('age'))
+        console.log(data[0].name);
+    </pre>
+  </code>
+  <p>在上面的代码中 , 一个数组有两个对象 , 如果只是使用sort()进行排序的话 是先对这两个对象执行toString() 然后再决定他们的顺序 ,但是这样得不到有意义的结果
+    <strong>而通过createComparisonFunction 来创建一个比较函数就 可以根据每个对象的name 或者是每个对象的 age 来进行比较</strong>
+  </p>
+  <script>
+    function callSomeFunction(someFunction, someArgument) {
+      return someFunction(someArgument)
+    }
+
+    function add10(num) {
+      return num + 10
+    }
+
+    let result = callSomeFunction(add10, 10)
+
+    console.log(result); 20
+
+    function getGreeting(name) {
+      return 'Hello: ' + name
+    }
+
+    let result2 = callSomeFunction(getGreeting, 'Arrebol')
+    console.log(result2);
+
+    console.log('======================== sort() ======================');
+
+    function createComparisonFunction(propertyName) {
+      return function (Object1, Object2) {
+        let value1 = Object1[propertyName]
+        let value2 = Object2[propertyName]
+
+        if (value1 < value2) {
+          return -1
+        } else if (value1 > value2) {
+          return 1
+        } else {
+          return 0
+        }
+      };
+    }
+
+    let data = [
+      { name: 'Bob', age: 28 },
+      { name: 'Arrebol', age: 29 }
+    ]
+
+    data.sort(createComparisonFunction('name'))
+    console.log(data[0].name);
+
+    data.sort(createComparisonFunction('age'))
+    console.log(data[0].name);
+
+
+  </script>
+</body>
+
+</html>

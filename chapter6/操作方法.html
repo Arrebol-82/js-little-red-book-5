@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>concat()</h1>
+  <p>他能接受任意参数,<strong>如果里面的元素</strong> 是数组就会将里面的一一打平,在添加新数组中 , <strong>如果非数组类型</strong>,会直接当数组元素添加数组中,不会被展开</p>
+  <p>会返回新数组,不会修改原数组</p>
+  <code>
+    <pre>
+      let colors = ['red', 'blue', 'greed']
+      let colors2 = colors.concat('yellow')
+      <strong>元素组不会修改</strong>
+      console.log(colors); //['red', 'blue', 'greed']
+      <strong>返回一个新的数组</strong>
+      console.log(colors2); //['red', 'blue', 'greed', 'yellow']
+    </pre>
+  </code>
+  <p>如果传入非数组参数,会将这个参数当作元素,一同添加到数组里面</p>
+  <code>
+    <pre>
+      let colo = colors.concat('yellow', ['pink', 'black'])
+      console.log(colo);  //['red', 'blue', 'greed', 'yellow', 'pink', 'black']
+    </pre>
+  </code>
+  <p>对于展开和不展开的区别</p>
+  <code>
+    <pre>
+      let go = ['red', 'blue', 'green']
+      let newColors = ['black', 'brown']
+      <strong>对于类数组默认是不展开的,所以[Symbol.isConcatSpreadable]设置为true</strong>
+      let moreNewColors = {
+      [Symbol.isConcatSpreadable]: true,
+      0: 'pink',
+      1: 'red',
+      length: 2
+      }
+      newColors[Symbol.isConcatSpreadable] = false;
+      let colors3 = go.concat('yellow', newColors)
+      console.log(colors3); // ['red', 'blue', 'green', 'yellow', Array(2)]
+      
+      <strong>将数组展开</strong> 
+      let colors4 = go.concat(moreNewColors)
+      console.log(colors4); //['red', 'blue', 'green', 'pink', 'red']
+      
+      console.log(go); //['red', 'blue', 'green']
+    </pre>
+  </code>
+
+  <h1>slice() 左闭右开 不会修改原数组</h1>
+  <p>只能用于数组 , 其他方法要是想用的话就可以使用<strong>of / from 转换为数组</strong></p>
+  <ul>
+    <li>如果只传入一个参数,就表示从当前的位置截取到末尾</li>
+    <li>如果是两个参数就表示从第一个截到第二个参数</li>
+    <li>如果里面的两个参数是负数的话,就会将<strong>原数组的长度加上负数</strong></li>
+  </ul>
+
+  <section>
+    <h1>splice() 是会直接修改原数组</h1>
+    <h2>返回值是删除掉的元素</h2>
+    <p>如果只传入一个参数就是从当前索引往后删</p>
+    <ul>
+      <li>第一个参数表示从哪个索引开始修改数组 , 如果是负数的话就表示从后往前找</li>
+      <li>第二个参数表示删除原数的数量 , 可以设置成0表示不删除</li>
+      <li>剩下的参数都是表示要插入的原数</li>
+    </ul>
+  </section>
+  <script>
+    let colors = ['red', 'blue', 'greed']
+    let colors2 = colors.concat('yellow')
+    console.log(colors);
+    console.log(colors2);
+
+    // 如果传入非数组参数, 会将这个参数当作元素, 一同添加到数组里面
+    let colo = colors.concat('yellow', ['pink', 'black'])
+    console.log(colo);//) ['red', 'blue', 'greed', 'yellow', 'pink', 'black']
+
+    let go = ['red', 'blue', 'green']
+    let newColors = ['black', 'brown']
+    let moreNewColors = {
+      [Symbol.isConcatSpreadable]: true,
+      0: 'pink',
+      1: 'red',
+      length: 2
+    }
+    newColors[Symbol.isConcatSpreadable] = false;
+    let colors3 = go.concat('yellow', newColors)
+    console.log(colors3); // ['red', 'blue', 'green', 'yellow', Array(2)]
+
+    // 将数组展开
+    let colors4 = go.concat(moreNewColors)
+    console.log(colors4); //['red', 'blue', 'green', 'pink', 'red']
+
+    console.log(go); //['red', 'blue', 'green']
+
+    console.log('slice ==============================================');
+    let a = ['red', 'blue', 'green', 'pink', 'black']
+    let a1 = a.slice(1)
+    console.log(a1);
+    let a2 = a.slice(1, 4)
+    console.log(a2);
+
+    let a3 = a.slice(-3, -1)
+    console.log(a3); //['green', 'pink']
+
+    console.log('splice() ==========================================');
+    let b = ['red', 'blue', 'green']
+    // let bv = b.splice(2)
+    // console.log(b);
+    // console.log(bv);
+
+
+    let bv = b.splice(0, 1)
+    console.log(bv);
+    console.log(b);
+
+    console.log('======================================================');
+
+    // 没有进行删除 , 插入了2个元素
+    bv = b.splice(1, 0, 'yellow', 'orange')
+    console.log(bv); //没返回值,因为没进行删除
+    console.log(b);
+
+    console.log('======================================================');
+    bv = b.splice(1, 1, 'red', 'purple')
+    console.log(bv);
+    console.log(b);
+
+  </script>
+</body>
+
+</html>

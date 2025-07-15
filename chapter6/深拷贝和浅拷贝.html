@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <h1>浅拷贝</h1>
+  <code>
+    <pre>
+      let obj1 = {
+      uname: '张三',
+      age: 21
+      }
+      
+      let obj2 = obj1
+      console.log(obj1); ////{uname: '张三', age: 21}
+      obj1.age = 18
+
+                   <strong>改obj1的age值 . 同时obj2的age也会一同修改因为赋值的是同一个的内存地址值</strong>
+
+      console.log(obj2); //{uname: '张三', age: 18}
+      console.log(obj1); //{uname: '张三', age: 18}  
+
+
+      let a = [1, 2, 3, [2, 3]];
+      let b = [...a];
+      a[2] = 0
+      a[3][1] = 8
+      
+      <h1>这里b[2]的索引,之所以不会被改变是因为b[2]是原始值 相对独立的 </h1>
+      <h2>详解: 进行浅拷贝本身就是进行 地址值 的复制 ,而引擎在检测到里面是原始值会开辟一个独立的空间把他们放进去 , 互不影响 而引用值就不是了就是直接放进去了</h2>
+      console.log(a);[1, 2, 0, [2,8]]
+      
+      console.log(b);[1, 2, 3, [2,8]]
+    </pre>
+  </code>
+  <p>像平时直接对象等于对象 , 都是浅拷贝 , 都是 <strong>直接赋值对象的地址值(内存的地址值)</strong></p>
+  <h1>深拷贝</h1>
+  <code>
+    <pre>
+      let obj = {
+      uname: 'age',
+      age: 15
+      }
+      <h3>就是将对象里面的所有方法和属性对象, 全部拷贝到指定的对象里面,同时他们的地址值也是不一样的</h3>
+      
+      <strong>递归 不过代码中存在一些格式问题，比如部分代码排版混乱，影响可读性 。</strong>
+      function deepCloneWithCycle(obj, visited = new WeakMap()) {
+      if (typeof obj !== "object" || obj === null) {
+      return obj;
+      }
+      if (visited.has(obj)) {
+      return visited.get(obj);
+      }
+      let copy;
+      if (Array.isArray(obj)) {
+      copy = [];
+      visited.set(obj, copy);
+      for (let i = 0; i < obj.length; i++) { 
+        copy[i]=deepCloneWithCycle(obj[i], visited); } } else { copy={}; visited.set(obj,
+        copy); for (let key in obj) { if (obj.hasOwnProperty(key)) 
+          { copy[key]=deepCloneWithCycle(obj[key], visited); } } }
+        return copy; 
+      } 
+        
+       <strong>使用JSON实现 不能处理特殊数据类型</strong>
+        function simpleDeepClone(obj) { return JSON.parse(JSON.stringify(obj)); } //
+        structuredClone() 
+
+
+        <strong>API使用结构化克隆算法来实现深拷贝 但是存在兼容性问题</strong>
+        function deepCloneByStructuredClone(obj) { return structuredClone(obj); }
+    </pre>
+  </code>
+  <p>是将对象里面的所有方法和属性对象, 全部拷贝到指定的对象里面,同时他们的地址值也是不一样的</p>
+  <script>
+    let obj1 = {
+      uname: '张三',
+      age: 21
+    }
+
+    let obj2 = obj1
+    console.log(obj1); ////{uname: '张三', age: 21}
+    obj1.age = 18
+    console.log(obj2); //{uname: '张三', age: 18}
+    console.log(obj1); //{uname: '张三', age: 18}
+
+    let obj = {
+      uname: 'age',
+      age: 15
+    }
+    // 就是将对象里面的所有方法和属性对象, 全部拷贝到指定的对象里面,同时他们的地址值也是不一样的
+
+    // 递归
+    function deepCloneWithCycle(obj, visited = new WeakMap()) {
+      if (typeof obj !== "object" || obj === null) {
+        return obj;
+      }
+      if (visited.has(obj)) {
+        return visited.get(obj);
+      }
+      let copy;
+      if (Array.isArray(obj)) {
+        copy = [];
+        visited.set(obj, copy);
+        for (let i = 0; i < obj.length; i++) {
+          copy[i] = deepCloneWithCycle(obj[i], visited);
+        }
+      } else {
+        copy = {};
+        visited.set(obj, copy);
+        for (let key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            copy[key] = deepCloneWithCycle(obj[key], visited);
+          }
+        }
+      }
+      return copy;
+    }
+
+
+    // 使用JSON实现
+    function simpleDeepClone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    // structuredClone() API使用结构化克隆算法来实现深拷贝 但是存在兼容性问题
+    function deepCloneByStructuredClone(obj) {
+      return structuredClone(obj);
+    }
+  </script>
+</body>
+
+</html>

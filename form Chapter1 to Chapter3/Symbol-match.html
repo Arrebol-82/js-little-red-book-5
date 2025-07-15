@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    class FooMatcher {
+      // 因为这里定义的是static方法 静态 , 所不需要实例
+      static [Symbol.match](target) {
+        return target.includes('foo')
+      }
+    }
+
+    console.log('foobar'.match(FooMatcher));
+    console.log('barzer'.match(FooMatcher));
+    console.log('barzer'.match('r'));
+
+
+    class StringMatcher {
+      constructor(str) {
+        this.str = str
+      }
+
+      [Symbol.match](target) {
+        return target.includes(this.str)
+      }
+    }
+
+    console.log('foobar'.match(new StringMatcher('foo')));
+    console.log('foobar'.match(new StringMatcher('qux')));
+
+
+  </script>
+</body>
+
+</html>

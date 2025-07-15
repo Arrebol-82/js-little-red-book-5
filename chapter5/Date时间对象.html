@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    console.log(new Date().toLocaleString());
+    console.log(new Date().toString());
+    // Date.parse 他是专门用于转换里面的字符为时间的
+    console.log(new Date(Date.parse('May 23, 2020')));
+
+    console.log(new Date('May 23, 2019'));
+    console.log(new Date(Date.UTC(2000, 0)));
+    // 他是使用年月日时间分秒
+    // 但是要注意 月是从0开始算的 , 所以0表示1月 谁让他是外国人发明的呢
+    console.log(new Date(2025, 4, 5, 17, 55, 55));
+
+    function doSomething() {
+      console.log('==================');
+    }
+
+    let start = Date.now()
+
+    doSomething()
+    // 获取当前的时间
+    let end = Date.now()
+    console.log(end - start);
+
+
+    // 在被Date的重写下valueOf()返回的不再是字符串 , 返回的是日期的毫秒表示 所以他才用于比较日期先后
+
+    // 比较的是日期的毫秒数 按照日期先后顺序比较
+    let date1 = new Date(1992, 2, 1)
+    let date2 = new Date(1992, 2, 2)
+    console.log(date1 > date2); //false
+    console.log(date1 < date2); //true
+
+
+
+
+    // 日期格式化方法
+    // 四个
+    console.log(new Date().toDateString()); //周几 月 日 年
+    console.log(new Date().toLocaleDateString()); //简写形式
+    console.log(new Date().toTimeString()); //时 分 秒 时区
+    console.log(new Date().toLocaleTimeString()); //简写形式
+    console.log(new Date().toUTCString()); //显示完整的UTC日期
+
+  </script>
+</body>
+
+</html>

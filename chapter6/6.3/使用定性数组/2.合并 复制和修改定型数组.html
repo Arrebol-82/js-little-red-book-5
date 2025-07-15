@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>合并 复制和修改定型数组 这些都是定型数组特有的</h1>
+  <section>
+
+    <h2>set() 合并 :数据复制到目标数组的指定位置，修改目标数组不会影响源数组</h2>
+    <ul>
+      <li>进行合并数组</li>
+      <li>第一个元素表示合并元素</li>
+      <li>第二个元素表示合并位置</li>
+      <li><strong>他是不会自动扩容的</strong></li>
+    </ul>
+    <code>
+          <pre>
+            const container = new Int16Array(8)
+            // 设置前四位的值
+            container.set(Int8Array.of(1, 2, 3, 4))
+            console.log(container);
+            container.set([5, 6, 7, 8], 4)
+            console.log(container);
+            
+            // 溢出了是会报错的
+            // container.set([5, 6, 7, 8], 7)
+            
+            const arr1 = new Int32Array([1, 2]);
+            const arr2 = new Int32Array([3, 4]);
+            const arr3 = new Int32Array([5, 6]);
+            
+            const merged = new Int32Array(arr1.length + arr2.length + arr3.length);
+            merged.set(arr1); // 先复制arr1
+            // arr1.length表示在arr的结尾继续添加,而不是覆盖他
+            merged.set(arr2, arr1.length); // 接着复制arr2
+            merged.set(arr3, arr1.length + arr2.length); // 最后复制arr3
+            
+            console.log(merged); // [1, 2, 3, 4, 5,6]
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>subarray() 复制 :它复制的是地址值（内存引用），而非实际数据</h2>
+    <p>主要是基于原数组进行复制</p>
+    <ul>
+      <li>第一个参数表示复制<strong>起始</strong> 位置 (如果不设置第二个值,那就是直接复制完整个数组)</li>
+      <li>第二个参数表示复制<strong>结束</strong> 位置</li>
+    </ul>
+  </section>
+  <script>
+    const container = new Int16Array(8)
+    // 设置前四位的值
+    container.set(Int8Array.of(1, 2, 3, 4))
+    console.log(container);
+    container.set([5, 6, 7, 8], 4)
+    console.log(container);
+
+    // 溢出了是会报错的
+    // container.set([5, 6, 7, 8], 7)
+
+    const arr1 = new Int32Array([1, 2]);
+    const arr2 = new Int32Array([3, 4]);
+    const arr3 = new Int32Array([5, 6]);
+
+    const merged = new Int32Array(arr1.length + arr2.length + arr3.length);
+    merged.set(arr1); // 先复制arr1
+    // arr1.length表示在arr的结尾继续添加,而不是覆盖他
+    merged.set(arr2, arr1.length); // 接着复制arr2
+    merged.set(arr3, arr1.length + arr2.length); // 最后复制arr3
+
+    console.log(merged); // [1, 2, 3, 4, 5, 6]  
+
+    console.log('======== subarray =========');
+    const source = Int16Array.of(2, 4, 6, 8)
+
+    // 复制到fullcode
+    const fullcode = source.subarray()
+    console.log(fullcode);
+
+    //指定复制的位置 表示从索引2位置开始复制
+    const code = source.subarray(2)
+    console.log(code);
+
+    //指定复制的起始位置 后结束位置
+    const partialcode = source.subarray(1, 3)
+    console.log(partialcode);
+
+    console.log('======== 使用定性数组的AIP工具 =========');
+
+    function typeArrayConcat(typeArrayConstructor, ...typedArrays) {
+      // 坑点
+
+      /*  如果像是要连续添加3个同样的数组, 在第一次添加的时候没有问题, 当第一个和第二个数组相加之后x的值已经是相加完之后的值, 
+      此时的x已经没有length, 是返回undefined了, 所以使用 || 就可以保留相加的值, 与后面的数组长度继续相加 */
+
+      // 单行箭头函数：(a, b) => a + b 自动返回表达式结果。
+      // 多行箭头函数：(a, b) => { return a + b; } 必须显式 return。
+
+
+      // 拿到数组的总长
+      // const numElements = typedArrays.reduce((x, y) => (x.length || x) + y.length)
+      const numElements = typedArrays.reduce((sum, arr) => sum + arr.length, 0);
+
+      // 创建定型数组(并指定字节总长)
+      const resultArray = new typeArrayConstructor(numElements)
+
+
+      let currentOffset = 0
+      // typedArrays.map(x => {
+      //   resultArray.set(x, currentOffset)
+      //   currentOffset += x.length
+      // });
+      typedArrays.forEach(x => {
+        resultArray.set(x, currentOffset)
+        currentOffset += x.length
+      });
+
+      return resultArray;
+    }
+
+    const concatArryay = typeArrayConcat(Int32Array,
+      Int8Array.of(1, 2, 3),
+      Int16Array.of(4, 5, 6),
+      Float32Array.of(7, 8, 9))
+
+    console.log(concatArryay);
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+    <h1>理解原型</h1>
+    <p class="black">原型是JavaScript实现继承和共享机制的核心模型</p>
+    <h2>核心组件</h2>
+    <ul>
+        <li>prototype 指向原型对象</li>
+        <li>constructor 指向构造函数/函数</li>
+        <li>__proto__<strong>([[prototype]])</strong> 指向构造函数的原型对象(每个对象都有) 叫__proto__就是因为好记,但是不是在内部是[[prototype]]</li>
+    </ul>
+    <h2>核心三大特性</h2>
+    <ul>
+        <li class="circle">共享性：原型上的方法和属性被所有实例共享</li>
+
+        <li class="circle">动态性：修改原型立即影响所有已存在实例</li>
+
+        <li class="circle"> 链式查找：访问属性时沿原型链向上查找</li>
+    </ul>
+
+    <section>
+        <h2>例子: </h2>
+        <ul>
+            <li>只要创建了一个函数 ，就会按照特定的规则，为这个函数创建一个prototype 属性 <strong>（指向原型对象）</strong></li>
+            <li>默认情况下 ， 所有的原型对象自动获得 constructor 的属性 ， 指回与之关联的构造函数 <strong>（指回构造函数）</strong></li>
+            <li>正如: Person.Prototype.constructor === Person // true <strong>指回原来的函数</strong>
+                <i>然后,因构造函数而异,可能后续会添加其他属性或者方法</i>
+            </li>
+
+            <li>
+                <p>看图捋一捋</p>
+                <img src="./Snipaste_2025-06-23_20-02-05.png" alt="" width="1000px">
+            </li>
+            <li>
+                <h3>看以下的代码</h3>
+                <code>
+                            <pre>
+                                function a() {
+            
+                                }   
+                            
+                                // a.prototype = {
+                                //   constructor: a(指回原来的函数)
+                                // }
+                            
+                                console.log(a);
+                                console.log(a.prototype);
+                                console.dir(a);
+                            </pre>
+                        </code>
+                <h2 class="pink">这个Prototype是在函数外部定义,他是函数的属性 , 但是不是在函数内部定义的, 他是 函数.Prototype = 原型对象地址值 这样的 , 而为什么log( a
+                    ) 和 log (a.Prototype ) 不一样就是因为一个是函数一个是对象</h2>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <strong class="skyblue">在定义构造函数时 , 原型对象默认只会获得 constructor 属性, 其他的所有方法都是继承自Object (所以就是为什么最终的原型是Object) ,
+            每次调用构造函数的时候都会创建一个新实列 , 新实例都会有一个指针指向构造函数的原型对象 , 这个指针就是[[Prototype]] ,但是[[Prototype]]是不可访问的特性
+            所以在现代浏览器会在每一个对象上添加一个__proto__属性 , 通过这个属性可以访问对象的原型 , <i class="pink">关键的是: 实例与构造函数的原型对象有直接联系 ,
+                而实例与构造函数是没有直接关系的</i>
+        </strong>
+        <section>
+            <h2>实例对象 , 每一个实例对象都是有一个 [[Prototype]] 属性 , 他是表示继的构造函数的原型对象是谁 , 但是他是不可访问的 , 所以现在的浏览器给每个对象添加了__Proto__ 属性
+                用于更改构造函数的原型对像 ,
+                他是定义在外面的相当于 对象.__proto__ 属性 = 构造函数的原型对象 , 为什么是构造函数的原型对象 , 因为js的构造函数和原型是相分离的 , <i>再次指向构造函数的话</i>
+            </h2>
+            <ul>
+                <li> 没有意义 ,因为构造函数使用来初始化对象 ,在次指向构造函数,没有用 </li>
+                <li> 构造函数用于初始化 , 而他的原型对象才是用来共享方法和属性的 还损损失了原型链这个特性</li>
+            </ul>
+        </section>
+        <h2>四个重要的属性</h2>
+        <ul>
+            <li class="circle">每个对象都有 [[Prototype]] 这属性表示继承的哪个对象的属性和发法</li>
+            <li class="circle">prototype: 里面存放的是原型对象的地址值 <strong>函数的Prototype属性是函数独有的</strong></li>
+            <li class="circle">constructor: 里面存放的是构造函数的地址值
+                <strong>原型对象上的constructor是自有属性，而其他对象的constructor是继承Function来的</strong>
+            </li>
+            <li class="circle">[[prototype]]: 里面存放的是指向改对象的原型对象的地址值 <strong>实例对象里面的__proto__也不是实例对象自己的
+                    ,而是继承于Object访问器的</strong></li>
+            <li class="circle">__proto__: 里面存放的是构造函数的原型对象 <i>在所有对象上都是继承属性（来自 Object.prototype）</i> <strong>__proto__ 等于
+                    [[Prototype]] 因为调用 __proto__
+                    就是调用[[Prototype]] 因为[[Prototype]]是不可访问的,所以浏览器暴露了 __proto__方法 相当于就是 a.__prot__ ===
+                    a.[[Prototypre]]</strong></li>
+            <li class="circle"><strong>总结就是:</strong> 所以就是constructor 和 __proto__ 都是继承的 , 不像Prototype那样是自己独有的 。</li>
+        </ul>
+        <img src="./Snipaste_2025-06-24_13-45-30.png" alt="" width="1100px">
+    </section>
+    <section>
+        <h2>配上代码来食用吧</h2>
+        <code style="font-size: 16px; font-weight: 700;">
+            <pre>
+                ——————————————————————————————————————————————————————————————————————————————————
+                              概念                                                                     代码片段
+                --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                    构造函数声明于函数表达式                                function Person() { } //这两个选一个就可以了 , 都是一样的
+                                                                          let Person = function () { }
+                    构造函数的prototype对象
+                                                                          console.log(typeof Person.prototype); //object
+                                                                          console.log(Person.prototype);
+                                                                           /* {
+                                                                                    constructor: f Person() 指向Person自身
+                                                                                    [[prototype]]: Object 内部指向Object.prototype         
+                                                                              } */
+
+                  
+                  
+                  
+                    构造函数与prototype对象间的                             console.log(Person.prototype.constructor === Person); // true constructor 指回创建的函数
+                    循环引用                                                      
+                    原型链终止于Object的原型                                console.log(Person.prototype.__proto__ === Object.prototype); // true
+                                                                          
+                                                                          console.log(Person.prototype.__proto__.constructor === Object); // true
+                                                                          
+                                                                          console.log(Person.prototype.__proto__.__proto__ === null);
+                                                                          //true 因为所以对象都是继承Object,所以他是最高的 , 在往上找继承构造函数的原型对象,没有了就返回null
+                                                                          
+                                                                          console.log(Person.prototype.__proto__); //打印Object的原型对象
+                                                                          /* {
+                                                                              __defineGetter__:
+                                                                              ƒ, __defineSetter__:
+                                                                              ƒ, hasOwnProperty:
+                                                                              ƒ, __lookupGetter__:
+                                                                              ƒ, __lookupSetter__:
+                                                                              ƒ, …          
+                                                                          } */                  
+                  
+                    创建构造函数的实例                                      let person1 = new Person,                        
+                                                                          person2 = new Person
+
+                    区分对象实例,构造函数实例,以及                          console.log(person1 != person2); //true 都不是同一个地址值,是独立的两个对象
+                    prototype对象                                                          
+                                                                          console.log(person1 != Person.prototype); //true p1是独立对象 , Person.prototype是构造函数的原型对象
+
+                                                                          console.log(Person.prototype !== Person); //true 肯定啊一个是原型对象 一个是函数 地址值都不一样
+                                                
+                    实例constuctor 和 prototype                            console.log(person1.__proto__ === Person.prototype); // true 都是指向Person的原型对象
+                    的关系                                                      
+                                                                          console.log(person1.__proto__.constructor === Person); //true 原型对象里面的constructor指回函数
+                                                
+                    实例共享同一个prototype                                console.log(person1.__proto__ === person2.__proto__); //true 都是同一个函数创建的原型对象自然也一样
+                                                
+                    使用instanceof 操作符                                  console.log(person1 instanceof Person); //Person的原型对像,出现在了person1的原型链身上,不然__proto__就没用了
+                                                
+                                                                          console.log(person1 instanceof Object); //Object是所以引用值继承的最终的对象 ,只要你是引用值,就一定有
+                                                
+                                                                          console.log(Person.prototype instanceof Object); //也是一样的即使你是原型对象 , 你的原型链还是有Object的
+                    ——————————————————————————————————————————————————————————————————————————————————                                                    
+            </pre>
+        </code>
+        <ul>
+            <li>
+                <strong>解释点 1</strong>
+                <code>
+                    <pre>
+                        function Person() { }
+
+                         let Person = function () { }                    
+                    </pre>
+                </code>
+                <h3 class="skyblue">这两个选一个就可以了 , 都是一样的 都是创建函数, 没什么区别</h3>
+            </li>
+            <li>
+                <strong>解释点 2</strong>
+                <code>
+                    <pre>
+                        {
+                            constructor: f Person() 指向Person自身
+                            __proto__:  
+                        }
+                        和
+                        {
+                            constructor: f Person() 指向Person自身
+                            [[prototype]]: Object 内部指向Object.prototype  
+                        }
+                    </pre>
+                </code>
+                <p class="pink">书里的是想让那些不追求细节的开发者 ,快速看懂 , 但是准确的应该是[[prototype]] 因为控制塔也是这么输出的
+                    第二点是因为每个对象都是有[[prototype]]属性的,指向继承的父对象</p>
+                <strong>
+                    __proto__ : 最终还是-> [[set]] ->会内部调用[[prototype]]这个内部属性 , 然后从[[prototype]]在修改继承的对象
+                </strong>
+            </li>
+            <li>
+                <h2>配合书上的图片看</h2>
+                <img src="./Snipaste_2025-06-25_9-06-26.png" alt="">
+                <p>展示了Person构造函数，Person, Person的原型对象 和 Person 现在有两个实例之间的关系 ， 主要Perosn.prototype指向原型对象，
+                    而Person.prototype.constructor指回 Person 构造函数（ 函数 ）。原型对象包含 constructor 属性和其他后来添加的属性 。 person1 和
+                    person2
+                    都有一个内部属性 [[prototype]] 指回Person.prototype , 而且两者都与构造函数没有直接联系。另外要注意的是
+                    ，虽然这两个实例都没有属性和方法，但person1。sayName() 可以
+                    正常调用，这是由于对象查找机制机制的原因
+                </p>
+                <h4>虽然不是所有实列都[[Prototype]] , 但可以使用isPrototyperOf()方法确定两个对象之间的这种关系。本质上.isPrototypeOf()
+                    会在传入参数的[[Prototype]]指向调用它的对象时返回true</h5>
+                    <ul>
+                        <li class="ciecle">
+                            <code>
+                                <pre>
+                                    console.log(Person.prototype.isPrototypeOf(person1)); //true 基于Person构造函数创建的 那么他的原型链肯定也是在他身上的
+                                    console.log(Person.prototype.isPrototypeOf(person2)); //true 基于Person构造函数创建的 那么他的原型链肯定也是在他身上的
+                                </pre>
+                            </code>
+                            <p>这里通过原型对象调用isPrototypeOf()方法检查了person1 和 person2 ，因为这两个列子内部都有链接指向Person.prototype
+                                ,所以结果都返回true</p>
+                        </li>
+                        <li class="circle">isPrototyperOf() 是用于直接检测原型是否出现再检测对象的原型链上
+                            <i>不依赖构造函数</i>
+                            <strong>已知原型对象，判断是否是某实例的祖先（推荐用 isPrototypeOf）</strong>
+                        </li>
+                        <li class="circle">instanceof 用于检测是否在构造函数的原型对象是否出现在检测对象的原型链上
+                            <i>调用构造函数的原型对象</i>
+                            <strong>判断对象是否由某个构造函数创建（推荐用 instanceof）</strong>
+                        </li>
+                    </ul>
+            </li>
+            <li>
+                <h2>ECMAscript的Object 类型有一个方法叫 Object.getPrototypeOf() , 返回参数的内部特性[[Pertotype]]的值</h2>
+                <p>Object.getPrototypeOf() 是 JavaScript 中专门用于获取对象的 [[Prototype]] 内部属性的标准方法，它返回的就是对象实际继承的原型对象。</p>
+                <code>
+                    <pre>
+                        例如： 
+
+                        function Person() { 
+                            Person.prototype.name = 'Arrebol'
+                        }  
+                        
+                        console.log(Object.getPrototypeOf(person1) === Person.prototype); // true person1实例对象的[[prototype]] 是指向构造函数的原型对象 
+                        console.log(Object.getPrototypeOf(person1).name); // Arrebol
+                    </pre>
+                </code>
+                <p>第一行代码简单确认了 Object.getPrototypeOf() 返回的对象就是传入对象的原型对象。第二行代码使用Object.getPrototypeOf()可以很方便的取得一个对象的原型
+                    <strong>而在这里通过原型实现继承时显得尤为重要 </strong>
+                </p>
+            </li>
+            <li>
+                <h2>Object类型 还有一个 setPrototypeOf() 可以向实例的私有特性[[Prototype]] 写入一个新值。<i>这样就可以重写一个对象的原型继承关系</i></h2>
+                <code>
+                    <pre>
+                        let biped = {
+                            numLeges: 2
+                        }
+                        let person = {
+                            name: 'Matt'
+                        }
+                    
+                        Object.setPrototypeOf(person, biped)  //person 继承对象为biped
+                    
+                        console.log(person.name);    // 自己的属性肯定能访问
+                        console.log(person.numLeges); // 父对象的属性,因为继承了 ,也能访问
+                        console.log(Object.getPrototypeOf(person) === biped); // 继承的是biped 所以是相等的
+                    </pre>
+                </code>
+                <p>介绍一下 setPrototypeOf() 将person的[[prototype]]指向biped 修改了继承对象 , 第一个值的继承对像 , 会被改为第二个值,</p>
+                <p class="black">Object.setPrototypeOf() 可能会严重影响代码的性能 , 因为修改继承关系是微妙且深远的 ,
+                    因为会涉及那些会访问[[prototype]]的代码影响是很大的 ,<i> 所以接下来要讲Object.create()</i>
+                </p>
+            </li>
+            <li>
+                <h2>Object.create()</h2>
+                <strong>Object.create()基于指定的继承对象,然后创建一个新的</strong>
+                <code>
+                    <pre>
+                        console.log('==================================== Object.create ==========================================');
+                        let Biped = {
+                            numLeges: 8
+                        }
+                        let per = Object.create(Biped)
+                        per.name = 'Arrebol'
+                        console.log(per);
+                        console.log(per.name); // Arrebol
+                        console.log(per.numLeges); // 8
+                        console.log(Object.getPrototypeOf(per) === Biped); //true                    
+                    </pre>                    
+                </code>
+                <p>基于Biped为继承对象 , 创建了一个per的对象 , 所以可以使用Biped里面的属性和方法</p>
+            </li>
+        </ul>
+    </section>
+</body>
+<script>
+    function a() {
+
+    }
+
+    // a.prototype = {
+    //   constructor: a(指回原来的函数)
+    // }
+
+    console.log(a);
+    console.log(a.prototype);
+    console.dir(a);
+
+    class ClassRoom { }
+    console.log(ClassRoom.prototype.constructor === ClassRoom); // true
+
+    console.log('************************************* 配上代码来食用吧 ********************************');
+    function Person() {
+        Person.prototype.name = 'Arrebol'
+    } //这两个选一个就可以了 , 都是一样的
+    // let Person = function () { }
+
+    console.log(typeof Person.prototype); //object
+    console.log(Person.prototype);
+    /* {
+        constructor: f Person() 指向Person自身
+        [[prototype]]: Object 内部指向Object.prototype  
+    } */
+
+    console.log(Person.prototype.constructor === Person); // true constructor 指回创建的函数
+
+    console.log(Person.prototype.__proto__ === Object.prototype); // true
+
+    console.log(Person.prototype.__proto__.constructor === Object); // true
+
+    console.log(Person.prototype.__proto__.__proto__ === null);
+    //true 因为所以对象都是继承Object,所以他是最高的 , 在往上找继承构造函数的原型对象,没有了就返回null
+
+    console.log(Person.prototype.__proto__); //打印Object的原型对象
+    /*  {
+         __defineGetter__:
+         ƒ, __defineSetter__:
+         ƒ, hasOwnProperty:
+         ƒ, __lookupGetter__:
+         ƒ, __lookupSetter__:
+         ƒ, …
+     } */
+
+    let person1 = new Person,
+        person2 = new Person
+
+    console.log(person1 != person2); //true 都不是同一个地址值,是独立的两个对象
+
+    console.log(person1 != Person.prototype); //true p1是独立对象 , Person.prototype是构造函数的原型对象
+
+    console.log(Person.prototype !== Person); //true 肯定啊一个是原型对象 一个是函数 地址值都不一样
+
+    console.log(person1.__proto__ === Person.prototype); // true 都是指向Person的原型对象
+
+    console.log(person1.__proto__.constructor === Person); //true 原型对象里面的constructor指回函数
+
+    console.log(person1.__proto__ === person2.__proto__); //true 都是同一个函数创建的原型对象自然也一样
+
+    console.log(person1 instanceof Person); //Person的原型对像,出现在了person1的原型链身上,不然__proto__就没用了
+
+    console.log(person1 instanceof Object); //Object是所以引用值继承的最终的对象 ,只要你是引用值,就一定有
+
+    console.log(Person.prototype instanceof Object); //也是一样的即使你是原型对象 , 你的原型链还是有Object的
+
+    console.log('=============================== isPrototyperof ==============================');
+    console.log(Person.prototype.isPrototypeOf(person1)); //true 基于Person构造函数创建的 那么他的原型链肯定也是在他身上的
+    console.log(Person.prototype.isPrototypeOf(person2)); //true 基于Person构造函数创建的 那么他的原型链肯定也是在他身上的
+
+    console.log('============================== Object.Prototype() =================================');
+    console.log(Object.getPrototypeOf(person1) === Person.prototype); // true person1实例对象的[[prototype]] 是指向构造函数的原型对象 
+    console.log(Object.getPrototypeOf(person1).name); // Arrebol
+
+    console.log('============================== Object.setPrototype() ======================================');
+    let biped = {
+        numLeges: 2
+    }
+    let person = {
+        name: 'Matt'
+    }
+
+    Object.setPrototypeOf(person, biped)
+
+    console.log(person.name);
+    console.log(person.numLeges);
+    console.log(Object.getPrototypeOf(person) === biped);
+    console.log('==================================== Object.create ==========================================');
+    let Biped = {
+        numLeges: 8
+    }
+    let per = Object.create(Biped)
+    per.name = 'Arrebol'
+    console.log(per);
+    console.log(per.name); // Arrebol
+    console.log(per.numLeges); // 8
+    console.log(Object.getPrototypeOf(per) === Biped); //true
+
+
+
+
+</script>
+
+</html>

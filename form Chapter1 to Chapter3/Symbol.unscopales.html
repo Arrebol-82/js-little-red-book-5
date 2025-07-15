@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 它是关联到作用域链的 , 所以不推荐使用
+    let o = { foo: 'bar' }
+    /* with 语句他会把这个属性添加到作用域链的顶端 , 这样直接修改作用域链 
+    使代码的可读性,会变得很差 */
+    with (o) {
+      console.log(foo);
+    }
+
+    o[Symbol.unscopables] = {
+      foo: true
+    }
+    with (o) {
+      console.log(foo);
+    }
+
+  </script>
+</body>
+
+</html>

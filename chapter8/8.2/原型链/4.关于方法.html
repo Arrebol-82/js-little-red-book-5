@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>关于方法</h1>
+  <p>子类有时候需要覆盖父类的方法 , 或者增加父类没有的方法, 为此这些方法必须在原型赋值之后再添加到原型上:</p>
+  <h2>后面在 subType实列上调用 getsuperValue()时调用的是这个方法。而SuperType
+    的实例仍然会调用最初的方法。重点在于上述两个方法都是在把原型赋值为superrype的实例之后定义的。然后不应该是调用最新被覆盖的那个吗 , 旧的那个已经被覆盖了呀 , 为什么还要调用旧的
+  </h2>
+  <cod class="code">
+    <pre>
+      function SuperType() {
+        this.property = true
+      }
+  
+      SuperType.prototype.getSuperValue = function () {
+        return this.property
+      }
+  
+      function SubType() {
+        this.subproperty = false
+      }
+  
+      // 继承 SuperType
+      SubType.prototype = new SuperType()
+  
+      // 添加新方法
+      SubType.prototype.getSubValue = function () {
+        return this.subproperty
+      }
+  
+      // 覆盖已有的方法
+      SubType.prototype.getSuperValue = function () {
+        return false
+      }
+  
+  
+      let item = new SubType()
+      console.log(item.getSuperValue());  //false
+  
+      let item2 = new SuperType()
+      console.log(item2.getSuperValue());  //true
+    </pre>
+  </cod>
+  <strong>书上之所以这么说就是因为继承 , 子元素继承了父元素的方法 , 后面的覆盖方法也是在子元素上的原型方法 , 跟父元素没有关系的 , 所以才是调用父元素还是用旧方法</strong>
+  <script>
+    function SuperType() {
+      this.property = true
+    }
+
+    SuperType.prototype.getSuperValue = function () {
+      return this.property
+    }
+
+    function SubType() {
+      this.subproperty = false
+    }
+
+    // 继承 SuperType
+    SubType.prototype = new SuperType()
+
+    // 添加新方法
+    SubType.prototype.getSubValue = function () {
+      return this.subproperty
+    }
+
+    // 覆盖已有的方法
+    SubType.prototype.getSuperValue = function () {
+      return false
+    }
+
+
+    let item = new SubType()
+    console.log(item.getSuperValue());  //false
+
+    let item2 = new SuperType()
+    console.log(item2.getSuperValue());  //true
+
+
+  </script>
+</body>
+
+</html>

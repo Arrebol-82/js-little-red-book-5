@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>合并对象 (Object.assign())</h1>
+    <p>合并对象就是把源对象所有的本地属性一起复制到目标对象上，而在遇到冲突时源对象的属性优先</p>
+    <ul>
+        <li>总结就会直接修改目标对象，但是后面的源对象会覆盖前面同属性的源对象</li>
+        <li>他还是浅复制</li>
+        <li>不可枚举属性不复制(Object.propertyisEnumerable()) 为fasle</li>
+        <li>原型属性不复制(obj.hasOwnProperty()) 为false</li>
+        <li>用[[get]] 在源对象上取值 , 然后用[[set]] 在目标对象上写值</li>
+        <li>原始值包装为对象 null undefined会忽略</li>
+        <li>Object.assign他是会执行里面的set()方法和get()方法的</li>
+    </ul>
+    <code>
+        <pre>
+            dest = {
+                set a(val) {
+                    console.log(`Invoked dest setter with param ${val}`);
+                }
+            }
+            src = {
+                get a() {
+                    console.log('Invoked src getter');
+                    return 'foo'
+                }
+            }
+    
+            Object.assign(dest, src)
+            console.log(dest);
+            console.log(src);
+            值已经复制过去了
+            console.log('a' in dest); // 输出：true（证明 a 属性存在）
+        </pre>
+    </code>
+    <strong class="pink">总结 : 就是assign的执行流程是先get拿到值然后在set 把值放进到目标对象 ,
+        所以这里才会要先src 在dest , 就是因为assign的执行流程 , 如果反过来了,那就拿不到值了 , 还有就是 assign 复制的只能是 '
+        值 ' , 不是流程代码</strong>
+
+    <h2>获取函数与设置函数</h2>
+    <ul>
+        <li class="circle">知识点挺多的,坐稳了</li>
+        <li>
+            <p>先看代码</p>
+            <code>
+                <pre>
+                    dest = {
+                        set a(val) {
+                            console.log(`Invoked dest setter with param ${val}`);
+                        },
+            
+                    }
+                    src = {
+                        get a() {
+                            console.log('Invoked src getter');
+                            return 'foo'
+                        }
+                    }            
+                </pre>
+            </code>
+        </li>
+        <li>这里的get和 set 是俩关键字 , 用于定义在函数前面,表示这是[[getter]] 或者 [[setter]]</li>
+        <li>我懂了其实就是引擎会将对象里面的所有的属性名a 给提取出来 变成一个存储了所以对象的属性a 方便查找
+            , 这就是为什么object的查找速度要快与Map , 哎 跟前面的知识对应上了 , 这好像也是 Object
+            厉害过 Map的优势之一了</li>
+        <li>所以说这里的值没有传递 ,是值没有地方接收 , 所以才会值并没有复制过来,但是不影响a属性
+            而说他们的属性不会删除,指的是 最大的属性a , 就是指向每个对象里面的 属性a</li>
+    </ul>
+
+    <h3>下一个阶段</h3>
+    <ul>
+        <li>Object.assign() 对每个源对象都是浅复制</li>
+        <li>如果多个源对象都有相同的属性的话 , 就取最一个</li>
+        <li>从源对象里面的访问器获得的只能是<strong>值</strong>, 不是函数的他们的函数过程 </li>
+    </ul>
+    <ul>
+        <li class="circle">如果赋值期间出错了, 就会终止退出,同时抛出错误 , Object.assign()没有 '回滚'之前赋值的概念, 因为他是尽力而为的方法()</li>
+    </ul>
+    <script>
+
+        console.log('=============== 简单复制 =================');
+
+        let dest, src, result;
+        dest = {}
+        src = { id: 'src' }
+        result = Object.assign(dest, src)
+        console.log(dest === result); //true
+        console.log(dest !== src);    //true
+        console.log(result);          // {id:src}
+        console.log(dest);            // {id:src}
+
+        console.log('=============== 多个源对象 ===============');
+        const date = {}
+        Object.assign(date, { a: 'foo' }, { b: 'bar' })
+        console.log(date);
+
+        console.log('=============== 获取函数与设置函数 ================');
+        dest = {
+            set a(val) {
+                console.log(`Invoked dest setter with param ${val}`);
+            },
+
+        }
+        src = {
+            get a() {
+                console.log('Invoked src getter');
+                return 'foo'
+            }
+        }
+
+        Object.assign(dest, src)
+        console.log(dest);
+        console.log(src);
+        console.log('a' in dest); // 输出：true（证明 a 属性存在）
+        console.log(Object.getOwnPropertyDescriptor(dest, 'a'));
+        console.log(Object.keys(dest));
+
+        console.log('======================== 覆盖属性 =====================');
+        let de, sr, re
+        de = { id: 'dest' }
+        console.log(Object.assign(de, { id: '2', a: 'foo' }, { id: '3', b: 'bar' }));
+        dest = {
+            set id(x) {
+                console.log(x);
+            }
+        }
+
+        console.log('================ 观察过程 ==================');
+
+        Object.assign(dest, { id: 'first' }, { id: 'second' }, { id: 'thrid' })
+
+        console.log('============== 对象引用 ============');
+        dest = {}
+        src = { a: {} }
+        Object.assign(dest, src)
+        console.log(dest);
+        console.log(dest.a === src.a);
+
+        console.log('=============== 处理错误 =================');
+        let a, b, c
+        a = {}
+        b = {
+            a: 'foo',
+            get b() {
+                throw new Error()
+            },
+            c: 'bar'
+        }
+
+        try {
+            Object.assign(a, b)
+        } catch (e) { }
+        console.log(a);
+        // 因为这里报错了终止了执行, 但是在此之前是执行了  a  的复制 
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h2>私有类成员</h2>
+  <p>javascript中的私有类成员用于定义在类自身中内部访问的属性和方法 , 私有类体现了类的封装性和信息隐藏 , 能阻止类外部直接访问和修改,
+    <strong>要声明私有类的话,需要再成员名在加上 # : 来看例子</strong>
+  </p>
+  <code>
+    <pre>
+      class Person {
+        #name = 'Arrebol'
+        age = 30
+        getName() {
+          return this.#name
+        }
+      }
+  
+      const person = new Person()
+  
+      console.log(person.age); // 30
+      console.log(person.getName()); // Arrebol
+
+      // console.log(person.#name); <strong> SyntaxError: Private field '#name' must be declared in an enclosing class</strong>
+
+      console.log(person['age']); // 30 
+      console.log(person['#name']); // undefined  
+    </pre>
+  </code>
+  <p>这里定义了一个<strong>公有类age</strong>和<strong>私有类#name</strong> ,因为私有类不能直接访问的 所以定义了一个公有方法getName() 返回#name
+    这是为了保护#name , 所以只能间接访问 , <strong class="pink">上面的代码多次log , 也反应出了私有类在外部是不能访问的</strong>
+  </p>
+  <strong>私有类成员前面的 <i>#</i> 预示着特殊行为，在javascript执行编译时会检查这个字符并为匹配的属性应用特殊规则</strong>
+  <ul>
+    <li><strong>私有成员只有在定义他们的类中访问；不能在类外部访问和修改</strong> 跟上面的代码外部访问是会报错的</li>
+    <li><strong>私有成员不能被子类继承，仅限于他们的类使用</strong> 继承类的话私有类是不会被继承的</li>
+    <li><strong>私有成员不能由派生类中的同名方法和属性访问或覆盖</strong> 派生类就是继承父类公有方法和属性 ， 派生类里面的 , 父类的私有属性 ， 派生类是不知道的，即使定义了一样属性和方法的 ，
+      都是相互独立的 ， 互不影响的</li>
+    <li><strong>构造函数不能私有</strong> constructor() 也就是 #constructor() 是错的 ，毕竟人家是用来初始化的</li>
+    <li><strong>私有成员必修在类体内声明， 不能在构造函数被调用期间或调用之后添加</strong> 要在当前 { } 里面就声明，不能等到要用的时候在声明私有类</li>
+    <li class="circle">类私有成员 ， 定义了之后就是不可删除的 ， 就是为了保证一致性 ， 对吧</li>
+  </ul>
+  <h2>字段，方法，获取方法，设置方法，异步函数和静态成员都可以私有 。 下面看看这些例子</h2>
+  <code>
+        <pre>
+  
+        </pre>
+    </code>
+  <p><strong>总结一下： 重要！！！</strong>私有成员通常是挂载到实例对象身上的 ， 只不过访问不到 ， 而静态私有成员的话是挂载到类里面的 ， 由类来管理 ， 而上面的代码 的counter
+    之所以要加static 就是他可以在类里面使用 ， 外部访问不到 ， 也看不到 ，而且也不会每次new 的时候创建新的 counter ，</p>
+  <script>
+    class Person {
+      #name = 'Arrebol'
+      age = 30
+      getName() {
+        return this.#name
+      }
+    }
+
+    const person = new Person()
+
+    console.log(person.age); // 30
+    console.log(person.getName()); // Arrebol
+
+    // console.log(person.#name); // SyntaxError: Private field '#name' must be declared in an enclosing class
+    console.log(person['age']); // 30 
+    console.log(person['#name']); // undefined
+
+    console.log('====================== 错误示例 =====================');
+    class Perr {
+      #age
+      constructor() {
+        this.#age = 30
+
+        // 不能删除私有成员
+        // delete this.#age //  SyntaxError: Private fields can not be deleted 
+
+        // 必须在类体钟声明私有成员 , 在构造函数里面不能声明的
+        // this.#name = 'Alice'  //  Private field '#name' must be declared in an enclosing class
+      }
+    }
+
+    new Perr()
+
+    console.log('================================ 其余私有类 =================================');
+
+    class Per {
+      #name;
+      #age;
+      static #counter = 0
+
+      constructor(name, age) {
+        this.#name = name
+        this.#age = age
+        Per.#incrementCounter();
+      }
+      // 私有方法
+      #getNameInUpperCase() {
+        return this.#name.toUpperCase(); toUpperCase() // 变成大写的方法
+      }
+
+      // 私有获取方法
+      get #capitalizedName() {
+        return this.#getNameInUpperCase()
+      }
+
+      // 公有获取方法 
+      get name() {
+        return this.#name
+      }
+
+      //公有获取方法访问私有获取方法
+      get capitalizedName() {
+        return this.#capitalizedName
+      }
+
+      //静态方法
+      static getCounter() {
+        return Per.#counter
+      }
+
+      //私有静态方法
+      static #incrementCounter() {
+        Per.#counter += 1
+      }
+    }
+
+    let p = new Per('Arrebol', 30)
+    console.log(p.name);
+    console.log(p.capitalizedName);
+    console.log(Per.getCounter()); 
+  </script>
+</body>
+
+</html>

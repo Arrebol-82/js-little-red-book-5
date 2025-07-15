@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 style="color: pink;">那其实书上想说的 , 顶级异步循环就是 当你想要使用for-await-of 来获取里面的值的话 就要在async 环境下去获取 ,
+    而用 异步立即执行函数 是最方便 最快捷的 ,
+    像我那种的写法就是适用于长期使用 , 团队开发 ,
+    复合调用的</h1>
+  <code>
+      <pre>
+           class Emitter {
+      constructor(max) {
+        this.max = max
+        this.asyncId = 0
+      }
+
+      async *[Symbol.asyncIterator]() {
+        while (this.max > this.asyncId) {
+          yield new Promise((resolve) => resolve(this.asyncId++))
+        }
+      }
+    }
+
+    const emitter = new Emitter(5)
+
+    <strong>书上写的</strong>
+
+    // 记得加分号
+
+    // (async function () {
+    //   const ascoot = emitter[Symbol.asyncIterator]()
+
+    //   for await (const k of ascoot) {
+    //     console.log(k);
+    //   }
+    // })()
+
+
+    <strong>我写的</strong>]
+    async function ass() {
+      const ascoot = emitter[Symbol.asyncIterator]()
+
+      for await (const k of ascoot) {
+        console.log(k);
+      }
+    }
+
+
+    ass()
+    
+
+    <strong>其实本质都是一样的都是async环境 , 只是用法不一样</strong>
+      </pre>
+    </code>
+  <ul>
+    <li><strong>本质:</strong> 顶级作用域不允许直接运行异步语法<br>
+      一定要在async环境下运行</li>
+    <li><strong>手段:</strong>用 async 函数包裹，两种典型写法<br>
+      异步立即执行函数 :: 命名异步函数 </li>
+    <li><strong>书中意图:</strong>用最简洁的例子讲清 “必须包裹” <br>
+      要想使用for-await-of 就要使用async环境</li>
+    <li><strong>我的写法:</strong>是属于在用于团队开发 要长期使用的</li>
+  </ul>
+  <script>
+    class Emitter {
+      constructor(max) {
+        this.max = max
+        this.asyncId = 0
+      }
+
+      async *[Symbol.asyncIterator]() {
+        while (this.max > this.asyncId) {
+          yield new Promise((resolve) => resolve(this.asyncId++))
+        }
+      }
+    }
+
+
+    const emitter = new Emitter(5)
+
+    // 记得加分号
+
+    // (async function () {
+    //   const ascoot = emitter[Symbol.asyncIterator]()
+
+    //   for await (const k of ascoot) {
+    //     console.log(k);
+    //   }
+    // })()
+
+
+
+    async function ass() {
+      const ascoot = emitter[Symbol.asyncIterator]()
+
+      for await (const k of ascoot) {
+        console.log(k);
+      }
+    }
+
+
+    ass()
+  </script>
+</body>
+
+</html>

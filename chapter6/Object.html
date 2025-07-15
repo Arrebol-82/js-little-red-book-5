@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      font-family: 'SourceHanSansSC';
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Object</h1>
+  <div>在ecmascript中Object 是非常用的 很适合用于存储和应用程序之间的交换数据</div>
+  <section>
+    <h1>创建Object 实例</h1>
+    <p>第一种</p>
+    <code>
+      <pre>
+        let number = new Object()
+        
+        console.log(number); === Object
+      </pre>
+    </code>
+    <p>第二种</p>
+    <code>
+          <pre>
+            let num = {
+              
+            }
+          </pre>
+    </code>
+    <p>这种属于对象字面量 跟上面的代码是一样的 , 因为使用这种方法就省去了实例的步骤 , 只不过是引擎帮你实例了 , 所以这也是一种简写方式</p>
+  </section>
+
+  <section>
+    <h1>语句块</h1>
+    <p>你看到了 {} 就是语句块</p>
+    <p>特点: 里面的变量在外面是不可以访问的 作为一个整体 , 我记得在前面作用域的时候讲过 , 我还记得, 那就不扯了 , 就我自己一个人看</p>
+  </section>
+  <section>
+    <h1>表达式上下文</h1>
+    <p>表达式上下文 的核心就是当这段代码 <strong>求值了</strong> , 那么他就是表达式上下文 例如</p>
+    <code>
+      <pre>
+          let num = 5 + 5;  都经过了计算
+          Math.max(2,3,5,6) 
+      </pre>
+    </code>
+  </section>
+
+  <h1>底层</h1>
+  <div style="background-color: pink;">
+    如果是使用new Object( ) 创建对象的话 , 就无法避免调用Object对象
+  </div>
+  <div style="background-color: skyblue; margin: 20px 0;">如果是使用对象字面量,创建对象的话,是不会去调用Object对象的 , 那他是怎么实现的呢 ,瞧好了</div>
+  <div style="color: #ff4400;">在引擎运行的时候会对 代码进行解析 , 如果解析到{} 时就代表一个对象 , 浏览器会在内存的堆里面开辟一个空间 , 把里面的属性,方法,变量放进去
+    并将this指向创建的变量名 ,最后将它的原型链指向Object.prototype 虽然说他不会显示的调用Object 但是还是要涉及到Object的
+  </div>
+  <section>
+    <h1>另外</h1>
+    <p>在代码中如果有是不断重复调用的变量 , 我们不妨把他提取出来</p>
+    <code>
+      <pre>
+        function creat(name, age, hobby, gender, address) {
+        let user = {}
+        if (name) {
+        user.name = name
+        }
+        if (age) {
+        user.age = age
+        }
+        
+        return user
+        }
+        
+         <strong>看着有些值 , 不一定要传的 ,但是还要写 '' 在那</strong>
+
+        creat('张三', 12, '打游戏', '男', '', '')
+        
+        function creatPro(name, ages) {
+        let user = { name }
+        if (name) {
+        user.name = name
+        }
+        if (ages.age) {
+        user.age = ages.age
+        }
+        
+        if (ages.hobby) {
+        user.hobby = ages.hobby
+        }
+        
+        return user
+        }
+        
+         <strong>你看如果用对象就不一样了, 没有就可以不传了</strong>
+
+        creatPro('李四', {
+        age: 12,
+        gender: '男'  })
+      </pre>
+    </code>
+  </section>
+
+  <section>
+    <h1>点语法和中括号语法</h1>
+    <p>什么是点语法 === Object.name / Array.age 这些都是点语法</p>
+    <p>中括号语法 , 就是Object['name'] 后面紧跟着中括号 , 里面必须是字符串 就算不是也会帮你装换成字符串</p>
+    <p>冷知识: 他是可以识别变量名的 </p>
+    来看看例子
+    <code>
+      <pre>
+        let pert = 'uname';
+           <strong>如果是变量的话就不用加''了</strong> 
+        console.log(num[pert]);
+        
+        let go = o()
+           <strong>函数也是一个道理</strong>
+        console.log(num[go]);
+        console.log(num[o()]);
+        
+        function o() {
+        return 'age'
+        }
+        
+        console.log(num['ho' + 'bby']);
+
+
+        console.log(num['first name']);   // 如果你能定义到first name 的话 , 那么他绝对能访问到
+        console.log(num.first name);      //报错 , 因为是不合法字符 
+
+        <strong>所以只要是特殊的属性名都可以用[''] 去访问 , 不过在平时开发中还是推荐先使用  '点语法' , 毕竟清晰明了</strong>
+        特殊属性名 空格 特殊字符 关键字 保留字 这些都是特殊字符
+      </pre>
+    </code>
+  </section>
+  <script>
+    let number = new Object()
+    console.log(number);
+
+    let str = {
+    }
+    console.log(str);
+
+
+    let num = {
+      uname: '张三',
+      age: 18,
+      hobby: '敲代码',
+      5: true
+    }
+
+    console.log(num);
+
+
+
+    function dispalyinfo(args) {
+      let output = '';
+      if (typeof args.uname === 'string') {
+        output = 'Name' + args.uname + '\n'
+      }
+      if (typeof args.age === 'number') {
+        output = 'age' + args.age + '\n'
+      }
+
+      console.log(output);
+
+    }
+
+    dispalyinfo({
+      uname: 'pig',
+      age: 18
+    })
+
+    dispalyinfo({
+      uname: 'pig'
+    })
+
+    function creat(name, age, hobby, gender, address) {
+      let user = {}
+      if (name) {
+        user.name = name
+      }
+      if (age) {
+        user.age = age
+      }
+
+      return user
+    }
+
+    // 看着有些值 , 不一定要传的 ,但是还要写 '' 在那
+    creat('张三', 12, '打游戏', '男', '', '')
+
+    function creatPro(name, ages) {
+      let user = { name }
+      if (name) {
+        user.name = name
+      }
+      if (ages.age) {
+        user.age = ages.age
+      }
+
+      if (ages.hobby) {
+        user.hobby = ages.hobby
+      }
+
+      return user
+    }
+
+    // 你看如果用对象就不一样了, 没有就可以不传了
+    creatPro('李四', {
+      age: 12,
+      gender: '男'
+    })
+
+    let pert = 'uname';
+    // 如果是变量的话就不用加''了
+    console.log(num[pert]);
+
+    let go = o()
+    console.log(num[go]);
+    console.log(num[o()]);
+
+    function o() {
+      return 'age'
+    }
+
+    console.log(num['ho' + 'bby']);
+
+
+    console.log(num['first name']); // 如果你能定义到first name 的话 , 那么他绝对能访问到
+    // console.log(num.first name); //报错
+
+  </script>
+</body>
+
+</html>

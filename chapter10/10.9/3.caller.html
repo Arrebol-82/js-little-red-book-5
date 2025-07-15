@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>ECMAscript也会给函数对象上添加一个属性: caller 这个属性引用的是调用当前函数的函数 或者如果是在全局作用域中调用则为null</h1>
+  <code>
+    <pre>
+        function outer() {
+          inner()
+        }
+
+        function inner() {
+          console.log(inner.caller);
+        }
+
+        outer()
+    </pre>
+  </code>
+  <p>以上的代码就是显示outer的源代码 , 这是因为inner调用了 inner.caller 而outer 调用了 inner 如果要降低耦合度 则可以通过arguments.callee.caller
+    来引用同一个值
+  </p>
+  <code>
+    <pre> 
+      function Outer() {
+        Inner()
+      }
+
+      let Inner = function er() {
+        console.log(er.caller);
+        console.log(arguments.callee.caller);
+
+      }
+
+      Outer()
+    </pre>
+  </code>
+  <p><strong class="black">在严格模式下</strong> arguments.callee 和 arguments.caller 都是会报错的 这是为了分清argument.caller 和 caller
+    而设计的 <strong>caller 只能用于访问上文的调用者 , 要做修改 , 操作 那是不行滴 </strong></p>
+  <p>严格模式下还有一个限制 , 就是不能给caller属性赋值 , 否则会导致错误</p>
+  <script>
+    function outer() {
+      inner()
+    }
+
+    function inner() {
+      console.log(inner.caller);
+    }
+
+    outer()
+
+    function Outer() {
+      Inner()
+    }
+
+    let Inner = function er() {
+      console.log(er.caller);
+      console.log(arguments.callee.caller);
+    }
+
+    Outer()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>this</h1>
+  <h2 style="color: pink;">当this在函数内部需要隐式指向全局作用域时（即没有明确的调用者），严格模式会将其改为undefined，而不是全局对象（如浏览器中的window）。</h2>
+  <ul>
+    <li><strong>非严格模式：当函数独立调用（没有人调用/没有绑定对象）时，this 指向 window</strong></li>
+    <li><strong> 严格模式：当函数独立调用时，this 指向 undefined（不是 window）</strong></li>
+  </ul>
+  <h3>普通函数的this指向调用者 谁用this就指向谁 , 而箭头函数则是指向外层作用域的this</h3>
+  <code>
+    <pre>
+        window.color = 'pink'
+        let o = {
+          color: 'skybule',
+          a: () => {
+            console.log(this.color);
+          }
+        }
+
+        let sayColor = function () {
+          console.log(this.color);
+        }
+
+        sayColor()           // pink
+
+        o.sayColor = sayColor
+        o.sayColor()        // skybule
+        console.log(o.a()); // pink
+    </pre>
+  </code>
+  <p>这里的sayColor this指向 全局作用域 也就是window , 后面的sayColor 把他添加进了 o 里面然后通过 o 去调用 那this自然就会指向 o :: 因为a是箭头函数
+    , 所以就会指向全局作用域</p>
+  <p><strong>在箭头函数中 , this引用的是定义箭头函数的上下文 ,</strong> 下面的例子演示这一点 , 在对sayColor() 的两次调用中 , this引用的都是window对象 因为这
+    个箭头函数是在是在 window 上下文中定义的</p>
+  <code>
+      <pre>
+          window.color = 'red'
+          let O = {
+            color: 'sky'
+          }
+
+          let saycolor = () => console.log(this.color);
+
+          saycolor()
+
+          O.saycolor = saycolor
+          O.saycolor()
+          console.log(O);
+      </pre>
+    </code>
+  <p>在事件回调或定时回调中调用某个函数时 , this 值指向的并非想要的对象 此时将回调函数写成箭头函数就可以解决问题 ,
+    <strong>这是因为箭头函数中的this 会引用该函数时的上下文</strong>
+  </p>
+  <code>
+    <pre>
+      let a = {
+            sayName: () => {
+              console.log("level1 this:", this);
+              return () => {
+                console.log("level2 this:", this);
+                return () => console.log("level3 this:", this);
+              };
+            }
+          }
+
+          a.sayName()
+          console.log(a.sayName());
+
+
+          function King() {
+            this.royaLtyName = 'Arrbol'
+            setTimeout(() => { console.log(this.royaLtyName) }, 1000);
+          }
+
+          function Queen() {
+            this.royaLtyName = 'Elizabeth'
+
+            setTimeout(function () {
+              // this.royaLtyName = 'afasddfgbiuasdghf'
+              console.log(this.royaLtyName);
+            }, 1000)
+          }
+
+          new King()   // Arrebol 
+          new Queen()  // undefined
+    </pre>
+  </code>
+  <p>King 输出Arrebol , Queen 输出undefined 都是定义 setTimeout() 函数体里面 , 那为什么输出的结果不同 , 就是因为一个function() 普通函数 , () => {} 箭头函数
+    一个是在当前的函数体里面找this (window), 一个是去外层函数找this (King)
+  </p>
+  <h3>函数名只是保存指针的变量 所以 sayColor() 和 O.sayColor() 是同一个函数 , 只是执行的上下文不一样</h3>
+  <script>
+    window.color = 'pink'
+    let o = {
+      color: 'skybule',
+      a: () => {
+        console.log(this.color);
+      }
+    }
+
+    let sayColor = function () {
+      console.log(this.color);
+    }
+
+    sayColor()           // pink
+
+    o.sayColor = sayColor
+    o.sayColor()        // skybule
+    console.log(o.a()); // pink
+
+    console.log('============================== this =============================');
+    window.color = 'red'
+    let O = {
+      color: 'sky'
+    }
+
+    let saycolor = () => console.log(this.color);
+
+    saycolor()
+
+    O.saycolor = saycolor
+    O.saycolor()
+    console.log(O);
+
+    console.log('================================= this 引用上下文 ===============================');
+
+
+    let a = {
+      sayName: () => {
+        console.log("level1 this:", this);
+        return () => {
+          console.log("level2 this:", this);
+          return () => console.log("level3 this:", this);
+        };
+      }
+    }
+
+    a.sayName()
+    console.log(a.sayName());
+
+
+    function King() {
+      this.royaLtyName = 'Arrbol'
+      setTimeout(() => {
+        console.log(this.royaLtyName)
+        console.log(this);
+      }, 1000);
+    }
+
+    function Queen() {
+      this.royaLtyName = 'Elizabeth'
+
+      setTimeout(function () {
+        // this.royaLtyName = 'afasddfgbiuasdghf'
+        console.log(this.royaLtyName)
+        console.log(this);
+      }, 1000)
+    }
+
+    new King()   // Arrebol 
+    new Queen()  // undefined
+
+  </script>
+</body>
+
+</html>

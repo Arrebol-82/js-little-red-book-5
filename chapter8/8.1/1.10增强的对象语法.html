@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>增强的对象语法</h1>
+
+  <h2>属性名简写:</h2>
+  <ul>
+    <li class="circle">
+      <code>
+        <pre>
+          let name = 'Arrebol'
+          let person = {
+            name: name
+          }
+          console.log(name);
+        </pre>
+      </code>
+      <p>上面这么写太复杂了 , 所以还有一种,更简单的写法</p>
+      <code>
+        <pre>
+          let per = {
+            name
+          }
+        </pre>
+      </code>
+      <p>效果是一样的</p>
+    </li>
+  </ul>
+  <h3>在压缩代码的时候js会进行优化</h3>
+  <code>
+    <pre>
+      function makePerson(name) {
+        return { name }
+      }
+  
+      console.log(makePerson('Arrebol')); // Arrebol
+  
+      function makePerson(a) {
+        return { name: a }
+      }
+    </pre>
+  </code>
+  <ul>
+    <li><strong>函数里面的局部变量会被压缩 ,除了全局变量 , 在这个函数里面的变量名都会被压缩</strong></li>
+    <li><strong>「编译压缩时，只有函数内部的局部变量（包括形参）会被压缩，全局变量和对象的属性名不会被压缩」</strong></li>
+  </ul>
+
+  <section>
+    <h2>还有就是js的可计算属性</h2>
+    <ul>
+      <li>
+        <p>来看看吧</p>
+        <code>
+          <pre>
+            const namekey = 'name'
+            const ageKey = 'age'
+            const ganderKey = 'gander'
+        
+            let Per = {}
+            Per[namekey] = 'zhu'
+            Per[ageKey] = 16
+            Per[ganderKey] = '男'
+            console.log(Per);  <strong>{name: 'zhu', age: 16, gander: '男'}</strong>
+          </pre>
+        </code>
+        <p>这个方法太复杂了,要一个个,调用Per然后进行添加 麻烦 所以可以这么写:</p>
+        <code>
+          <pre>
+            let obj = {
+              [namekey]: 'Arrebol',
+              [ageKey]: 17,
+              [ganderKey]: '男'
+            }
+          </pre>
+        </code>
+      </li>
+    </ul>
+    <p><i>在使用可计算属性表达式中一定要小心</i><strong class="pink">可计算属性一旦出错后面代码的就不会在执行了(会在控制台报错)，
+        前面的创建的属性不会进行回收(暂用内存)。当前的对象就不会在执行了，停止了
+        ,<i>而且整个对象都是不可访问状态</i></strong>
+    </p>
+  </section>
+  <section>
+    <h2>简写方法名</h2>
+    <p>通常定义方法都是这样的:</p>
+    <code>
+      <pre>
+        let fun = {
+          sayName: function (name) {
+            console.log(`My name is ${name}`);
+          }
+        }
+      </pre>
+    </code>
+    <p>这样就是太麻烦了,而且看起来也不直观所以<strong>用下面的简写属性更好</strong></p>
+    <code>
+      <pre>
+        let Fun = {
+          sayName(name) {
+            console.log(`My name is ${name}`);
+          }
+        }
+      </pre>
+    </code>
+    <p>此外还有这两种用法</p>
+    <code>
+      <pre>
+        // 简写方法名对于获取函数和设置函数也是适用的
+
+        let gain = {
+          name_: '',
+          get name() {
+            return this.name_
+          },
+          set name(name) {
+            this.name_ = name
+          },
+          sayName() {
+            console.log(`you name is ${this.name_}`);
+          }
+        }
+    
+        gain.name = 'Arrebol'
+        gain.sayName() <strong>// you name is Arrebol</strong>
+    
+        // 还可以和计算属性键一起使用
+    
+        const Computedname = 'sayName'
+        let Computed_properties = {
+          [Computedname](name) {
+            console.log(`this is function name ${Computedname} and is you ${name}`);
+          }
+        }
+        console.log(Computed_properties.sayName('z'));  <strong>// this is function name sayName and is you z</strong>    
+      </pre>
+    </code>
+  </section>
+  <script>
+    let name = 'Arrebol'
+    let person = {
+      name: name
+    }
+    console.log(person);
+    console.log(name);
+
+
+    let per = {
+      name
+    }
+
+    console.log('==================== 压缩代码 ====================');
+
+
+    console.log(per);
+    function makePerson(name) {
+      return { name }
+    }
+
+    console.log(makePerson('Arrebol'));
+
+
+    function makePerson(a) {
+      return { name: a }
+    }
+
+    var Person = makePerson('Arrebol')
+    console.log(Person.name);
+
+    console.log('=================== 可计算属性 ====================');
+
+    const namekey = 'name'
+    const ageKey = 'age'
+    const ganderKey = 'gander'
+
+    let Per = {}
+    Per[namekey] = 'zhu'
+    Per[ageKey] = 16
+    Per[ganderKey] = '男'
+    console.log(Per);
+
+    let obj = {
+      [namekey]: 'Arrebol',
+      [ageKey]: 17,
+      [ganderKey]: '男'
+    }
+
+    console.log(obj);
+
+    const keyName = 'name'
+    const keyAge = 'age'
+    const keyGander = 'gander'
+    let index = 0
+    function getUniquekey(key) {
+      return `${key}_${index++}`
+    }
+
+    let arr = {
+      [getUniquekey(keyName)]: 'Arrebol',
+      [getUniquekey(keyAge)]: 18,
+      [getUniquekey(keyGander)]: '女'
+    }
+
+    console.log(arr);
+
+    console.log('********************* 简写方法名 *********************');
+
+    let fun = {
+      sayName: function (name) {
+        console.log(`My name is ${name}`);
+      }
+    }
+
+    fun.sayName('Arrebol')
+
+    let Fun = {
+      sayName(name) {
+        console.log(`My name is ${name}`);
+      }
+    }
+
+    // 简写方法名对于获取函数和设置函数也是适用的
+
+    let gain = {
+      name_: '',
+      get name() {
+        return this.name_
+      },
+      set name(name) {
+        this.name_ = name
+      },
+      sayName() {
+        console.log(`you name is ${this.name_}`);
+      }
+    }
+
+    gain.name = 'Arrebol'
+    gain.sayName()
+
+    // 还可以和计算属性键一起使用
+
+    const Computedname = 'sayName'
+    let Computed_properties = {
+      [Computedname](name) {
+        console.log(`this is function name ${Computedname} and is you ${name}`);
+      }
+    }
+    console.log(Computed_properties.sayName('z'));
+    
+  </script>
+</body>
+
+</html>

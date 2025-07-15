@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>对象标识及相等判断</h1>
+  <p>这些是===符合预期的情况</p>
+  <code>
+    <pre>
+      console.log(true === 1); //false
+      console.log({} === {});  //false
+      console.log('2' === 2);  //false
+    </pre>
+  </code>
+  <p>在不同引擎中表现不一样</p>
+  <code>
+    <pre>
+      console.log(+0 === -0); //true
+      console.log(+0 === 0);  //true
+      console.log(-0 === 0);  //true
+    </pre>  
+  </code>
+  <h2>NaN</h2>
+  <code>
+    <pre>
+      console.log(NaN === NaN); //false
+      console.log(Object.is(NaN, NaN)); //true
+    </pre>
+  </code>
+  <p>要检查超过两个值, 用递归利用相等性传递即可</p>
+  <code>
+    <pre>
+      function recurslycheck(x, ...rest) {
+        return Object.is(x, rest[0]) && (rest.length < 2 || recurslycheck(...rest))
+      }
+    </pre>
+  </code>
+  <h2>简单总结: 除了NaN 和 -0 +0 不一样 其他都和 === 一致</h2>
+  <script>
+    console.log(true === 1);
+    console.log({} === {});
+    console.log('2' === 2);
+
+    console.log(+0 === -0);
+    console.log(+0 === 0);
+    console.log(-0 === 0);
+
+    console.log('================ NaN ==============');
+
+    console.log(NaN === NaN);
+    console.log(Object.is(NaN, NaN));
+
+    console.log(Object.is(+0, -0));
+    console.log(Object.is(+0, 0)); //true
+    console.log(Object.is(-0, 0));
+
+    function recurslycheck(x, ...rest) {
+      return Object.is(x, rest[0]) && (rest.length < 2 || recurslycheck(...rest))
+    }
+  </script>
+</body>
+
+</html>

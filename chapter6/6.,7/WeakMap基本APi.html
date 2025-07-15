@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WeakMap</h1>
+  <p>是用于增强Map的子集,他的APi也是Map的子集</p>
+  <h2>无迭代方法 ,自动回收, 弱引用</h2>
+  <p>总结一下:</p>
+  <ul>
+    <li>
+      <code>
+        <pre>
+          const vm = new WeakMap([])
+        </pre>
+      </code>
+      <p>因为是直接创建的所以,要加[]因为数组是可迭代器,同时符合迭代协议 所以写法是 ([])</p>
+    </li>
+    <li>
+      <code>
+        <pre>
+          const VM = new WeakMap()
+          VM.set({ uname: 'Arrebol' }, 16) 
+          VM.set({ uname: 'Matter' }, 40)
+          
+          console.log(VM);
+        </pre>
+      </code>
+      <p>因为是用set方法的,所以此时直接协方法就好了,不需要在加[]</p>
+    </li>
+    <li>
+      <code>
+        <pre>
+          const m2 = new WeakMap({
+          [Symbol.iterator]: function* () {
+          yield ['key1', 'val1']
+          yield ['key2', 'val2']
+          yield ['key3', 'val3']    
+            }
+         })
+        </pre>
+      </code>
+      <p>因为这是生成器所以协生成器方法( function* () ),在加上值就好了</p>
+    </li>
+  </ul>
+  <script>
+    const wm = new WeakMap()
+
+    // 弱映射的键只能是对象, 或者是继承object的类型, 如果是其他的话回报错
+
+    const key1 = { id: 1 },
+      key2 = { id: 2 },
+      key3 = { id: 3 }
+
+    const vm1 = new WeakMap([[key1, 'val1'], [key2, 'val2'], [key3, 'val3']])
+
+    console.log(vm1.get(key1));
+    console.log(vm1.get(key2));
+    console.log(vm1.get(key3));
+
+    console.log(vm1);
+
+    // 因为weakMap是弱引用, 所以只能存储地址值
+    // const vm2 = new WeakMap([[key1, 'val1'], ['BADKEY', 'val2'], [key3, 'val3']]) // 报错
+
+    // 要是真的要传的话就把原始值包装成对象
+    const stringKey = new String('key1')
+    console.log(stringKey);
+    const vm3 = new WeakMap([[stringKey, 'vall']])
+    console.log(vm3.get(stringKey));
+
+    console.log('========== 初始化 ===========');
+
+    const VM = new WeakMap()
+
+    console.log(VM.has('uname'));
+    console.log(VM.get('uname'));
+
+    const key4 = { uname: 'Arrebol' },
+      key5 = { uname: 'Matter' }
+
+    VM.set(key4, 16)
+    VM.set(key5, 40)
+
+    console.log(VM.has(key5));
+    console.log(VM.get(key5));
+
+    console.log('======== delete =========');
+
+    VM.delete(key5)
+    console.log(VM.has(key5));
+    console.log(VM.get(key5));
+
+    console.log(VM);
+
+    console.log('============= 链在一起 =============');
+
+    // set() 方法返回弱映射 , 因此可以把他们连起来
+    const weakMap = new WeakMap().set({ age: 16 }, 'val')
+      .set({ age: 17 }, 'val1')
+      .set({ age: 18 }, 'val2')
+
+    console.log(weakMap);
+
+    weakMap.set({ age: 19 }, 'val3')
+      .set({ age: 20 }, 'val4')
+    console.log(weakMap);
+    // 同时声明多个
+  </script>
+</body>
+
+</html>

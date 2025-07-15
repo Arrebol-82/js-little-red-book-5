@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <section>
+    <h1>URL 编码</h1>
+    <strong>encodeURI()</strong> 和<strong>encodeURIComponent()</strong> 这两个方法都是用UTF-8进行编码的
+
+    <p>我猜你想知道为什么用UTF-8 而不是ASCII进行编码的是吧</p>
+
+    主要是因为 UTF-8 几乎支持所有的字符 ,
+    <p>并且他的通用性和兼容性很高 , 所以会使用UTF-8 进行编码 另外UTF-8 和 ASCII 是兼容的</p>
+
+    <strong style="display: block; margin-bottom: 10px;"><i>encodeURI()</i> 用于保证URL在传输等操作符的合法性,更注重链接的完整性 , 就像常见的 链接跳转
+      请求地址的等等</strong>
+    <p>encodeURI()方法会对ASCII字母,数字, - , _ , . , ! , ~ , * , ' ,( , )以及 : / ? # 之外的特殊字符进行处理,空格就是非常的常见</p>
+    <strong><i>encodeURIComponent()</i> 更关注URL中的用户输入相关的内容, 比如提交表单(当然是用get请求 , 不过现在都是用post的) 搜索栏
+      将用户输入的内容放在URL里面需要encodeURIComponent()
+      编码才能拿到</strong>
+    <p>encodeURIComponent() 会对字母, 数字, -, _,. , ~之外的所以字符进行编码处理</p>
+    <h3>当然解铃还须系铃人 , 有编当然有解呀</h3>
+    <p><strong>decodeURI()</strong> 可以将用encodeURI() 的uri编码 进行解码 ,但是推荐用于encodeURIComponent()进行编码的url来进行解码 , 因为他无法解一些特殊的字符
+    </p>
+    <p><strong>decodeURIComponent() </strong>可以进行解码 , 谁都可以 ,反正这个文档也是自己看</p>
+    他们也是用UTF-8进行解码的
+  </section>
+  <section>
+    <h1>eval()</h1>
+    <h3>他是一个强大的但十分危险的函数,我们应该在开发中尽量避免使用</h3>
+    <p>console.log('eval()') === eval("console.log('eval()')") 同时还可以访问外部的变量</p>
+    <p>另外再严格模式下是会报错的 , 因为他是不允许在eval()里面的变量和函数在外部都是无法被访问的</p>
+  </section>
+
+  <section>
+    <h1>Global对象属性</h1>
+    <p>在javascript中只要是特殊值 undefined NaN 和 Infinity 等等 还有原生的引用类型构造函数 Object() Function() Number() String() 也都是Global对象
+    </p>
+    <h1>window对象</h1>
+    <p><strong>在浏览器中window就是Global的代理</strong> window.String() === Global.String() 等价的</p>
+    <p>那为什么还要用window呢 , 其实是因为window与我们的前端开发的概念跟相似 , 还能提升效率 , 毕竟后面还有一些window方法的 </p>
+    <p>冷知识: 在浏览器中是无法打印到global的, 只能访问window , 打印globalThis会打印出window</p>
+  </section>
+
+  <h1>冷知识</h1>
+  <h3>为什么可以看到window , 而看不到Global呢??? &nbsp;&nbsp;&nbsp;看下文</h3>
+  <h2>浏览器在运行 JavaScript 代码时，将 window 置于全局执行上下文的顶端，在作用域链中也是处于最上层的位置。并且把原本属于 Global 的属性和方法都挂载到 window 上，对开发者来说，直接使用 window
+    来操作全局的变量、函数等内容就可以了，无需关注抽象的 Global 对象。这样设计让开发者在浏览器环境下进行开发时更加方便，代码编写和理解起来也更容易呢。之后在开发过程中，基于 window 来进行各种操作就好啦</h2>
+  <script>
+    // 严格模式
+    // 'use strict'
+
+
+    // 宿主环境
+    // 宿主环境表示 运行的环境不一样 ,例如运行在js 和运行在服务器是不一样的
+    // 接下来聊一下单利内置对象, 他们与浏览器的运行环境无关 当我使用ECMAscript 就可以使用他们了
+    // 不需要再次实例化 直接使用, 因为js已经将他们实例化好了, 可以直接提供我们使用, 例如 Global Math
+
+    // 注意:
+    //   (Object Array String Number Boolean) 其实他们并不算是单利内置对象, 因为他们可以通过实例化创建新的实例对象
+    //   而他们是内置对象 , ::: 因为单利内置对象是唯一的 ,没有办法在创建一个新的实例
+
+
+    // URL 编码
+    // 是将url地址里面的一些特殊字符进行编码
+
+    let url = 'http://www.wiley.com/illegal value.js#start';
+
+    encodeURI()
+    encodeURIComponent()
+    // 这两个方法都是用UTF-8进行编码的
+
+
+    // encodeURI() 方法会对ASCII字母,数字,-,_,.,!,~,*,',(,)以及 : / ? # 之外的特殊字符进行处理,空格就是非常的常见
+    // http://www.wiley.com/illegal%20value.js#start
+    let code = encodeURI(url)
+    console.log(code);
+
+    // encodeURIComponent() 会对字母, 数字, -, _,. , ~之外的所以字符进行编码处理 
+    // http % 3A % 2F % 2Fwww.wiley.com % 2Fillegal % 20value.js % 23start
+    let oncode = encodeURIComponent(url)
+    console.log(oncode);
+
+    console.log(decodeURI(code));
+    console.log(decodeURI(oncode));
+    console.log(decodeURIComponent(code));
+    console.log(decodeURIComponent(oncode));
+
+
+    // eval()
+    console.log('eval()');
+
+    eval("console.log('eval()')")
+
+    eval("console.log(oncode)")
+
+    // 另外再严格模式下是会报错的 , 因为他是不允许在eval()里面的变量和函数在外部都是无法被访问的
+    eval("str = 'hello world!';")
+
+    // 注意如果用的是let 和 const 的话 只能在eval() 里面使用 因为们是块级作用域
+    eval("let str = 'hello world!';")
+
+    console.log(str);
+
+    let gol = function () {
+      return this
+    }()
+
+    console.log(gol);
+
+
+    // window
+    console.log(globalThis);
+    // 报错
+    console.log(global);
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>代理的问题与不足</h1>
+  <p>代理是在ECMAscript现有的基础上构建起来的一套API 因此其实是尽力做到最好了,很大的程度上代理作为对象的虚拟层面可以正常的使用,但是在某些情况下 ,
+    代理也不能与现在的 ECMAscript机制很好的协调
+  </p>
+  <section>
+    <h2>代理中的this</h2>
+    <p>代理中潜在的一个问题就是this值 , 我们知道方法中的this是指向调用者的</p>
+    <strong>默认情况下this指向代理对象 , 但是如果是用目标对象调用的 , 那么他就指向目标对象</strong>
+    <code>
+      <pre>
+        const target = {
+          thisValuequalsProxy() {
+            console.log(this);
+            return this === proxy
+          }
+        }
+    
+        const proxy = new Proxy(target, {})
+    
+        console.log(target.thisValuequalsProxy()); // false , {thisValuequalsProxy: ƒ}
+        console.log(proxy.thisValuequalsProxy()); // true ,  Proxy(Object) {thisValuequalsProxy: ƒ}=    
+      </pre>
+    </code>
+    <p></p>
+    <strong>WeakMap 中的 “私有变量” 就是存储在值的位置</strong>
+    <code>
+      <pre>
+        const wm = new WeakMap()
+
+        class User {
+          constructor(userId) {
+            wm.set(this, userId)
+          }
+          set id(userId) {
+            wm.set(this, userId)
+          }
+          get id() {
+            console.log(this);
+            return wm.get(this)
+          }
+        }
+    
+        const user = new User(123)
+        console.log(user.id);
+    
+    
+        const userInstanceProxy = new Proxy(User, {})
+        console.log(userInstanceProxy.id);
+    
+        const userClassProxy = new Proxy(User, {})
+        const Pyter = new userClassProxy(456)
+        console.log(Pyter.id);
+      </pre>
+    </code>
+    <h3>WeakMap里面的键他是刚需对象标识的 也就是需要键的地址值才能获取到值</h3>
+    <p>user是因为通过new 出来所以this是指向user的 , userInstanceProxy是代理出来的里面的还是指向User类自身 , 而后面的Pyter就是通过了new 的 所以this就指向Pyter
+      可以正常调用了</p>
+    <h2>总结:</h2>
+    <p>代理中默认的this指向代理对象 , 如果配合WeakMap 使用的话就要留意是谁调用的this ,
+      因为WeakMap他是依赖对象标识的 , 要想获取值 , 就要找到对应的对象标识 否则就会报错</p>
+  </section>
+  <section>
+    <h2>代理与内部槽位</h2>
+    <p>代理与内置引用类型( Array ),的实例通常是可以很好的协同 , 但是有些ECMAscript内置类型可能会依赖代理无法控制的机制 结果就会出错</p>
+    <strong>像Array , Object ... 都是不依赖内部槽位的 , 而像Date , Mat , Set 就会依赖内部槽位 ,但都是可以通过改变this的指向 , 从而正常代理</strong>
+    <code>
+      <pre>
+        const tar = new Date()
+        const prox = new Proxy(tar, {
+         <strong> get(target, prop) {
+          const value = target[prop];
+          // 如果是方法，绑定 this 到原始实例 tar
+          return typeof value === 'function' ? value.bind(target) : value;
+        }</strong>  <strong>可以把this的指向指回来</strong>
+        })
+    
+        console.log(prox instanceof Date);  // true
+        prox.getDate() //TypeError: prox.getDate is not a function    
+      </pre>
+    </code>
+    <p>已经存在了 Date的原型链上了 , 但是因为Date是内部槽位 所以this的指向是会出问题的</p>
+    <h2>总结:</h2>
+    <p>代理并不是所有方法都可以直接代理 ， 像Mat , Set ... 依靠内部槽位实现的 <strong>但是可以通过 改变this的指向 就像上面的代码一样</strong> , 让他成功代理</p>
+  </section>
+  <script>
+    const target = {
+      thisValuequalsProxy() {
+        console.log(this);
+        return this === proxy
+      }
+    }
+
+    const proxy = new Proxy(target, {})
+
+    console.log(target.thisValuequalsProxy()); // false , {thisValuequalsProxy: ƒ}
+    console.log(proxy.thisValuequalsProxy()); // true ,  Proxy(Object) {thisValuequalsProxy: ƒ}
+
+    console.log('================================ WeakMap =============================');
+
+    const wm = new WeakMap()
+
+    class User {
+      constructor(userId) {
+        wm.set(this, userId)
+      }
+      set id(userId) {
+        wm.set(this, userId)
+      }
+      get id() {
+        console.log(this);
+        return wm.get(this)
+      }
+    }
+
+    const user = new User(123)
+    console.log(user.id);
+
+
+    const userInstanceProxy = new Proxy(User, {})
+    console.log(userInstanceProxy.id);
+
+    const userClassProxy = new Proxy(User, {})
+    const Pyter = new userClassProxy(456)
+    console.log(Pyter.id);
+
+    console.log('=========================== this默认 ===========================');
+
+
+    // 一个普通对象，有两个方法：outerMethod（外部方法）和 innerMethod（内部方法）
+    const Target = {
+      name: "目标对象",
+      // 内部方法：依赖 this 访问自身属性
+      innerMethod() {
+        return `我是内部方法，当前对象的 name 是：${this.name}`;
+      },
+      // 外部方法：内部会调用 innerMethod
+      outerMethod() {
+        // 这里的 this 指向调用 outerMethod 的对象
+        return `我是外部方法，调用内部方法的结果：${this.innerMethod()}`;
+      }
+    };
+
+    // 创建代理
+    const pro = new Proxy(Target, {});
+
+    // 通过代理调用 outerMethod
+    console.log(pro.outerMethod());
+    console.log(pro.name);
+
+    // 输出："我是外部方法，调用内部方法的结果：我是内部方法，当前对象的 name 是：undefined"
+    console.log('===================================== 内部槽位 ==============================');
+    const tar = new Date()
+    const prox = new Proxy(tar, {
+      // get(target, prop) {
+      //   const value = target[prop];
+      //   // 如果是方法，绑定 this 到原始实例 tar
+      //   return typeof value === 'function' ? value.bind(target) : value;
+      // }
+    })
+
+    console.log(prox instanceof Date);
+    console.log(prox.getDate()); //TypeError: prox.getDate is not a function
+
+
+  </script>
+</body>
+
+</html>

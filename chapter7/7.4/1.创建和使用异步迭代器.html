@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        li {
+            list-style: decimal;
+            margin: 10px 0s;
+        }
+    </style>
+</head>
+<h1 style="color: pink;">所有通过 yield 产出的值都会被自动包装成 Promise</h1>
+<p>太复杂了，打开vscode看源码</p>
+<ul>
+    <li>最简单的异步生成器的写法就是 async* [Symbol.asyncIterator]</li>
+    <li>那什么时候使用Promise :: 如果用async* 创建的异步生成器那么就不用写 Promise 用于返回了 <i>如果是用[Symbol.asyncIterator]
+            那么自定义返回的时候要写Promise</i></li>
+    <li>那什么时候用await呢 ， 就是要使用等待处理的函数 （用于处理异步操作）</li>
+</ul>
+<h2>Promise</h2>
+<p>Promise 的执行器函数有两个参数</p>
+<div>resolve：当异步操作成功时调用，参数是成功的结果。 <br>
+    reject：当异步操作失败时调用，参数是错误对象（通常是 Error 实例）。
+</div>
+
+<h2>for-await-of 是可以同时处理同步和异步可迭代对象 , 但是for循环就不行了,只能处理同步的</h2>
+<div>
+    <p>所以说其实就是Symbol.asyncIterator 他是不会改变他的函数里面的行为 ,
+        是跟 [Symbol.iterator]是一样的 , 然后Symbol.asyncIterator 就是为了告术外界 ,
+        要想拿到里面的值 ,
+        就要用 for-await-of</p>
+</div>
+<script>
+    console.log('================= 同步迭代 ==============');
+    class Emitter {
+        constructor(item) {
+            this.item = item
+            this.index = 0
+        }
+
+        *[Symbol.iterator]() {
+            while (this.item > this.index) {
+                yield this.index++
+            }
+        }
+    }
+
+    const E = new Emitter(5)
+
+    // for(const k of E) {
+    //     console.log(k);
+    // }
+
+    function print() {
+        const e = E[Symbol.iterator]()
+        for (const k of e) {
+            console.log(k);
+        }
+    }
+
+    print()
+
+
+    console.log('============ 异步迭代 ===========');
+    console.log('用同步迭代，处理异步函数的话 ， 是会直接返回 Promise {<pending>}');
+    class emitter {
+        constructor(item) {
+            this.item = item
+            this.index = 0
+            this.asyncIdx = 0
+        }
+        *[Symbol.iterator]() {
+            while (this.item > this.index) {
+                yield this.index++
+            }
+        }
+        // *[Symbol.iterator]() {
+        //     yield new Promise(resolve => {
+        //         setTimeout(() => resolve(this.index++), 1000);
+        //     });
+        // }
+
+        async *[Symbol.asyncIterator]() {
+            while (this.item > this.asyncIdx) {
+                // yield this.asyncIdx++
+                yield new Promise((a) => a(this.asyncIdx++))
+
+            }
+        }
+    }
+
+    const emitt = new emitter(5)
+
+    function syncCount() {
+        const syncCounter = emitt[Symbol.iterator]()
+        for (const k of syncCounter) {
+            console.log(k);
+        }
+    }
+
+    console.log(' 把同步生成器创给for-await-of ');
+
+
+    async function SyncCount() {
+        const syncCounter = emitt[Symbol.iterator]()
+        for await (const k of syncCounter) {
+            console.log(`await: ${k}`);
+        }
+    }
+
+
+
+    async function asyncCount() {
+        const asyncCounter = emitt[Symbol.asyncIterator]()
+        for await (const k of asyncCounter) {
+            console.log(k);
+        }
+    }
+
+    console.log(' 用for循环遍历异常迭代器');
+
+    // function asyncCount() {
+    //     const asyncCounter = emitt[Symbol.asyncIterator]()
+    //     for (const k of asyncCounter) {
+    //         console.log(k);
+    //     }
+    // }
+
+    /*    Uncaught TypeError: asyncCounter is not iterable
+   at asyncCount(1.创建和使用异步迭代器.html: 124: 29)
+   at 1.创建和使用异步迭代器.html: 134: 9 */
+
+    syncCount()
+
+    SyncCount()
+
+    asyncCount()
+
+
+    console.log(' ==================== 在来看看 ==================== ');
+    console.log('打印这段的时候，你会发现本来是先执行asyncCount() 但是他是异步的 要等待1秒 ， 所以是先打印的这段字符串的');
+
+    class iterAtor {
+        constructor(item) {
+            this.item = item
+            this.index = 0
+            this.asyncindex = 0
+        }
+        *[Symbol.iterator]() {
+            while (this.item > this.index) {
+                yield this.index++
+            }
+        }
+
+        async *[Symbol.asyncIterator]() {
+            while (this.item > this.asyncindex) {
+                yield new Promise(resolve => {
+                    setTimeout(() => { resolve(this.asyncindex++) }, 1000);
+                })
+            }
+        }
+    }
+
+    const Iterator = new iterAtor(5)
+
+    async function AsyncCount() {
+        const asyncCount = Iterator[Symbol.asyncIterator]()
+        console.time('async');
+        for await (const k of asyncCount) {
+            console.log(k);
+        }
+        console.timeEnd('async')
+    }
+
+    console.log(' 测试异步迭代 ');
+    AsyncCount()
+
+
+</script>
+</body>
+
+</html>

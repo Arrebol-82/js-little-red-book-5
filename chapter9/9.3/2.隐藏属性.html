@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>隐藏属性</h1>
+  <p>代理的内部实现对外部代码是不可见的 , 因此要隐藏目标对象上的属性也轻而易举 : 比如</p>
+  <strong>includes</strong>
+  <p>他用于检测数组 / 字符串 里面是否有对应的属性</p>
+  <code class="code">
+    <pre>
+      const hiddenProperties = ['foo', 'bar']
+      const targetObject = {
+        foo: 1,
+        bar: 2,
+        baz: 3,
+      }
+  
+      const proxy = new Proxy(targetObject, {
+        get(target, property) {
+          if (hiddenProperties.includes(property)) {
+            return undefined
+          } else {
+            return Reflect.get(...arguments)
+          }
+        },
+        has(target, property) {
+          if (hiddenProperties.includes(property)) {
+            return false
+          } else {
+            return Reflect.get(...arguments)
+          }
+        }
+      })
+  
+      // get() 
+      console.log(proxy.foo);
+      console.log(proxy.bar);
+      console.log(proxy.baz);
+  
+      // set() 
+      console.log('foo' in proxy);
+      console.log('bar' in proxy);
+      console.log('baz' in proxy);
+
+      console.log(proxy); // Proxy(Object) {foo: 1, bar: 2, baz: 3}
+    </pre>
+  </code>
+  <p>上面的代码用 includes 检测数组中是否有相同的 , 有的话就返回undefined 和 false 从而把数组中有的属性给隐藏掉了 , 而baz 就可访问到了</p>
+  <script>
+    const hiddenProperties = ['foo', 'bar']
+    const targetObject = {
+      foo: 1,
+      bar: 2,
+      baz: 3,
+    }
+
+    const proxy = new Proxy(targetObject, {
+      get(target, property) {
+        if (hiddenProperties.includes(property)) {
+          return undefined
+        } else {
+          return Reflect.get(...arguments)
+        }
+      },
+      has(target, property) {
+        if (hiddenProperties.includes(property)) {
+          return false
+        } else {
+          return Reflect.get(...arguments)
+        }
+      }
+    })
+
+    // get() 
+    console.log(proxy.foo);
+    console.log(proxy.bar);
+    console.log(proxy.baz);
+
+    // set() 
+    console.log('foo' in proxy);
+    console.log('bar' in proxy);
+    console.log('baz' in proxy);
+
+    console.log(proxy); // Proxy(Object) {foo: 1, bar: 2, baz: 3}
+
+  </script>
+</body>
+
+</html>

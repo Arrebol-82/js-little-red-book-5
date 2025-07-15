@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>自定义迭代器</h1>
+  <ul>
+    <li>游标 (像当于for循环的 i )</li>
+    <li>next()</li>
+    <li>[Symbol.iterator]接口</li>
+  </ul>
+  <h2>了解一下constructor</h2>
+  <code>
+    <pre>
+      function Person(name) {
+      this.name = name;
+      } 
+          <strong>和</strong>
+      class Dog {
+      constructor(name) {
+      this.name = name;
+       }
+      } <strong>是等价的</strong>
+    </pre>
+  </code>
+  <p>class要想实例化的就要去调用constructor方法 , 而实例化创建的话就不用了,因为引擎帮我们隐式调用了</p>
+  <section>
+    <h2>要想让一个迭代器能够创建多个迭代器,那就要<i>每创建一个迭代器就对应一个新的计数器</i>此时,就可以使用闭包,把计数器放进闭包,通过闭包返回迭代器</h2>
+  </section>
+  <section>
+    <h1>只要实现了[Symbol.iterator]接口 , 那就是可以直接使用接收可迭代对象的方法的了() </h1>
+    <h2>此时就不需要再调用[Symbol.iterator]()方法了 因为引擎会帮你隐式调用</h2>
+  </section>
+  <script>
+    class Counter {
+      // 初始化数据
+      constructor(limit) {
+        // 起始位置
+        this.count = 1
+        // 结束位置
+        this.limit = limit
+      }
+
+      next() {
+        if (this.count <= this.limit) {
+          return { value: this.count++, done: false }
+        } else {
+          return { value: undefined, done: true }
+        }
+      }
+      [Symbol.iterator]() {
+        return this
+      }
+    }
+
+
+    const counter = new Counter(3)
+    console.log(counter);
+    console.log(counter[Symbol.iterator]);
+    console.log(counter[Symbol.iterator]());
+    // console.log(counter.next());
+    // console.log(counter.next());
+    // console.log(counter.next());
+    // console.log(counter.next());
+    // console.log(counter.next());
+
+    console.log('for...of');
+
+    for (const k of counter) {
+      console.log(k);
+    }
+
+    // 如果像这样写的话就会每个实例只能被迭代一次
+
+    for (const k of counter) {
+      console.log(k);
+    }
+
+    console.log('diedau');
+
+
+    class diedau {
+      constructor(item) {
+        this.item = item
+      }
+
+      [Symbol.iterator]() {
+        console.log(`结束值${this.item}`);
+
+        let index = 1,
+          item = this.item;
+        return {
+          next() {
+            if (index <= item) {
+              return { value: index++, done: false }
+            }
+            else {
+              return { value: undefined, done: true }
+            }
+          }
+        };
+      }
+    }
+
+    let Diedau = new diedau(3)
+    // console.log(Diedau);
+    // console.log(Diedau[Symbol.iterator]); 
+    console.log('[Symbol]');
+
+    console.log(Diedau[Symbol.iterator]().next());
+
+    for (const k of Diedau) {
+      console.log(k);
+    }
+
+    for (const k of Diedau) {
+      console.log(k);
+    }
+
+    console.log('================= arr ==================');
+
+
+    let arr = [1, 2, 3, 4]
+    for (const k of arr) {
+      console.log(k);
+    }
+
+    // console.log(arr.next());
+
+    console.log('==================== Iterator ===================');
+
+
+    class Iterator {
+      // 初始化
+      constructor(item) {
+        this.item = item
+      }
+
+      // 接口
+      [Symbol.iterator]() {
+        let index = 1,
+          item = this.item
+        // 返回里面的规则
+        return {
+          // 里面的规则
+          next() {
+            // 在return里面this默认指向的函数本身
+            // let index = 1,
+            //   item = this.item
+            if (index <= item) {
+              return { value: index++, done: false }
+            }
+            else {
+              return { value: undefined, done: true }
+            }
+          }
+        }
+      }
+    }
+
+
+    console.log(Iterator);
+    const miiterator = new Iterator(3)
+    const miiterator1 = miiterator
+    console.log('for...of');
+
+    for (const k of miiterator) {
+      console.log(k);
+    }
+    for (const k of miiterator1) {
+      console.log(k);
+    }
+
+    console.log(miiterator === miiterator1); //true 
+    // 因为是同一个引用的工厂函数
+
+
+    console.log('===================== 打印所有字符串 =========================');
+
+
+
+    const array = [8, 'Arrebol', 2, '昨夜书', 8]
+
+    class Arr {
+      constructor(array) {
+        this.array = array
+      }
+
+
+      [Symbol.iterator]() {
+        let array = this.array,
+          index = 0
+        return {
+          next() {
+            while (index < array.length) {
+              const current = array[index]
+              index++
+              if (typeof current === 'string') {
+                return { value: current, done: false }
+              }
+            }
+            return { value: undefined, done: true }
+          }
+        }
+      }
+    }
+
+    const g = new Arr(array)
+    // const G = g[Symbol.iterator]()
+    // console.log(G.next());
+    // console.log(G.next());
+
+    for (const k of g) {
+      console.log(k);
+    }
+  </script>
+</body>
+
+</html>

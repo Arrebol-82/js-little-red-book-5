@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>实现可迭代协议要具备2种能力</h1>
+  <ul>
+    <li>迭代的自我识别能力</li>
+    <li>创建实现Iterator的能力 [Symbol.iterator]</li>
+    <li>例如: <strong>字符串, 数组, 映射(Map), 集合(Set), argument, NodeList和DOM集合类型</strong></li>
+  </ul>
+  <p>检测是否是迭代器</p>
+  <h2>属性名加[Symbol.iterator]</h2>
+  <div></div>
+  <code>
+    <pre>
+      let num = 1;
+      let obj = {}
+      const arr = []
+      
+      console.log(num[Symbol.iterator]); undefined
+      console.log(obj[Symbol.iterator]); undefined
+      console.log(arr[Symbol.iterator]); ƒ values() { [native code] }
+    </pre>
+  </code>
+  <h2>符合条件的数组</h2>
+  <code>
+    <pre>
+      const str = 'abc'
+    const array = ['a', 'b', 'c']
+    const map = new Map([['a', 1], ['b', 2]]).set('c', 3)
+    const set = new Set().add('a').add('b').add('c')
+    const els = document.querySelectorAll('div')
+
+      
+    console.log(str[Symbol.iterator]);    [Symbol.iterator]() { [native code] } <strong>字符串</strong>
+    console.log(array[Symbol.iterator]);  values() { [native code] }   <strong>数组</strong>
+    console.log(map[Symbol.iterator]);    entries() { [native code] }  <strong>键值对</strong>
+    console.log(set[Symbol.iterator]);    values() { [native code] }   <strong>集合</strong>
+    console.log(els[Symbol.iterator]);    values() { [native code] }   <strong>DOM伪数组</strong>
+    </pre>
+  </code>
+  <h2>在原生中 就有很多元素是接收可迭代对象的</h2>
+  <ul>
+    <li>for-of循环</li>
+    <li>数组解构</li>
+    <li>扩展操作符</li>
+    <li>Array.from()</li>
+    <li>创建集合</li>
+    <li>创建映射</li>
+    <li>创建映射</li>
+    <li>Promise.all()接收由期哟组成的可迭代对象</li>
+    <li>Promise.race()接收由期哟组成的可迭代对象</li>
+    <li>yield#操作符,在生成器使用</li>
+  </ul>
+  <h2>这些原生语言会在后台调用提供的可迭代对象的工厂函数,从而创建一个迭代器</h2>
+  <p>以上这些方法只要使用的话,就会根据你传入的参数调用[Symbol.iterator] </p>
+  <h1>如果父辈实现了这个iterator接口，那我下面继承父辈的所有子类，都已经实现了这个接口了。</h1>
+  <script>
+    // 检测是否是迭代函数
+    let num = 1;
+    let obj = {}
+    const arr = []
+
+    console.log(num[Symbol.iterator]);
+    console.log(obj[Symbol.iterator]);
+    console.log(arr[Symbol.iterator]);
+
+    const str = 'abc'
+    const array = ['a', 'b', 'c']
+    const map = new Map([['a', 1], ['b', 2]]).set('c', 3)
+    const set = new Set().add('a').add('b').add('c')
+    const els = document.querySelectorAll('div')
+
+    console.log(str[Symbol.iterator]);
+    console.log(array[Symbol.iterator]);
+    console.log(map[Symbol.iterator]);
+    console.log(set[Symbol.iterator]);
+    console.log(els[Symbol.iterator]);
+
+    // 调用他们就可以生成迭代器
+    console.log(str[Symbol.iterator]());
+    console.log(array[Symbol.iterator]());
+    console.log(map[Symbol.iterator]());
+    console.log(set[Symbol.iterator]());
+    console.log(els[Symbol.iterator]());
+
+    let arra = ['foo', 'bar', 'baz']
+    // 其实for...of 循环就是 调用[Symbol.iterator]() 方法 调用next() 方法获取value() 值返回
+    for (const k of arra) {
+      console.log(k);
+    }
+
+    // 数组解构 索引一一对应
+    let [a, b, c] = arra
+    console.log(a, b, c);
+
+    let arr2 = [...arra]
+    console.log(arr2);
+
+    let arr3 = Array.from(arra)
+    console.log(arr3);
+
+    let St = new Set(arra)
+    console.log(St);
+
+    let A = arra.map((ele, index) => [ele, index]);
+    console.log(A);
+
+    let Mp = new Map(A)
+    console.log(Mp);
+
+    // 如果父辈实现了这个接口，那我下面继承父辈的所有子类，都已经实现了这个接口了。
+    class FooArray extends Array { }
+    const fooArray = new FooArray(['a', 'b', 'c'])
+    for (const k of fooArray) {
+      console.log(k);
+
+    }
+
+  </script>
+</body>
+
+</html>

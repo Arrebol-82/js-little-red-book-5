@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let array = [12, 12, 122, 22]
+    // 因为它是一个方法,所以要加小括号去调用昂 ,基础昂
+    let iter = array[Symbol.iterator]()
+    console.log(iter.next());
+    console.log(iter.next());
+    console.log(iter.next());
+    console.log(iter.next());
+    console.log(iter.next());
+
+
+    // 实例
+
+    class Emkitter {
+      constructor(max) {
+        this.max = max;
+        this.idx = 0
+      }
+
+      *[Symbol.iterator]() {
+        while (this.idx < this.max) {
+          yield this.idx++
+        }
+      }
+    }
+
+
+    function count() {
+      let emitter = new Emkitter(5)
+
+      for (const k of emitter) {
+        console.log(k);
+      }
+    }
+
+    count()
+  </script>
+</body>
+
+</html>

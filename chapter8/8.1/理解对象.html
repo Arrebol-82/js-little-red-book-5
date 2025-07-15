@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <section>
+    <h1>实例化创建</h1>
+    <p>前面的章节讲过咯 , 复习一下</p>
+    <code>
+      <pre>
+        console.log('实例化创建');
+
+        const obj = new Object()
+        obj.name = 'Arrebol'
+        obj.age = 16
+        obj.gender = '男'
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h1>对象字面量创建</h1>
+    <p>涉及object原型 , this指向</p>
+    <p>他们是等价的</p>
+    <code>
+      <pre>
+        console.log('对象字面量创建');
+
+    const object = {
+      name: 'Arrebol',
+      age: 16,
+      gender: '男'
+    }
+      </pre>
+    </code>
+  </section>
+  <script>
+    console.log('实例化创建');
+
+    const obj = new Object()
+    obj.name = 'Arrebol'
+    obj.age = 16
+    obj.gender = '男'
+
+    console.log('对象字面量创建');
+
+    const object = {
+      name: 'Arrebol',
+      age: 16,
+      gender: '男'
+    }
+  </script>
+</body>
+
+</html>

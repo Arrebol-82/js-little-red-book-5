@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>isExtensible preventExtensions apply construct</h1>
+  <section>
+    <h2>isExtensible()</h2>
+    <strong>isExtensible 用于检测对象是否可以扩展</strong>
+    <p>isExtensible() 捕获器会在Object.isExtensible() 中被调用 对应的反射API方法是 Reflect.isExtensible()</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                     isExtensible() 必须返回布尔值 用于表示target是否可以扩展 返回非布尔值的话会被转换为布尔值
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    Object.isExtensible( proxy )
+                                                       Reflect.isExtensible ( proxy )
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+            捕获器不变式                                如果 target 可扩展 则处理程序返回的必须是 true
+
+                                                       如果 target 不可扩展 则处理程序返回的必须是 false
+                _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h2>preventExtensions</h2>
+    <strong>用于禁止对象扩展的方法</strong>
+    <p>preventExtensions() 会在Object.preventExtensions() 中被调用 , 对应的反射API方法是Object.preventExtensions()</p>
+    <code>
+      <pre>
+        const mypreventExtensions = {}
+
+        const Prox = new Proxy(mypreventExtensions, {
+          preventExtensions(target) {
+            console.log('preventExtensions');
+            return Reflect.preventExtensions(...arguments)
+          }
+        })
+    
+        console.log(Object.preventExtensions(Prox));
+        // preventExtensions 
+        // Proxy(Object) {}
+      </pre>
+    </code>
+    <p>这里在禁止对象扩展的时候 , 遭到了代理的拦截 所以最终打印 preventExtensions</p>
+    <code class="code">
+      <pre>
+        _________________________________________________________________________________________________________________________
+        返回值                                      preventExtensions() 必须返回布尔值 表示target是否已经不可扩展 返回非布尔值的话会被
+                                                    转换为布尔值
+        _________________________________________________________________________________________________________________________
+
+        拦截操作                                    Object.preventExtensions( target  )
+                                                   Reflect.preventExtensions( target )
+
+        捕获器处理程序参数                           target: 目标对象
+
+        捕获器不变式                                如果 Object.isExtensible(proxy) 是false (表示对象不可扩展) 则处理程序必须返回true
+        _________________________________________________________________________________________________________________________ 
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h2>apply call bind</h2>
+    <ul>
+      <li><strong>call</strong> 是会改变了this的指向 指向call(要被指向的对象) <strong>语法: cat.sayName.call(this指向的对象 , '参数' , '参数'
+          .....)</strong>会被立即调用</li>
+      <li><strong>apply</strong> 跟call的效果是一样的 语法不同 <strong>语法:cat.sayName.call(this指向的对象 , [ '参数' , '参数'
+          .....] )</strong>会被立即调用 <i>参数是使用数组来进行传参的</i></li>
+      <li><strong>bind</strong> 跟call的效果是一样的 <strong>语法: cat.sayName.call(this指向的对象 , '参数' , '参数'
+          .....)</strong>但是bind要被调用的时候才会执行 也就是
+        <code>
+          <pre>
+            let a = dog.eat.bind(cat, '鱼', '肉') <strong>不执行</strong>
+            a() <strong>执行</strong>
+          </pre>
+        </code>
+      </li>
+      <li class="circle">
+        <code class="code">
+          <pre>
+            let cat = {
+              name: '猫',
+              sayName() {
+                console.log(this.name);
+              }
+            }
+        
+            let dog = {
+              name: '狗',
+              eat(foo1, foo2) {
+                console.log(this.name + '喜欢吃' + foo1 + foo2);
+              }
+            }
+        
+            cat.sayName.call(dog) // 狗 this指向了 dog
+            dog.eat('骨头', '狗粮')
+            dog.eat.call(cat, '<・)))><<', '肉')
+        
+            console.log('================= call ==================');
+        
+            dog.eat.call(cat, '<・)))><<', '肉')
+        
+            console.log('================= apply =================');
+        
+            dog.eat.apply(cat, ['<・)))><<', '肉'])
+        
+            console.log('================== bind =================');
+        
+            let a = dog.eat.bind(cat, '<・)))><<', '肉')
+            a()
+          </pre>
+        </code>
+        <h4>这三个方法只能用于函数 , 因为他是属于函数的API</h4>
+      </li>
+    </ul>
+    <h2 style="color: pink;">学完之后回归正题</h2>
+    <p class="black">apply</p>
+    <p>apply() 捕获器会在调用函数时中被调用 , 对应的反射API方法为 Reflect.apply()</p>
+    <code>
+      <pre>
+        const myapply = () => { }
+
+        const pro = new Proxy(myapply, {
+          apply(target, thisage, ...argumentslist) {
+            console.log('apply');
+            return Reflect.apply(...arguments)
+          }
+        })
+    
+        pro()
+      </pre>
+    </code>
+    <p>pro拦截了默认改this的行为 , 所以最终打印 apply</p>
+    <code class="code">
+      <pre>
+        _________________________________________________________________________________________________________________________
+        返回值                                      无限制
+        _________________________________________________________________________________________________________________________
+
+        拦截操作                                    proxy(...arguments)
+                                                   Function.prototype.apply(thisArg , [argumentslist])
+                                                   Function.prototype.call(thisAge , ...argumentslist)
+                                                   Reflect.apply(target , thisAge , arguments)
+
+        捕获器处理程序参数                           target: 目标对象
+
+                                                   thisAge: 调用函数时的this参数
+
+                                                   argumentslist: 调用函数时的参数列表
+
+        捕获器不变式                                target 必须是一个函数对象
+        _________________________________________________________________________________________________________________________ 
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h2>construct</h2>
+    <strong>用法</strong>
+    <ul>
+      <li class="ciecle"><strong>第一个参数：</strong> 要实例化的构造函数（必填）。</li>
+      <li class="ciecle"><strong>第二个参数：</strong> 传递给构造函数的参数（数组形式，必填）</li>
+      <li class="ciecle"><strong>第三个参数：</strong> newTarget 是一个可选的构造函数，它决定了新实例的原型链（指向 newTarget.prototype），并覆盖目标构造函数默认的
+        prototype 设置。"</li>
+    </ul>
+    <p>construct() 捕获器会在操作符中被调用 对应的反射API方法是 Reflect.construct()</p>
+    <code>
+      <pre>
+        const myconstruct = function () { }
+        const ppr = new Proxy(myconstruct, {
+          construct(target, argumentslist, newTarget) {
+            console.log('construct()');
+            return Reflect.construct(...arguments)
+          }
+        })
+    
+        new ppr()
+      </pre>
+    </code>
+    <p>ppr拦截了默认new construct的行为 , 所以最终打印 'construct'</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                      construct() 必须返回一个对象
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    new proxy(...argumentslist)
+                                                       Reflect.construct(target,argumentslist , newTarget)
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+                                                       argumentslist: 调用函数时的参数列表
+
+                                                       newTarget: 最初被调用的构造函数
+    
+            捕获器不变式                                target 必须可以用作构造函数
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+    <script>
+
+    </script>
+  </section>
+  <script>
+
+    console.log('======================================= isExtensible ================================');
+
+    const myisExtensible = {}
+
+    const proxy = new Proxy(myisExtensible, {
+      isExtensible() {
+        console.log('isExtensible');
+        return Reflect.isExtensible(...arguments)
+      }
+    })
+
+    console.log(Object.isExtensible(proxy)); // isExtensible  true
+
+    console.log('==================================== preventExtensions ==================================');
+    const mypreventExtensions = {}
+
+    const Prox = new Proxy(mypreventExtensions, {
+      preventExtensions(target) {
+        console.log('preventExtensions');
+        return Reflect.preventExtensions(...arguments)
+      }
+    })
+
+    console.log(Object.preventExtensions(Prox));
+    // preventExtensions 
+    // Proxy(Object) {}
+
+    console.log('================================ apply call bind =============================');
+    let cat = {
+      name: '猫',
+      sayName() {
+        console.log(this.name);
+      }
+    }
+
+    let dog = {
+      name: '狗',
+      eat(foo1, foo2) {
+        console.log(this.name + '喜欢吃' + foo1 + foo2);
+      }
+    }
+
+    cat.sayName.call(dog) // 狗 this指向了 dog
+    dog.eat('骨头', '狗粮')
+    dog.eat.call(cat, '<・)))><<', '肉')
+
+    console.log('================= call ==================');
+
+    dog.eat.call(cat, '<・)))><<', '肉')
+
+    console.log('================= apply =================');
+
+    dog.eat.apply(cat, ['<・)))><<', '肉'])
+
+    console.log('================== bind =================');
+
+    let a = dog.eat.bind(cat, '<・)))><<', '肉')
+    a()
+
+    console.log('============================== apply ============================');
+    const myapply = () => { }
+
+    const pro = new Proxy(myapply, {
+      apply(target, thisage, ...argumentslist) {
+        console.log('apply');
+        return Reflect.apply(...arguments)
+      }
+    })
+
+    pro()
+
+    console.log('=========================== construct ===========================');
+    const myconstruct = function () { }
+    const ppr = new Proxy(myconstruct, {
+      construct(target, argumentslist, newTarget) {
+        console.log('construct()');
+        return Reflect.construct(...arguments)
+      }
+    })
+
+    new ppr()
+  </script>
+</body>
+
+</html>

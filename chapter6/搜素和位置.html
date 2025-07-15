@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  li {
+    list-style: decimal;
+  }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>搜素和位置方法</h1>
+  <p>indexOf() lastIndexOf() incldes()</p>
+
+  <ul>
+    <li>indexOf() <strong>从头开始</strong> 返回的是元素在数组的索引, 找不到返回-1</li>
+    <li>lastIndexOf() <strong>从尾开始</strong> 返回的是元素在数组中的索引,找不到返回-1 </li>
+    <li>incldes() <strong>true / false</strong> 表示当前数组里面有一个或者多个元素</li>
+  </ul>
+  <code>
+  <pre>
+    <strong>正常用法</strong>
+    let numbers = [1, 2, 3, 4, 5, 4, 3, 2, 1]
+    // 返回4的索引位置
+    console.log(numbers.indexOf(4));
+    // 从后往前找，返回找的索引
+    console.log(numbers.lastIndexOf(4));
+    // 表示有没有
+    console.log(numbers.includes(4));
+    
+    
+    // 表示查找的起始位置
+    // 返回4的索引位置 从4索引开始找
+    console.log(numbers.indexOf(4, 4));
+    // 从后往前找，返回找的索引从4索引开始找
+    console.log(numbers.lastIndexOf(4, 4));
+    // 表示有没有
+    console.log(numbers.includes(4, 7));
+  </pre>
+</code>
+
+  <h3>传入引用值</h3>
+  <code>
+    <pre>
+      let person = { name: 'Arrebol' }
+      let people = [{ name: 'Arrebol' }]
+      <strong> 表示存储的是person里面的引用值 是在上下文中person的变量 , 并获取其地址值</strong>
+      
+      let morePeople = [person]
+      
+      <strong>people 数组中对象的引用与 person 变量指向对象的引用不一样，所以 people.indexOf(person) 找不到对应元素返回-1</strong>
+
+      console.log(people.indexOf(person));
+
+      <strong> morePeople 数组存储的是 person 变量指向对象的引用，二者引用相同，因此 morePeople.indexOf(person) 能找到，返回索引 0</strong>
+
+      console.log(morePeople.indexOf(person));
+
+      <strong> 跟上面是同理的</strong>
+      
+      console.log(people.includes(person));
+
+      <strong> 跟上面是同理的</strong> 
+      
+      console.log(morePeople.includes(person));
+    </pre>
+  </code>
+
+  <h1>断言函数</h1>
+  <h3>数组 Set, Map, str.split() </h3>
+  <p>断言函数本质就是让,在遍历数值的时候,会执行你自己设置的函数(元素,索引,数组本身) 放回的就是true / false 可以通过find() findIndex()等 </p>
+  <h2>find() 返回的是元素值</h2>
+  <h2>findIndex() 返回的是索引</h2>
+  <h1>断言函数一旦拿到了return返回的值后，后续的元素就不会在执行断言函数了</h1>
+  <code>
+    <pre>
+      const evens = [2, 4, 6]
+      evens.find((a, b, c) => {
+      console.log(a);
+      console.log(b);
+      console.log(c);
+      return a === 4  })
+      2
+      0
+      [2, 4, 6]
+      4
+      1
+      [2, 4, 6]
+
+    <strong>这里的最后一个元素不会在执行断言函数了 ， 因为此时return已经有了返回值 所以就不会在执行</strong>
+    </pre>
+  </code>
+</body>
+<script>
+  let numbers = [1, 2, 3, 4, 5, 4, 3, 2, 1]
+  // 返回4的索引位置
+  console.log(numbers.indexOf(4));
+  // 从后往前找，返回找的索引
+  console.log(numbers.lastIndexOf(4));
+  // 表示有没有
+  console.log(numbers.includes(4));
+
+
+  // 表示查找的起始位置
+  // 返回4的索引位置 从4索引开始找
+  console.log(numbers.indexOf(4, 4));
+  // 从后往前找，返回找的索引从4索引开始找
+  console.log(numbers.lastIndexOf(4, 4));
+  // 表示有没有
+  console.log(numbers.includes(4, 7));
+
+  let person = { name: 'Arrebol' }
+  let people = [{ name: 'Arrebol' }]
+  // 表示存储的是person里面的引用值 是在上下文中person的变量 , 并获取其地址值
+  let morePeople = [person]
+
+  // 一个是对象引用 , 一个数组引用当然不一样
+  console.log(people.indexOf(person));
+  // 这里是一样的, 因为地址值是相同的
+  console.log(morePeople.indexOf(person));
+  // 他们的引用是不一样的 , 一个是数组 , 一个是对象
+  console.log(people.includes(person));
+  // 这同一个地址值 ,因为[person] 里存储的是 let person = { name: 'Arrebol' } 的地址值
+  console.log(morePeople.includes(person));
+
+  console.log('断言函数 ===================================');
+  let p = [{ name: 'Arrebol', age: '27' }, { name: 'Arrebol', age: '29' }]
+  // 只要age小于28就会被返回元素
+  console.log(p.find((a, b, c) => a.age < 28));
+  // 返回的是索引
+  console.log(p.find((a, b, c) => a.age < 28));
+
+  const evens = [2, 4, 6]
+  evens.find((a, b, c) => {
+    console.log(a);
+    console.log(b);
+    console.log(c);
+    return a === 4
+  })
+</script>
+
+</html>

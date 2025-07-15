@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>序列化函数</h1>
+  <h2>通常指将函数转换为字符串表示的过程，以便存储、传输或后续重新创建。但由于 JavaScript 函数的复杂性（如闭包、上下文依赖），序列化函数存在一定限制和挑战。</h2>
+  <strong>简单说就是 : 是将函数转换为字符串的过程，但受限于 JavaScript 函数的动态特性</strong>
+  <p>对于函数而言 , 继承的方法tolocaleString 和 toString 始终按照ECMAscript定义返回函数的代码 原生函数只返回占位符 </p>
+  <code>
+    <pre>
+          function foo(value = 'foo') { return value }
+          console.log(foo.toString()); // function foo(value = 'foo') { return value }
+          
+          const bar = (value = 'bar') => value
+          console.log(bar.toString()); // (value = 'bar') => value
+          
+          console.log(alert);
+          // (value = 'bar') => value
+    </pre>
+  </code>
+  <p>返回的代码格式因浏览器而异 有的返回源代码 包含注释 而有的只返回代码的内部样式 等等 由于这些差异 , 因此不等能在重要功能中依赖这些方法返回的值 ,应该只在调试中使用他们 , 继承的方法 valueOf
+    返回函数的本身
+  </p>
+  <script>
+    function foo(value = 'foo') { return value }
+    console.log(foo.toString()); // function foo(value = 'foo') { return value }
+
+    const bar = (value = 'bar') => value
+    console.log(bar.toString()); // (value = 'bar') => value
+
+    console.log(alert);
+    // (value = 'bar') => value
+  </script>
+</body>
+
+</html>

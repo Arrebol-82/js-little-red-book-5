@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>迭代器与生成器方法</h1>
+  <p>类定义语法支持在<strong>原型和类本身上</strong>定义生成器方法</p>
+  <code class="code">
+    <pre>
+      class Person {
+        // 原型上定义生成器方法
+        *createNicknameIterator() {
+          yield 'Arrebol'
+          yield 'ZJS'
+          yield '82静态'
+        }
+  
+        // 在类上定义静态生成器方法
+        static *createJobItertor() {
+          yield '12'
+          yield '34'
+          yield '56'
+        }
+      }
+  
+      console.log('=============================== 静态类定义 ==================================');
+  
+      let job = Person.createJobItertor()
+      console.log(job.next());
+      console.log(job.next());
+      console.log(job.next());
+      console.log(job.next());
+  
+      console.log('================================ 类定义 =================================');
+  
+      let p = new Person()
+      let nicknameIter = p.createNicknameIterator()
+      console.log(nicknameIter.next());
+      console.log(nicknameIter.next());
+      console.log(nicknameIter.next());
+      console.log(nicknameIter.next());
+  
+      console.log('因为支持生成器 , 所以可以通过添加一个默认的迭代器把类实例变成可迭代对象');
+  
+      // 因为支持生成器 , 所以可以通过添加一个默认的迭代器把类实例变成可迭代对象
+      class Per {
+        constructor() {
+          this.nicknameIter = ['jack', 'Arrebol', ' Matt']
+        }
+  
+        *[Symbol.iterator]() {
+          yield* this.nicknameIter.entries()
+        }
+      }
+  
+      let P = new Per()
+      for (let [id, index] of P) {
+        console.log(index);
+      }
+  
+      // 也可以只返回迭代器实例
+      console.log('====================== 迭代器实例 =======================');
+      class Perr {
+        constructor() {
+          this.nicknameIter = ['Arrebol', '8', '2']
+        }
+  
+        [Symbol.iterator]() {
+          return this.nicknameIter.entries()
+        }
+      }
+  
+      let A = new Perr
+      for (let [idx, nickname] of A) {
+        console.log(idx);
+        console.log(nickname);
+      }
+    </pre>
+  </code>
+  <p>通过在类上实现迭代器协议（Iterator Protocol），让类的实例成为可迭代对象，从而可以直接使用 JavaScript 的迭代语法（如 for...of、扩展运算符等）来访问类内部的集合数据。</p>
+  <script>
+    class Person {
+      // 原型上定义生成器方法
+      *createNicknameIterator() {
+        yield 'Arrebol'
+        yield 'ZJS'
+        yield '82静态'
+      }
+
+      // 在类上定义静态生成器方法
+      static *createJobItertor() {
+        yield '12'
+        yield '34'
+        yield '56'
+      }
+    }
+
+    console.log('=============================== 静态类定义 ==================================');
+
+    let job = Person.createJobItertor()
+    console.log(job.next());
+    console.log(job.next());
+    console.log(job.next());
+    console.log(job.next());
+
+    console.log('================================ 类定义 =================================');
+
+    let p = new Person()
+    let nicknameIter = p.createNicknameIterator()
+    console.log(nicknameIter.next());
+    console.log(nicknameIter.next());
+    console.log(nicknameIter.next());
+    console.log(nicknameIter.next());
+
+    console.log('因为支持生成器 , 所以可以通过添加一个默认的迭代器把类实例变成可迭代对象');
+
+    // 因为支持生成器 , 所以可以通过添加一个默认的迭代器把类实例变成可迭代对象
+    class Per {
+      constructor() {
+        this.nicknameIter = ['jack', 'Arrebol', ' Matt']
+      }
+
+      *[Symbol.iterator]() {
+        yield* this.nicknameIter.entries()
+      }
+    }
+
+    let P = new Per()
+    for (let [id, index] of P) {
+      console.log(index);
+    }
+
+    // 也可以只返回迭代器实例
+    console.log('====================== 迭代器实例 =======================');
+    class Perr {
+      constructor() {
+        this.nicknameIter = ['Arrebol', '8', '2']
+      }
+
+      [Symbol.iterator]() {
+        return this.nicknameIter.entries()
+      }
+    }
+
+    let A = new Perr
+    for (let [idx, nickname] of A) {
+      console.log(idx);
+      console.log(nickname);
+    }
+
+
+  </script>
+</body>
+
+</html>

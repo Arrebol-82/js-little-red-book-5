@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let s1 = Symbol('foo'),
+      s2 = Symbol('bar');
+
+    let o = {
+      [s1]: 'foot val',
+      [s2]: 'bar val',
+      baz: 'baz val',
+      qux: 'qux val'
+    }
+    // 这个方法主要用于把里面的Symbol的键打印出来
+    console.log(Object.getOwnPropertySymbols(o));
+
+    //这个方法主要用于把里面的 常规属性的键打印出来
+    console.log(Object.getOwnPropertyNames(o));
+
+    //这个方法主要用于把里面的 常规属性 和 Symbol 的 键值对 打印出来
+    console.log(Object.getOwnPropertyDescriptors(o));
+
+    //这个方法主要用于把里面的 常规属性 和 Symbol 的 键 打印出来
+    console.log(Object.getOwnPropertyDescriptors(o));
+
+
+
+  </script>
+</body>
+
+</html>

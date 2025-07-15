@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>理解异步迭代器队列</h1>
+  <h3>异步迭代器队列 , 其实就是相当于时间循环的队列 , 但是事件循环是谁先好了 ,就返回出去执行 ,而异步迭代器队列是 , 不管如何都要等上一个函数执行完,才能执行下一个</h3>
+  <h2 style="color: pink;">异步迭代器队列 就是按顺序执行队列里面的代码 , 不管谁先加载完 , 也要乖乖排队</h2>
+  <ul>
+    <li>异步执行器队列就跟事件循环队列是一样的</li>
+    <li>事件循环队列: 他是不管先后顺序 ,只要到点了 ,就会返回出去执行</li>
+    <li>异步迭代器队列: 他是严格按照先后顺序的 ,不管谁先执行完,反正一定要等上一个执行完才能执行下一个 (模仿同步迭代器)</li>
+  </ul>
+  <code>
+    <pre style="font-size: 20px; font-weight: 700;">
+      期约 = Promise：表示异步操作的最终结果
+      
+      两种最终状态：
+      
+      ✅ 兑现（fulfilled）：通过 resolve(value) 表示成功
+      
+      ❌ 拒绝（rejected）：通过 reject(reason) 表示失败
+      
+      状态不可逆：一旦确定就不能改变
+      
+      消费方式：
+      
+      成功值通过 await promise 获取
+      
+      失败原因通过 try/catch 捕获
+      
+      这种设计让异步迭代器既能优雅地处理成功流程，也能妥善处理错误情况，是 JavaScript 异步编程的基石。
+    </pre>
+  </code>
+  <script>
+    class Emitter {
+      constructor(max) {
+        this.max = max
+        this.index = 0
+        this.asyncindex = 0
+      }
+      *[Symbol.iterator]() {
+        while (this.max > this.index) {
+          yield this.index++
+        }
+      }
+
+      *[Symbol.asyncIterator]() {
+        while (this.max > this.asyncindex) {
+          yield new Promise((value) => {
+            setTimeout(() => { value(this.asyncindex++) }, Math.floor(Math.random() * 1000))
+          });
+        }
+      }
+    }
+
+    const emitter = new Emitter(5)
+    function syncCount() {
+      const syncCounter = emitter[Symbol.iterator]()
+      for (const k of syncCounter) {
+        console.log(k);
+      }
+    }
+
+    async function asyncCount() {
+      const asyncCounter = emitter[Symbol.asyncIterator]()
+      for await (const k of asyncCounter) {
+        console.log(k);
+      }
+    }
+
+    syncCount()
+    console.log('异步执行 不管要等多久,都要等到上一个执行完,才会执行一个');
+
+    asyncCount()
+  </script>
+</body>
+
+</html>

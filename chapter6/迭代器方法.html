@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>迭代器方法</h1>
+  <p><strong>因为数组是可迭代属性</strong> , 所以会返回Array Iterator <br>
+    keys() 是迭代器生成方法 需要通过 Array.from() 或循环将迭代器展开为数组。</p>
+  <p>像splice() 是数组操作方法 所以不用转换</p>
+  <code>
+    <pre>
+      const a = ['foo', 'bar', 'baz', 'qux'];
+      
+      // 因为数组是可迭代属性 , 所以会返回Array Iterator { }
+      // keys() 是迭代器生成方法 需要通过 Array.from() 或循环将迭代器展开为数组。
+      console.log(a.keys());
+      // 转换
+      console.log(Array.from(a.keys()));
+      
+      // 像splice() 是数组操作方法 所以不用转换
+    </pre>
+  </code>
+  <ul>
+    <li>keys() 返回数组 <strong>索引</strong>的迭代器</li>
+    <li>values() 返回数组 <strong>元素</strong>的迭代器</li>
+    <li>entries() 返回数组 <strong>索引/值对 （用数组包含）</strong>的迭代器</li>
+  </ul>
+  <p>entries() 可以用数组结构更快拿到元素</p>
+  <code>
+    <pre>
+      for (const [x, y] of a.entries()) {
+      console.log(x);
+      console.log(y);
+      }
+      
+      0
+      foo
+      1
+      bar
+      2
+      baz
+      3
+      qux
+    </pre>
+  </code>
+  <script>
+    const a = ['foo', 'bar', 'baz', 'qux'];
+
+    // 因为数组是可迭代属性 , 所以会返回Array Iterator { }
+    // keys() 是迭代器生成方法 需要通过 Array.from() 或循环将迭代器展开为数组。
+    console.log(a.keys());
+    // 转换
+    console.log(Array.from(a.keys()));
+    console.log(Array.from(a.values()));
+    console.log(Array.from(a.entries()));
+
+    // 像splice() 是数组操作方法 所以不用转换
+
+    for (const [x, y] of a.entries()) {
+      console.log(x);
+      console.log(y);
+    }
+
+    // 0
+    // foo
+    // 1
+    // bar
+    // 2
+    // baz
+    // 3
+    // qux
+  </script>
+</body>
+
+</html>

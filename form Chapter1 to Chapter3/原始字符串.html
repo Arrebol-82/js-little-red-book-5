@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // 方法 String.raw() 
+    // 这是版权符号 ©
+    // 里面只能是模版字符串喔 ` `
+    console.log(`\u00A9`);
+    console.log(String.raw`\u00A9`);
+
+    console.log('ffff \n jjjj');
+    console.log(String.raw`ffff \n jjjj`);
+
+
+    // 因为本来就是模版字符串, 所以不会转换
+    console.log(`adadad
+     
+    adadad`);
+    console.log(
+      String.raw`adadad
+     
+    adadad`
+    );
+
+
+    // 配合标签函数使用
+
+    function printRaw(strings) {
+      console.log('Actual character');
+      for (const k of strings) {
+        console.log(k);
+      }
+
+      console.log('Escaped character');
+      for (const key of strings.raw) {
+        console.log(key);
+      }
+    }
+
+    printRaw`\u00A9${'and'}\n`
+  </script>
+</body>
+
+</html>

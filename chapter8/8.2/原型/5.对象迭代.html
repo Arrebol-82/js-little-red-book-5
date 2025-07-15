@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h2>静态方法 Object.values() 和 object.entrise() 用于将对象内容转换为序列化且可迭代的格式 , 这两个方法都接收对象 <i>返回数组 Object.values() 返回对象值数组</i>
+    <i>object.entrise()返回键值对数组</i>
+  </h2>
+  <p>来看看例子</p>
+  <code>
+    <pre>
+      const o = {
+        foo: 'bar',
+        baz: 1,
+        qux: {}
+      }
+  
+      console.log(Object.values(o));
+      <strong>['bar' , 1 , {} ]</strong>
+      console.log(Object.entries(o));
+      <strong>[[foo: 'bar'] , [baz: 1] , [qux: {}] ]</strong>
+    </pre>
+  </code>
+  <ul>
+    <li class="circle">
+      <strong>Object.values</strong>
+      <p>这个方法是返回对象的值</p>
+    </li>
+    <li class="circle">
+      <strong>Object.entries</strong>
+      <p>这个方法是将对象里面的属性跟值 以键值对的方式返回</p>
+    </li>
+  </ul>
+  <strong class="pink">非字符串属性会被转换为字符串输出 . 另外这两个方法执行对象的浅复制</strong>
+  <code>
+    <pre>
+      const O = {
+        qux: {}
+      }
+  
+      console.log(Object.values(O)[0] === O.qux);  // true 都是qux里面的地址值 同一个地址值 肯定是一样的
+  
+      console.log(Object.entries(O)[0][1] === O.qux); // true 毕竟都是同一个地址值
+    </pre>
+  </code>
+  <strong>符号属性会被忽略</strong>
+  <code>
+    <pre>
+      const sym = Symbol()
+      const obj = {
+      [sym]: 'Foo',
+      }
+      
+      console.log(Object.entries(obj));
+      console.log(Object.values(obj));
+    </pre>
+  </code>
+  <p>因为这两个方法是不会返回Symbol属性的</p>
+  <h2>来看看两个方法的共同特性</h2>
+  <code class="code">
+    <pre>
+      特性              Object.values           Object.entries        共同规则
+      包含原型链属性          ❌                      ❌            只限自身属性
+      包含Symbol属性          ❌                      ❌             仅字符串键
+      包含不可枚举属性        ❌                      ❌             必须可枚举
+      包含继承属性            ❌                      ❌             仅直接属性
+      
+    </pre>
+  </code>
+  <h2>Object.fromEntries()</h2>
+  <p>这个属性刚好是跟Object.entries反着来的 他是基于键值对的集合构建对象</p>
+  <code>
+    <pre>
+      // 所以非常适合Map 他们之间可以无缝配合使用
+      
+      const map = new Map()
+      .set('name', 'Arrebol')
+      console.log(Object.fromEntries(map));
+    </pre>
+  </code>
+  <strong>总结Object.fromEntries() 只接受一个参数 这个参数必须是可迭代对象 , 里面的也必须是键值对的形式 例如: name: 'Arrebol' , 如果里面的参数不符合要求的话 就会报错</strong>
+  <script>
+    const o = {
+      foo: 'bar',
+      baz: 1,
+      qux: {}
+    }
+
+    console.log(Object.values(o));
+    // ['bar' , 1 , {} ]  
+    console.log(Object.entries(o));
+    // [[foo: 'bar'] , [baz: 1] , [qux: {}] ]
+
+    // 注意 非字符串属性会被转换为字符串输出 . 另外这两个方法执行对象的浅复制
+    console.log(' ================== 浅复制 ================== ');
+
+
+    const O = {
+      qux: {}
+    }
+
+    console.log(Object.values(O)[0] === O.qux);  // true 都是qux里面的地址值 同一个地址值 肯定是一样的
+
+    console.log(Object.entries(O)[0][1] === O.qux); // true 毕竟都是同一个地址值
+
+    console.log(' ===================== 符号属性会被忽略 ===================== ');
+
+    const sym = Symbol()
+    const obj = {
+      [sym]: 'Foo',
+    }
+
+    console.log(Object.entries(obj));
+    console.log(Object.values(obj));
+
+    console.log('======================= Object.fromEntries() ===================');
+    const Obj = {
+      foo: 'bar',
+      baz: 'qux'
+    }
+
+    const objEntries = Object.entries(Obj)
+    console.log(objEntries);  // [Array(2), Array(2)]
+
+    console.log(Object.fromEntries(objEntries)); // {foo: 'bar', baz: 'qux'}
+
+    // 所以非常适合Map 他们之间可以无缝配合使用
+
+    const map = new Map()
+      .set('name', 'Arrebol')
+    console.log(Object.fromEntries(map));
+
+
+  </script>
+</body>
+
+</html>

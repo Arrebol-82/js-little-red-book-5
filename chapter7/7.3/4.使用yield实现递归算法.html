@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>使用yield实现递归算法</h1>
+    <p><strong style="color: red;">yield非常有用的场景是实现递归操作</strong> 此时的生成器可以产生自身</p>
+    <p>先是递归层层进入，最后if条件不符合，没的继续递归了，开始执行下面的yield n - 1 而这里的n是当前作用域的n 经过了n-1的 n，层层回溯往回执行</p>
+    <code>
+        <pre>
+            function* nTime(n) {
+                if (n > 0) {
+                    yield* nTime(n -1)
+                    yield n - 1
+                }
+            }
+
+            for(const x of nTime(3)) {
+                console.log(x);
+            }
+        </pre>
+    </code>
+    <p>图模型(无向图)</p>
+    <code>
+        <pre>
+            class Node {
+            // 实例化
+                constructor(id) {
+                // 编号从 0 到 size - 1
+                this.id = id
+                // 存放所有的id 和匹配的元素
+                this.neighbors = new Set()
+            }
+            
+            connect(node) {
+            // 不能和自身相等
+                    if (node !== this) {
+                    // 你添加我
+                    this.neighbors.add(node)
+                    // 我添加你
+                    node.neighbors.add(this)
+                    }
+                }
+            }
+            class RandomGraph {
+               constructor(size) {
+                    this.nodes = new Set()
+                    for (let i = 0; i < size; i++) { 
+                        this.nodes.add(new Node(i)) 
+                    } 
+                    
+                    const threshold=1 / size 
+                    
+                    for (const k of this.nodes) {
+                        for (const y of this.nodes) { 
+                            if (Math.random() < threshold) { k.connect(y) } } 
+                        }
+                 }
+                        
+                    print() { 
+                        for (const k of this.nodes) { 
+                            const ids=[...k.neighbors] 
+                                .map((n)=> n.id)
+                                .join(',')
+                
+                           console.log(`${k.id}: ${ids}`);
+                           }
+                       }
+                    }
+            
+                const g = new RandomGraph(6)
+            
+                g.print()
+        </pre>
+    </code>
+    <p>只要两个节点的邻居列表互相包含，它们就直接连通 (那这里是不是只有 2 : 5 ,然后 5 : 2 那就说明2和5是想通的)</p>
+    <h2>深度优先遍历 (就是看看有没有不可到达的节点)</h2>
+    <code>
+        <pre>
+            class node { ... }
+
+            class RandomGraph { 
+                constructor(size) { ... }
+
+                print(){ ... }
+
+                isConnected() {
+                    const visitedNoe = new Set()
+                        function* traverse(nodes) {
+                            for (const node of nodes) {
+                                if (!visitedNode.has(node)) {
+                                yield node
+                                yield* traverse(node.neighbors)
+                        }
+                    }
+                }
+                const firstNode = this.nodes[Symbol.iterator]().next().value
+                
+                for (const node of traverse([firstNode])) {
+                          visitedNode.add(node)
+                     }
+                    // 对比 “从某个起点出发能遍历到的节点数量” 和 “图的总节点数量”
+                 return visitedNode.size === this.nodes.size
+                    
+                    }
+                }
+                const G = new randomGraph(6)
+                
+                G.print()
+
+                console.log(G.isConnected());
+        </pre>
+    </code>
+    <p>所以整体的意思就是 先创建visitedNode 的集合(去重) ,在创建生成器 然后依次遍历里面的每一个节点和邻居 ,
+        如果已经遍历过了的话就不会在遍历了 , 然后获取this.nodes里面第一个节点和邻居 ,
+        因为无向图只要一个节点就可以知道是否能连通了 , 然后进行遍历 ,
+        把每个节点都添加进 先前创建的集合里面 最后return 判断他们的总节点数是否相等</p>
+    <script>
+        function* nTime(n) {
+            if (n > 0) {
+                yield* nTime(n - 1)
+                yield n - 1
+            }
+        }
+
+        for (const x of nTime(3)) {
+            console.log(x);
+        }
+
+        console.log('=====好复杂======');
+        console.log(' 段代码实现的是一个无向图（Undirected Graph），核心特征是边的双向性和无自环。');
+
+
+
+        class Node {
+            // 实例化
+            constructor(id) {
+                // 编号从 0 到 size - 1 
+                this.id = id
+                // 存放所有的id 和匹配的元素
+                this.neighbors = new Set()
+            }
+
+            connect(node) {
+                // 不能和自身相等
+                if (node !== this) {
+                    // 你添加我
+                    this.neighbors.add(node)
+                    // 我添加你
+                    node.neighbors.add(this)
+                }
+            }
+        }
+        class RandomGraph {
+            constructor(size) {
+                this.nodes = new Set()
+                for (let i = 0; i < size; i++) {
+                    this.nodes.add(new Node(i))
+                }
+
+                const threshold = 1 / size
+                for (const k of this.nodes) {
+                    for (const y of this.nodes) {
+                        if (Math.random() < threshold) {
+                            k.connect(y)
+                        }
+                    }
+                }
+
+                console.log(this.nodes[Symbol.iterator]().next().value);
+
+            }
+
+            print() {
+                for (const k of this.nodes) {
+                    // console.log([...k.neighbors]);
+
+                    const ids = [...k.neighbors]
+                        .map((n) => n.id)
+                        .join(',')
+
+                    console.log(`${k.id}: ${ids}`);
+                }
+            }
+        }
+
+        const g = new RandomGraph(6)
+
+        g.print()
+
+        console.log(' 深度遍历 ');
+
+
+        class node {
+            constructor(id) {
+                this.id = id
+                this.neighbors = new Set()
+            }
+
+            connect(node) {
+                if (this != node) {
+                    this.neighbors.add(node)
+                    node.neighbors.add(this)
+                }
+            }
+        }
+
+        class randomGraph {
+            constructor(size) {
+                this.nodes = new Set()
+                for (let i = 0; i < size; i++) {
+                    this.nodes.add(new node(i))
+                }
+
+                const threshold = 1 / size
+
+                //拿到节点
+                for (const k of this.nodes) {
+                    //拿到节点的邻居
+                    for (const y of this.nodes) {
+                        if (Math.random() < threshold) {
+                            k.connect(y)
+                        }
+                    }
+                }
+            }
+
+            print() {
+                for (const k of this.nodes) {
+                    const ids = [...k.neighbors]
+                        .map((n) => n.id)
+                        .join(',')
+
+                    console.log(`${k.id}:${ids}`);
+                }
+            }
+
+
+            isConnected() {
+                const visitedNode = new Set()
+                function* traverse(nodes) {
+                    for (const node of nodes) {
+                        if (!visitedNode.has(node)) {
+                            yield node
+                            yield* traverse(node.neighbors)
+                        }
+                    }
+                }
+                const firstNode = this.nodes[Symbol.iterator]().next().value
+
+                for (const node of traverse([firstNode])) {
+                    visitedNode.add(node)
+                }
+                // 对比 “从某个起点出发能遍历到的节点数量” 和 “图的总节点数量”
+                return visitedNode.size === this.nodes.size
+
+            }
+        }
+        const G = new randomGraph(6)
+
+        G.print()
+
+        console.log(G.isConnected());
+
+
+    </script>
+</body>
+
+</html>

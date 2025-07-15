@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>构造函数 , HomeObject , 和 super()</h1>
+  <p>派生类的方法可以通过 super 关键字引用它们的原型 这个关键字只能在派生类中使用 , 而且仅限用类构造函数 ,实例方法 和 静态方法内部 在类构造函数中使用 super 可以调用父类构造函数</p>
+  <h2>注意一下</h2>
+  <ul>
+    <li class="ciecle">能在子类中访问 super( )</li>
+    <li class="ciecle">不要在调用 super() 之前引用this 否则就会抛出ReferenceError(引用错误 )</li>
+    <li class="ciecle">只能在子类的 构造函数中 <strong>constructor() 里 → 调用父类构造函数</strong></li>
+    <li class="ciecle">只能在子类的 实例方法 <strong>普通方法里 → 调用父类方法</strong></li>
+    <li class="ciecle">只能在子类的 静态方法 <strong>static 方法里 → 调用父类静态方法</strong></li>
+    <li class="ciecle">在子类中调用 super()会把 <strong>父类里面的this改成子类的this(也就是实例化子类的对象)</strong></li>
+  </ul>
+  <strong>在静态方法中可通过super调用继承的类上定义的静态方法</strong>
+  <code>
+    <pre>
+      class Veher {
+        static identify() {
+          console.log('vehicle');
+        }
+      }
+  
+      class Bu extends Veher {
+        static identify() {
+          super.identify()
+        }
+      }
+  
+      Bu.identify()
+    </pre>
+  </code>
+  <p><strong>注意</strong> ECMAscript给类构造函数和静态方法添加了内部特性[[HomeObject]] , 这个特性是一个指针 , 指象定义该方法的对象 这个指针是自动赋值的
+    只能在引擎内部访问 , super始终会定义[[HomeObject]]的原型</p>
+  <strong>[[HomeObject]]的底层代码就是 Object.getPrototypeOf([[HomeObject]]).方法名.call(this)
+    而这里的[[HomeObject]]指的是当前类名.prototype === className.prototype </strong>
+  <h2>在使用super要注意几个问题</h2>
+  <p>super只能在<strong>派生类</strong>构造函数和静态方法中使用</p>
+  <code>
+    <pre>
+      class Ve {
+        constructor() {
+          super()  // SyntaxError: 'super' keyword unexpected here
+        }
+      }
+    </pre>
+  </code>
+  <p>不能单 <strong>独引用 super 关键字 要super() </strong>,要么用他调用构造函数,要么用他引用静态方法</p>
+  <code>
+    <pre>
+      class Vehic { }
+      class B extends Vehic {
+        constructor() {
+          console.log(super); // SyntaxError: 'super' keyword unexpected here
+        }
+      }
+    </pre>
+  </code>
+  <p>调用super() 会调用父类构造函数,并 <strong>返回的实例赋值给this</strong></p>
+  <code>
+    <pre>
+      class Von { }
+      class Boby extends Von {
+        constructor() {
+          super()
+          console.log(this instanceof Von);
+        }
+      }
+  
+      new Boby() // this
+    </pre>
+  </code>
+  <p>super()的行为如同构造函数, <strong>如果需要给父类构造函数传参,则需要手动传入</strong></p>
+  <code>
+    <pre>
+      class parameter {
+        constructor(name) {
+          this.name = name
+        }
+      }
+  
+      class Subclass extends parameter {
+        constructor(name) {
+          super('Arrebol')
+        }
+      }
+  
+      console.log(new Subclass('1234')); // Subclass {name: 'Arrebol'}
+    </pre>
+  </code>
+  <p>如果没有定义类构造函数, <strong>在实例化派生类时会隐式调用super()</strong> , 而且会传入所有传给派生类的参数</p>
+  <p>直接通过子类创建的话 , 引擎会帮我们调用 super ( ) ,如果是访问属性的话 , 就会在子类创建constructor , 并把参数传进去,如果访问的是方法的话 , 就会去父类身上找</p>
+  <code>
+    <pre>
+      class Parem {
+        constructor(licnesPlate) {
+          this.licnesPlate = licnesPlate
+        }
+  
+        a() {
+          console.log('55');
+  
+        }
+      }
+  
+      class Sub extends Parem { }
+      let Arre = new Sub()
+      console.log(new Sub('1234H47'));
+    </pre>
+  </code>
+  <p>在类构造函数中 , 不能在调用 <strong>super() 之前引用this</strong></p>
+  <strong>子类中的构造函数里面 , 一定要先调用super( ) , 才能引用this</strong>
+  <ul>
+    <li class="circle">子类实例的创建依赖于父类构造函数的初始化</li>
+    <li class="circle">super() 的作用就是调用父类构造函数。只有调用 super() 后，父类构造函数才会创建并初始化子类实例（即 this 对象）的基础结构。</li>
+    <li class="circle">在 super() 调用之前，子类实例 (this) 尚未被创建或初始化。此时访问 this，JavaScript 引擎会认为 this 处于“未初始化状态”（类似于暂时性死区
+      TDZ），直接抛出 ReferenceError。</li>
+  </ul>
+  <code>
+    <pre>
+      class Vec { }
+
+      class BY extends Vec {
+        constructor() {
+          super()
+          console.log(this)
+  
+        }
+        a() {
+          console.log(this);
+        }
+      }
+  
+      let by = new BY()
+    </pre>
+  </code>
+  <p>如果在派生类中显示定义了构造函数 ， 则 <strong>要么必须在其中调用 super() 要么必须在其中返回一个对象</strong></p>
+  <p>因为实例化子类的时候他是要去继承父类的 , 所以就会要求调用super() , 如果是直接返回一个this的话 ,
+    那么就会失去原有的继承了 , 那么这个子类就没有意义了 <strong>其实就是extends(继承) 配合super() 往父类身上找方法 , 一套精密的组合</strong></p>
+  <code>
+    <pre>
+      class Vecher { }
+
+      class Car extends Vecher { }
+  
+      class Original extends Vecher {
+        constructor() {
+          super()
+        }
+      }
+  
+      class Van extends Vecher {
+        constructor() {
+          return {}
+        }
+      }
+  
+      console.log(new Car); // 自动调用super 所以返回 Car
+      console.log(new Original); // super 返回 Original
+      console.log(new Van); // 返回 {}
+    </pre>
+  </code>
+  <script>
+    class Vehicle {
+      constructor() {
+        this.hasEngine = true
+      }
+    }
+
+    class Bus extends Vehicle {
+      constructor() {
+        super()
+        console.log(this instanceof Vehicle);
+        console.log(this);
+      }
+    }
+
+    new Bus()
+
+    console.log('在静态方法中可通过super调用继承的类上定义的静态方法');
+    class Veher {
+      static identify() {
+        console.log('vehicle');
+      }
+    }
+
+    class Bu extends Veher {
+      static identify() {
+        super.identify()
+      }
+    }
+
+    Bu.identify()
+
+    class car {
+      straight() {
+        console.log('小车在直行');
+        return '直行完成'
+      }
+    }
+
+    class highway extends car {
+      accelerator() {
+        console.log('踩下了油门');
+        console.log(super.straight());
+      }
+    }
+
+    let a = new highway
+    a.accelerator()
+
+    console.log('======================== super要注意的问题 ==========================');
+    // super只能在派生类构造函数和静态方法中使用
+    class Ve {
+      constructor() {
+        // super()  // SyntaxError: 'super' keyword unexpected here
+      }
+    }
+
+    // 不能单独引用 super 关键字,要么用他调用构造函数,要么用他引用静态方法
+
+    class Vehic { }
+    class B extends Vehic {
+      constructor() {
+        // console.log(super); // SyntaxError: 'super' keyword unexpected here
+      }
+    }
+
+    console.log('================= 调用父类 ===============');
+
+    // 调用 super() 会调用父类构造函数 , 并将返回的实例赋值给this
+    class Von { }
+    class Boby extends Von {
+      constructor() {
+        super()
+        console.log(this instanceof Von);
+      }
+    }
+
+    new Boby() // true
+
+    console.log('====================== 传参 ===================');
+    class parameter {
+      constructor(name) {
+        this.name = name
+      }
+    }
+
+    class Subclass extends parameter {
+      constructor(name) {
+        super('Arrebol')
+      }
+    }
+
+    console.log(new Subclass('1234')); // Subclass {name: 'Arrebol'}
+
+    console.log('====================== 隐式调用super() =====================');
+    class Parem {
+      constructor(licnesPlate) {
+        this.licnesPlate = licnesPlate
+      }
+
+      a() {
+        console.log('55');
+      }
+    }
+
+    class Sub extends Parem { }
+
+    let Arre = new Sub()
+
+    console.log(new Sub('1234H47'));
+    console.log(new Sub().a());
+
+    console.log('========================= 引用this =======================');
+
+    class Vec { }
+
+    class BY extends Vec {
+      constructor() {
+        super()
+        console.log(this)
+
+      }
+      a() {
+        console.log(this);
+      }
+    }
+
+    let by = new BY()
+
+    console.log('===================== super() =====================');
+
+    class Vecher { }
+
+    class Car extends Vecher { }
+
+    class Original extends Vecher {
+      constructor() {
+        super()
+      }
+    }
+
+    class Van extends Vecher {
+      constructor() {
+        return {}
+      }
+    }
+
+    console.log(new Car); // 自动调用super 所以返回 Car
+    console.log(new Original); // super 返回 Original
+    console.log(new Van); // 返回 {}
+
+  </script>
+</body>
+
+</html>

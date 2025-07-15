@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>定型数组的行为 跟正常数组的行为是非常相似的 ,几乎支持数组的方法和属性,操作符</h1>
+  <h2>他还有一个方便的点: </h2>
+  <p>直接使用new Int(8/16/32/64)Array( ) 来创建值 是可以不用先创建二进制缓冲区的 , 他可以根据我创建的数据来自动分配</p>
+  <h3>定型行为</h3>
+  <p>在他里面是有Symbol.iterator</p>
+  <script>
+    const init = new Int16Array([1, 2, 3])
+    const double = init.map(x => x * 2)
+    console.log(double);
+    console.log(double instanceof Int16Array);
+
+    for (const k of double) {
+      console.log(k);
+    }
+
+    // 因为doule 他不是纯数组
+    console.log(Math.max(...double));
+
+  </script>
+</body>
+
+</html>

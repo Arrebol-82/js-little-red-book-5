@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>类构造函数</h1>
+  <p>constructor 关键字想当于在类定义块内部创建类的构造函数 方法名 constructor 会告诉解释器在使用new 操作符创建类的新实例时 , 应该调用这个函数
+    <i>构造函数的定义不是必须的 , 不定义构造函数相当于构造函数定义为空函数</i>
+  </p>
+  <strong>其实说人话:: 就是里面的constructor() 会在你new 实例话对象的时候去调用 , 想当于初始化对象</strong>
+  <section>
+    <h2>实例化</h2>
+    <p>使用new操作符实例化Person操作等于new 调用其构造函数 唯一可感知的不同之处就是,javascript解释器知道使用new 和 类 意味应该使用constructor函数进行实例化</p>
+    <ul>
+      <li>在内存中创建一个新对象</li>
+      <li>将这新对象的 [[prototype]] 指向构造函数的原型对象的prototype属性</li>
+      <li>构造函数的this被赋值成这个新对象 (既this指向调用者)</li>
+      <li>把constructor里面的属性和方法添加到新对象,并且执行他们</li>
+      <li>如果构造函数返回非空对象 , 则返回新对象 否则返回刚刚创建的新对象</li>
+    </ul>
+    <code>
+      <pre>
+        class Animal { }
+
+        class Person {
+          constructor() {
+            console.log('初始化对象');
+          }
+        }
+    
+        class Vegetable {
+          constructor() {
+            this.color = 'green'
+          }
+        }
+    
+        let a = new Animal() // 啥也没有
+    
+        let b = new Person() // 初始化对象
+    
+        let c = new Vegetable()
+        console.log(c.color); // green
+      </pre>
+    </code>
+    <p>类实例化时传入的参数会用作构造函数的形参 如果不需要的话 则类名后面的括号也是可选的</p>
+    <code>
+      <pre>
+        class Parameter {
+          constructor(name) {
+            console.log(`当前的形参数量  ${arguments.length} `);
+            this.name = name || null
+          }
+        }
+    
+        let p1 = new Parameter
+        console.log(p1.name); // null
+    
+        let p2 = new Parameter('Arrebol')
+        console.log(p2.name); // Arrebol    
+      </pre>
+    </code>
+    <p>这就是constructor可以接收参数 , 用来打印值</p>
+    <h2>类构造函数的返回值</h2>
+    <p>默认情况下 , 类构造函数会在执行之后返回this对象 , 构造函数返回的对象会被用作实例化的结果对象, 如果没有什么引用新创建的this对象 , 那么这个对象会被销毁掉 不过, 如果返回的不是this对象,而是其他对象
+      那么这个对象不会通过instanceof 操作符检测出跟类有关系 , 因为这个对象的原型指针并没有被修改
+    </p>
+    <strong>那我可以理解成默认是返回里面的所有this , 如果有return 就返回return里面的代码</strong>
+    <h3>obj instanceof Constructor</h3>
+    <ul>
+      <li class="circle">检测Constructor.prototype是否出现在obj的原型链上</li>
+      <li>是检测obj</li>
+      <li>是Constructor.prototype原型对象</li>
+    </ul>
+    <code>
+      <pre>
+        class ThisPerson {
+          constructor(override) {
+            this.foo = 'foo'
+            this.name = 'Arrebol'
+            if (override) {
+              return {
+                boo: 'bar'
+              }
+            }
+          }
+        }
+    
+        let t1 = new ThisPerson(),
+          t2 = new ThisPerson('true')
+    
+        console.log(t1);
+        console.log(t1 instanceof ThisPerson);
+    
+    
+        console.log(t2);
+        console.log(t2 instanceof ThisPerson);
+      </pre>
+    </code>
+    <p>let t2 = new ThisPerson('true') 就等于 t2 = { boo: 'bar' } 而这个对象他是属于object的 然后instanceof 检测 new
+      ThisPerson('true')的原型对象也就是calss 是否出现在 t2的原型链只有 object的 { boo: 'bar' } 并没有ThisPerson.prototype ( 要检测的是t2的原型链 ! ! !
+      )</p>
+    <h2>类构造函数 , 必须使用new 操作符 !!!</h2>
+    <strong>类构造函数 , 必须使用new 操作符, 与普通构造函数不同的是 , 普通构造函数没有new的话 this默认是window(也就是Global),但是类构造函数一但忘了new 就会报错</strong>
+    <code>
+      <pre>
+        function Persons() { }
+
+        class Animals { }
+    
+        let p = Persons()  // 里面的this指向window , 然后构建一个实例
+    
+        let A = Animals() //TypeError: Class constructor Animals cannot be invoked without 'new'
+      </pre>
+    </code>
+    <h2>类构造函数没有什么特殊之处,实例化之后 , 它会成为普通的实例方法(但作为类构造函数,仍然要使用new ) 因此,实例化之后可以在实例上引用他</h2>
+    <code>
+      <pre>
+        class Per {
+          constructor() {
+            this.name = 'aff'
+          }
+        }
+    
+        let P1 = new Per()
+    
+        // P1.constructor() //  TypeError: Class constructor Per cannot be invoked without 'new' 
+        P1.constructor
+        P1.__proto__.constructor
+    
+        let P2 = new P1.constructor // 使用时类构造函数的引用创建一个新实例
+    
+        //  console.log(P1.constructor);
+    
+        console.log(Per.name);
+    
+        // console.log(P1.constructor);
+      </pre>
+    </code>
+
+    <p> P1.constructor 和 P1.__proto__.constructor
+      这两段代码现在是用来访问 不会报错 ， 但是如果在他们后面加上两个（ ） 就等于调用 ， 然后是这两个代码最终都是指向Person 这个类构造函数 要调用就必须要加new</p>
+  </section>
+  <section>
+    <h1 style="color: pink;">把类当成特殊函数</h1>
+    <p>ECMAscript中没有正式的calss类型 。 从各方面来看 ， ECMAscript类就是一种特殊函数 。 声明一个类之后 ， 通过typeof操作符检测类标识符 ，
+      返回的是一个function 表明他是一个函数</p>
+    <strong>类标识符 就是 class Perosn {} class 后面的 Person 也就是他的名称</strong>
+    <code>
+            <pre>
+                class Person {}
+                console.log(Person);        // class Person {}
+                console.log(typeof Person); // function
+            </pre>
+        </code>
+    <p>类标识符有prototype属性 ， 而这个原型也有一个constructor属性指向类自身</p>
+    <code>
+            <pre>
+                class Per { }
+    
+                console.log(Per.prototype);                      // { constructor： class Per{} }
+                console.log(Per === Per.prototype.constructor ); // true    
+            </pre>
+        </code>
+    <h2>和普通函数是一样的 ， 可以使用instancrof 操作符检查构造函数原型是否存在于实例的原型中： </h2>
+    <code>
+            <pre>
+                class Perr {}
+    
+                let p = new Perr()
+        
+                console.log(p instanceof Perr); // true
+            </pre>
+        </code>
+    <p>所以就可以使用instanceof 操作符检查一个对象与类构造函数 ， 以确定这个对象那个是不是类的实例。只不过此时的类构造函数要使用类标识符 就像上面的 p 和 Perr</p>
+    <strong>类本身使用new调用时会被当成构造函数。重点在于，类中定义的constructor不会被当成构造函数 ， 因为它使用来初始化实例对象的 ， 用instanceof返回的false ，
+      但是如果创建实例时直接将类构造函数当成普通构造函数来使用 ， 那么instanceof 就会返回true </strong>
+    <code>
+            <pre>
+              class Cons { }
+
+              let C1 = new Cons
+              console.log(C1.constructor === Cons); //true
+              console.log(C1 instanceof Cons); // true
+              console.log(Cons.constructor); //  Function() { [native code] }
+              console.dir(Cons);
+              console.log(C1 instanceof Cons.constructor); // false
+          
+              console.log('--- C2 ---')
+              let C2 = new Cons.constructor()
+          
+              console.log(Cons.constructor === Function); // true
+              console.log(C2.constructor === Cons);        // false C2 是function的实例 ，所以他的constructor就是function 不是Per
+              console.log(C2 instanceof Cons);             // false C2 的原型链时 function.prototype -> object.prototype  不包含 per.prototype
+              console.log(C2 instanceof Cons.constructor); // true  Cons.constructor 是 function的 而 R2是通过function（） 创建的在同一个原型链上
+            </pre>
+        </code>
+    <p>他本身就没有constructor这个属性啊 , 所以会往上找 __proto__ 那就是function的原型对象 , 然后里面的constructor又指回了 function 所以最终是function
+      , 接着就是 C1 因为他是通过new 出来的 是一个对象 用 instanceof 检测 function的原型对象是否在 C1的原型链上肯定是没有的 , 因为从始至终都没有关联过 , 就返回false
+      <strong>记住类定义是在其实就是一个函数</strong>
+    </p>
+    <strong>new Per.constructor() 实际上创建的是 Function 的实例，而非 Per 的实例。</strong>
+    <ul>
+      <li>R2 是function的实例 ，所以他的constructor就是function 不是Per</li>
+      <li>R2 的原型链时 function.prototype -> object.prototype 不包含 per.prototype</li>
+      <li>Per.constructor 是 function的 而 R2是通过function（） 创建的在同一个原型链上</li>
+    </ul>
+    <h2>类是javascript的一等公民，因此可以像其他对象或者函数引用一样把类作为参数传递</h2>
+    <ul>
+      <li class="circle">“一等公民”意味着该语言结构可以被当作值来处理。</li>
+      <li class="circle">在 JavaScript 中，“值”最基础的载体就是变量。</li>
+      <li class="circle">因此，说“类是一等公民”最直接的表现之一，就是：类名就是一个变量名，它引用着那个代表类的函数对象。</li>
+      <li class="circle">你可以像操作数字、字符串、普通对象、函数等变量的值一样，自由地传递、返回、存储或赋值这个“类”（通过它的变量名/标识符）。</li>
+    </ul>
+    <code style="font-size: 18px;">
+      <pre>
+         <strong> 类可以像函数一样在任何地方定义 , 比如在数组中</strong>
+        let classList = [
+          class {
+            constructor(id) {
+              this.id_ = id
+              console.log(`instance ${this.id_}`);
+            }
+          }
+        ]
+    
+        function createInstance(classDefinition, id) {
+          return new classDefinition(id)
+        }
+    
+    
+        let foo = createInstance(classList[0], 3141)   <strong> instance 3141</strong>
+    
+        console.log('------------------ 与立即调用函数表达式相似, 类也可以立即实例化 ------------------');
+    
+         <strong> 因为是一个类表达式 , 所以类名是可选的</strong>
+    
+        let F = new class Foo {   <strong> 等价于 ===  let F = new class名字 (Foo) { }</strong>
+          constructor(x) {
+            console.log(x);
+          }
+        }('bar')   <strong> bar</strong>
+    
+        console.log(F);   <strong> Foo {}</strong>
+      </pre>
+    </code>
+  </section>
+  <script>
+    class Animal { }
+
+    class Person {
+      constructor() {
+        console.log('初始化对象');
+      }
+    }
+
+    class Vegetable {
+      constructor() {
+        this.color = 'green'
+      }
+    }
+
+    let a = new Animal // 啥也没有
+
+    let b = new Person // 初始化对象
+
+    let c = new Vegetable
+    console.log(c.color); // green
+
+    console.log('============================= 传参 ===========================');
+    class Parameter {
+      constructor(name) {
+        console.log(`当前的形参数量  ${arguments.length} `);
+        this.name = name || null
+      }
+    }
+
+    let p1 = new Parameter
+    console.log(p1.name); // null
+
+    let p2 = new Parameter('Arrebol')
+    console.log(p2.name); // Arrebol
+
+    console.log('==================== this ========================');
+    class ThisPerson {
+      constructor(override) {
+        this.foo = 'foo'
+        this.name = 'Arrebol'
+        if (override) {
+          return {
+            boo: 'bar'
+          }
+        }
+      }
+    }
+
+    let t1 = new ThisPerson(),
+      t2 = new ThisPerson('true')
+
+    console.log(t1);
+    console.log(t1 instanceof ThisPerson);
+
+
+    console.log(t2);
+    console.log(t2 instanceof ThisPerson);
+
+    console.log('======================= new =======================');
+    function Persons() { }
+
+    class Animals { }
+
+    let p = Persons()  // 里面的this指向window , 然后构建一个实例
+
+    // let A = Animals() //TypeError: Class constructor Animals cannot be invoked without 'new'
+
+    console.log('======================= 实例引用 ===================');
+    class Per {
+      constructor() {
+        this.name = 'aff'
+      }
+    }
+
+    let P1 = new Per()
+
+    // P1.constructor() //  TypeError: Class constructor Per cannot be invoked without 'new' 
+    P1.constructor
+    P1.__proto__.constructor
+
+    let P2 = new P1.constructor // 使用时类构造函数的引用创建一个新实例
+
+    //  console.log(P1.constructor);
+
+    console.log(Per.name);
+
+    // console.log(P1.constructor);
+
+    console.log('************************** 把类当成特殊函数 ************************');
+    class special { }
+    console.log(special);        // class special {}
+    console.log(typeof special); // function
+
+    console.log('======================== 类标识符的prototype ================');
+    class specialPer { }
+
+    console.log(specialPer.prototype);                      // { constructor： class specialPer{} }
+    console.log(specialPer === specialPer.prototype.constructor); // true
+
+    console.log('========================= instanceof =======================');
+    class Perr { }
+
+    let P = new Perr()
+
+    console.log(P instanceof Perr);  // true
+    console.log('=================================  constructor ====================================');
+    class Cons { }
+
+    let C1 = new Cons
+    console.log(C1.constructor === Cons); //true
+    console.log(C1 instanceof Cons); // true
+    console.log(Cons.constructor); //  Function() { [native code] }
+    console.dir(Cons);
+    console.log(C1 instanceof Cons.constructor); // false
+
+    console.log('--- C2 ---')
+    let C2 = new Cons.constructor()
+
+    console.log(Cons.constructor === Function); // true
+    console.log(C2.constructor === Cons);        // false C2 是function的实例 ，所以他的constructor就是function 不是Per
+    console.log(C2 instanceof Cons);             // false C2 的原型链时 function.prototype -> object.prototype  不包含 per.prototype
+    console.log(C2 instanceof Cons.constructor); // true  Cons.constructor 是 function的 而 R2是通过function（） 创建的在同一个原型链上
+
+    console.log('=============================== 类是javascript的一等公民 ===========================');
+    // 类可以像函数一样在任何地方定义 , 比如在数组中
+    let classList = [
+      class {
+        constructor(id) {
+          this.id_ = id
+          console.log(`instance ${this.id_}`);
+        }
+      }
+    ]
+
+    function createInstance(classDefinition, id) {
+      return new classDefinition(id)
+    }
+
+
+    let foo = createInstance(classList[0], 3141)  // instance 3141
+
+    console.log('------------------ 与立即调用函数表达式相似, 类也可以立即实例化 ------------------');
+
+    // 因为是一个类表达式 , 所以类名是可选的
+
+    let F = new class Foo {  // 等价于 ===  let F = new class名字 (Foo) { }
+      constructor(x) {
+        console.log(x);
+      }
+    }('bar')  // bar
+
+    console.log(F);  // Foo {}
+
+
+  </script>
+</body>
+
+</html>

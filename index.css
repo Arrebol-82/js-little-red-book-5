@@ -1,0 +1,33 @@
+* {
+    font-size: 20px;
+}
+
+li {
+    list-style: decimal;
+    margin: 10px auto;
+}
+
+.pink {
+    color: pink;
+    font-size: 20px;
+}
+
+.skyblue {
+    color: skyblue;
+    font-size: 18px;
+}
+
+
+.circle {
+    list-style: circle;
+}
+
+.black {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.code {
+    font-weight: 700;
+    font-size: 18px;
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>扩展操作符 ...</h1>
+  <p>他是专门用于可迭代对象的 扩展操作符是用于将数组逐个元素展开 ,从而进行数组合并,复制,插入到另外一个数组吗</p>
+  <h3>他是属于浅复制的 , 是直接赋值引用值的</h3>
+  <code>
+    <pre>
+      let arr1 = [1, 2, 3];
+      let arr2 = [4, 5, 6];
+      let merage = [arr1, arr2];
+      let merage1 = [...arr1, ...arr2];
+      console.log(merage); //[Array(3), Array(3)]
+      console.log(merage1); //[1, 2, 3, 4, 5, 6]
+      
+      let orignalArray = [1, 2, 3];
+      let copie = orignalArray;
+      let copieArray = [...orignalArray];
+      orignalArray.push(4)
+      
+      console.log(copieArray);  [1, 2, 3]
+      console.log(orignalArray);  [1, 2, 3, 4]
+      console.log(copie);  [1, 2, 3, 4]
+      
+      
+      
+      let a = [1, 2, 3, [2, 3]];
+      let b = [...a];
+      a[2] = 0
+      a[3][1] = 8
+      console.log(a);[1, 2, 0, [2,8]]
+      
+      console.log(b);[1, 2, 0, [2,8]]
+      
+      let ar1 = [{ value: 1 }];
+      let ar2 = [...ar1];
+      ar1[0].value = 2;
+      console.log(ar2[0].value); // 2
+      
+      <strong>数组合并</strong>
+      let array1 = [1, 2, 4];
+      let array2 = [3];
+      // 左闭右开
+      console.log(...array1.slice(0, 2));
+      let com = [...array1.slice(0, 2), ...array2, ...array1.slice(2)]
+      console.log(com); //[1, 2, 3, 4]
+    </pre>
+  </code>
+  <script>
+    let arr1 = [1, 2, 3];
+    let arr2 = [4, 5, 6];
+    let merage = [arr1, arr2];
+    let merage1 = [...arr1, ...arr2];
+    console.log(merage); //[Array(3), Array(3)]
+    console.log(merage1); //[Array(3), Array(3)]
+
+    let orignalArray = [1, 2, 3];
+    let copie = orignalArray;
+    let copieArray = [...orignalArray];
+    orignalArray.push(4)
+
+    console.log(copieArray);
+    console.log(orignalArray);
+    console.log(copie);
+
+
+
+    let a = [1, 2, 3, [2, 3]];
+    let b = [...a];
+    a[2] = 0
+    a[3][1] = 8
+    console.log(a);
+
+    console.log(b);
+
+    let ar1 = [{ value: 1 }];
+    let ar2 = [...ar1];
+    ar1[0].value = 2;
+    console.log(ar2[0].value); // 2
+
+    let array1 = [1, 2, 4];
+    let array2 = [3];
+    // 左闭右开
+    console.log(...array1.slice(0, 2));
+    let com = [...array1.slice(0, 2), ...array2, ...array1.slice(2)]
+    console.log(com); //[1, 2, 3, 4]
+
+  </script>
+</body>
+
+</html>

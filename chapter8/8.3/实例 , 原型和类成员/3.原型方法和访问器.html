@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>原型方法和访问器</h1>
+  <p>为了可以在实例之间共享方法,类定义语法把在类块重定义的方法作为原型方法</p>
+  <code>
+    <pre>
+      class Person {
+        constructor() {
+          //添加到this的所有内容是会存在不同的实例上的
+          this.locate = () => console.log('instance');
+        }
+  
+        // 在类快定义的所有内容都会定义在类的原型上
+        locate() {
+          console.log('prototype');
+        }
+      }
+  
+      let p = new Person()
+      p.locate() // instance
+      p.__proto__.locate() // prototype
+    </pre>
+  </code>
+  <strong>只有在类块中直接定义的函数声明（非箭头函数、非赋值形式）才会自动成为原型方法，其他所有形式（包括函数表达式、箭头函数、非函数值）都会成为实例属性。</strong>
+  <h2>可以把方法定义在类构造函数中或者类块中,但不能在类块中给原型添加 <strong>原始值或对象数据成员</strong></h2>
+  <code>
+    <pre>
+      class Per {
+        name: 'Arrebol' // SyntaxError: Unexpected identifier 'name'
+      } 
+      <strong>在实例化的时候是会报错的 因为不允许存在对象数据的</strong>
+    </pre>
+  </code>
+  <h2>类方法等同于对象属性,因此可以使用字符串,符号或计算的值作为键</h2>
+  <code>
+    <pre>
+      const symbolKey = Symbol('SymbolKey')
+
+      class Per {
+        stringKey() {
+          console.log('invoked stringKey');
+        }
+        [symbolKey]() {
+          console.log('invoked symbolkey');
+        }
+        ['computed' + 'key']() {
+          console.log('invoked computedkey');
+        }
+      }
+  
+      let P = new Per()
+  
+      P.stringKey()
+  
+      P[symbolKey]()
+  
+      P.computedkey()
+    </pre>
+  </code>
+  <p>这样就是大大提升了灵活性 , 可以使用计算符[]</p>
+  <h2>类定义也支持获取和设置访问器 语法和行为跟普通对象一样</h2>
+  <code>
+    <pre>
+      class Perss {
+        set name(newName) {
+          this.name_ = newName
+        }
+  
+        get name() {
+          return this.name_
+        }
+      }
+  
+      let per = new Perss
+      per.name = 'Arrebol'
+      console.log(per.name);
+    </pre>
+  </code>
+  <p>他们是访问器 所以不可以调用 也就是per.name() 而是直接设置 per.name = 值; </p>
+  <script>
+    class Person {
+      constructor() {
+        //添加到this的所有内容是会存在不同的实例上的
+        this.locate = () => console.log('instance');
+      }
+
+      // 在类快定义的所有内容都会定义在类的原型上
+      locate() {
+        console.log('prototype');
+      }
+    }
+
+    let p = new Person()
+    p.locate() // instance
+    p.__proto__.locate() // prototype
+
+    console.log('========================== 不能在类块中添加 =====================');
+    // class Per {
+    //   name: 'Arrebol' // SyntaxError: Unexpected identifier 'name'
+    // }
+
+    const symbolKey = Symbol('SymbolKey')
+
+    class Per {
+      stringKey() {
+        console.log('invoked stringKey');
+      }
+      [symbolKey]() {
+        console.log('invoked symbolkey');
+      }
+      ['computed' + 'key']() {
+        console.log('invoked computedkey');
+      }
+    }
+
+    let P = new Per()
+
+    P.stringKey()
+
+    P[symbolKey]()
+
+    P.computedkey()
+
+    console.log('===================== 访问器 ==================');
+    class Perss {
+      set name(newName) {
+        this.name_ = newName
+      }
+
+      get name() {
+        return this.name_
+      }
+    }
+
+    let per = new Perss
+    per.name = 'Arrebol'
+    console.log(per.name);
+
+  </script>
+</body>
+
+</html>

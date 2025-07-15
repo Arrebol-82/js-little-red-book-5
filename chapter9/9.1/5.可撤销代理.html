@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>可撤销代理</h1>
+  <p>有时候需要中断代理对象与目标对象的联系 , 对于使用new Proxy()创建答得普通代理来说 , 这种联系会在代理对象的生命周期中一直存在 , 也就是只要代理对象还存在 , 那么他们还是有联系</p>
+  <p>所以此时我们可以使用撤销代理函数 <strong>(Proxy.revocable)</strong><br>
+    <strong>语法: const { proxy, revoke: revoke1 } = Proxy.revocable(target,handler)</strong>
+  </p>
+  <h2>Proxy.revocable() 特性</h2>
+  <ul>
+    <li class="circle">可以撤销目标对象与代理对象之间的联系</li>
+    <li class="circle">撤销是不可逆的 , 他是一次性的</li>
+    <li class="circle">无论调用多少次revoke() 都是一样的</li>
+    <li class="circle">撤销了代理之后再次调用代理是会报错的</li>
+    <li class="circle">如果每个撤销都命名为revoke 就太乱了 所以可revoke: 命名 === revoke: revoke1</li>
+  </ul>
+  <code>
+    <pre>
+      const target = {
+        foo: 'bar'
+      }
+  
+      const handler = {
+        get() {
+          return 'internal'
+        }
+      }
+  
+      const { proxy, revoke: revoke1 } = Proxy.revocable(target, handler)
+  
+      console.log(proxy.foo);  // internal
+      console.log(target.foo); // bar
+  
+      revoke1() // 撤销代理
+  
+      console.log(proxy.foo); // TypeError: Cannot perform 'get' on a proxy that has been revoked
+    </pre>
+  </code>
+  <script>
+    const target = {
+      foo: 'bar'
+    }
+
+    const handler = {
+      get() {
+        return 'internal'
+      }
+    }
+
+    const { proxy, revoke: revoke1 } = Proxy.revocable(target, handler)
+
+    console.log(proxy.foo);  // internal
+    console.log(target.foo); // bar
+
+    revoke1()
+
+    console.log(proxy.foo);
+
+  </script>
+</body>
+
+</html>

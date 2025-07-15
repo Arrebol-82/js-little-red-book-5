@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>var声明在全局是属于window的属性的,而let不是 一个是函数作用域 , 一个是块级作用域</h1>
+  <script>
+    for (var i = 0; i < 5; i++) {
+      setTimeout(() => {
+        console.log(i) //555555
+      }, 0);
+    }
+
+    // var声明的变量, 是会变量提升的, 而setTimeout是异步函数
+
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        console.log(i); // 01234
+      }, 0);
+    }
+    let a = Symbol(111)
+
+    console.log('22\t\t22');
+    console.log(typeof toString(a));
+    console.log(typeof a);
+    console.log(typeof a.description5x);
+
+    console.log('========== for =============');
+
+    const arr = {
+      uname: 'Arreol',
+      age: 16,
+      gender: '男',
+      hobby: '打游戏'
+    }
+    for (const k in arr) {
+      // console.log(k); //键
+      console.log(arr[k]); //值
+      // console.log(arr); // 整个对象
+    }
+  </script>
+</body>
+
+</html>

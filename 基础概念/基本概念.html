@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>原始类型</h1>
+  <p>一共7种 <strong>Number String Boolean null undefined Symbol Bigint</strong> </p>
+  <p>冷知识: 他们都有一个特点就是存储在栈里面的 , 通过不可修改 , 改了也是重新再栈空间生成改的元素</p>
+  <h1>引用类型</h1>
+  <p><strong>Object</strong> 像什么Array function 都是Object 的小弟 (他们的原型链的尽头是Object)</p>
+
+  <section>
+    <h1>声明</h1>
+    <p>优先使用const 后let 能不用var 就尽量别用了吧 ;毕竟变量提升挺恶心的</p>
+  </section>
+
+
+  <section>
+    null == undefined (true) 因为js设置比较松散 , 所以他们都代表空值 就返回true了 ,而全等的就是false 因为null是一种特殊类型 ,而undefined是undefined类型
+    两者不一样,所以返回false
+
+    <p>typeof(null) 是返回object //js设计的遗留问题</p>
+    <p>typeof(undefined) 是返回undefined</p>
+
+    <p>转换为数字的话就是 0 和 NaN了</p>
+    <p>在浮点类型中,很多的计算是不准确的比如 0.2 + 0.1 = 0.30000000000000004 <br>
+      所以说要记得先转换位整数
+    </p>
+    <p>这个 e 表示10的次方 而e5 表示为10的5次方</p>
+  </section>
+  <section>
+    <h1>字符串的特点</h1>
+    <code>
+      <pre>
+        let str = 'java'
+        str = str + 'script';
+        console.log(str);
+      </pre>
+    </code>
+    <p>事先声明了 str , 会在栈中存储 , 但是后面又向他添加了 script , 会先预算出10个字符的空间 创建新的空间, 随后在放进去原来就会被销毁掉</p>
+    <p>所以说string时存储在内存的堆里面的,因为引擎的优化 , 然后Number boolean undefined Null 都是存储在站里面,因为他们是不会经常改变</p>
+  </section>
+  <h1>在 JavaScript 中，几乎所有对象的属性名最终都会被隐式转换为字符串（Symbol 除外）</h1>
+  <script>
+    console.log(0.1 + 0.2);// 0.30000000000000004
+
+    let str = 'java'
+    str = str + 'script';
+    console.log(str);
+
+
+    let sun = 1
+    sun += 1;
+    console.log(sun);
+
+    console.log(0 && 1);
+    console.log(false && true);
+    console.log(true && false);
+    console.log(false && true);
+    console.log(true || false);
+    console.log(1 || 0);
+    console.log(0 || 1);
+
+  </script>
+</body>
+
+</html>

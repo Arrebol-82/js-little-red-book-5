@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>weakRef</h1>
+  <p>下面的案例不一定每次都成功 因为浏览器的回收机制,会尽可能的等待更长的时间在执行</p>
+  <h2>一次只能给绑定一个弱引用</h2>
+  <script>
+    let obj = { name: 'arrebol' };
+    const weakRef = new WeakRef(obj);
+    console.log(weakRef.deref());
+    obj = null;
+    // 模拟大量对象创建和销毁
+    for (let i = 0; i < 10000000000; i++) {
+      let temp = { value: i };
+      temp = null;
+    }
+    // 在次访问的时候访问不到了
+    console.log(weakRef.deref());
+  </script>
+</body>
+
+</html>

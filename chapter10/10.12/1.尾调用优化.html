@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>尾调用优化</h1>
+  <p>javascript 引擎会在满足条件时重用栈帧以优化内存管理 , 具体来说 这项优化非常适合尾调用 既外部函数的返回值是一个内部函数的返回值</p>
+  <code>
+    <pre>
+      function outerFunction() {
+      return innerFunction() // 尾调用
+      }
+    </pre>
+  </code>
+  <p>在没有优化的情况下 执行这个例子会在内存发生如下操作</p>
+  <ul>
+    <li>执行到outerFunction函数体 , 第一个栈帧被推到栈上</li>
+    <li>执行outerFunction函数体 到达return语句 计算返回值必须先计算 innerFunction </li>
+    <li>执行到 innerFunction 函数体 第二个栈帧被推到栈上</li>
+    <li>执行 innerFunction 函数体 计算其返回值 </li>
+    <li>将返回值传回ou]terFunction 然后 outerFunction 再返回值</li>
+    <li>将栈帧弹出栈外</li>
+  </ul>
+  <h3>在尾调用优化之后 , 执行这个例子会</h3>
+  <ul>
+    <li>执行到outerFunction函数体 , 第一个栈帧被推到栈上</li>
+    <li>执行到 outerFunction 函数体 到达return语句 为求值返回语句 必须先求值 innerFunction </li>
+    <li>引擎发现把第一个栈帧弹出栈外也没问题 , 因为innerFunctino 返回值也是outerFunction的返回值</li>
+    <li>弹出outerFunction 的栈帧</li>
+    <li>执行到innerFunction函数体 栈帧被推到栈上</li>
+    <li>执行 innerFunction 函数体 计算其返回值</li>
+    <li>将 innerFunction 的栈帧弹出栈外</li>
+  </ul>
+  <h2>没有办法检测尾调用优化是否生效 , 不过现代浏览器都能在保证在代码满足条件的情况下应用这一优化 , 但是目前执行的浏览器 也有只有 (Safari)</h2>
+  <script>
+    function outerFunction() {
+      return innerFunction() // 尾调用
+    }
+  </script>
+</body>
+
+</html>

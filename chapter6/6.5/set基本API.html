@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>set</h1>
+  <h2 style="color: pink;">Set是会去重的,在Set里面,值都是唯一的,不会有重复的</h2>
+  <h2>使用数组（中括号包裹）来初始化 Map 和 Set 时，正是利用了数组天然的可迭代性（实现了 Symbol.iterator 接口），让构造函数能方便地从中获取数据来构建实例。</h2>
+  <p>set其实更像是加强版的Map</p>
+  <h2>生成器</h2>
+  <p>function*() {} 就是一个生成器 生成器其实是一种语法,专门针对于迭代方法的</p>
+  <code>
+    <pre>
+      const s2 = new Set({
+      [Symbol.iterator]: function* () {
+      
+      }})
+    </pre>
+  </code>
+  <h2>Set 对象的特性就是存储 唯一值，重复添加已存在的值会被自动忽略。</h2>
+  <script>
+    // 创建Set的空集合
+    const m = new Set()
+
+    const s1 = new Set(['vall1', 'vall2', 'vall3'])
+    console.log(s1);
+    console.log(s1.size);
+
+    const s2 = new Set({
+      [Symbol.iterator]: function* () {
+        yield 'vall';
+        yield 'val2'
+        yield 'val3'
+      }
+    })
+
+    console.log(s2);
+    console.log(s2.size);
+
+    console.log('=========== API ===========');
+    const s = new Set()
+
+    console.log(s.has('name'));
+    console.log(s.size);
+
+    s.add('Arrebol')
+      .add('firstName')
+
+    console.log(s);
+    console.log(s.size);
+    console.log(s.has('Arrebol'));
+
+    console.log('============= delete ==============');
+
+    s.delete('firstName')
+
+    console.log(s.has('Arrebol'));
+    console.log(s.has('firstName'));
+    console.log(s.size);
+
+    console.log('============= clear ==============');
+
+    // 清除掉里面的所有元素
+    s.clear()
+    console.log(s);
+    console.log(s.has('Arrebol'));
+    console.log(s.has('firstName'));
+    console.log(s.size);
+
+    // 因为add() 方法返回集合实例,因此可以把多个操作连着写
+    const map = new Set().add('key')
+      .add('val1')
+      .add('val2')
+
+    console.log(map);
+
+    map.add('val3')
+      .add('val4')
+    console.log(map);
+    // 同时声明多个
+
+
+    console.log(' ======== Map键值 ========');
+
+    const S = new Set()
+
+    const functionkey = function () { }
+    const Symbolkey = Symbol()
+    const objectKey = new Object()
+
+    s.add(functionkey, 'functionkey')
+    s.add(Symbol, 'Symbolkey')
+    s.add(objectKey, 'objectKey')
+
+    console.log(s.has(functionkey))
+    console.log(s.has(Symbol))
+    console.log(s.has(objectKey))
+
+    // 这里面并没有 表示SameValueZero的比较独立的实例并不会冲突
+    console.log(s.has(function () { }));
+
+    console.log('========= 严格模式 =========');
+
+    const set = new Set()
+
+    const objval = {},
+      arrval = []
+
+    set.add(objval)
+    set.add(arrval)
+
+    console.log(set);
+    objval.name = 'Arrebol'
+    arrval.push(12)
+    console.log(set);
+
+    console.log(set.has(objval));
+    console.log(set.has(arrval));
+
+    console.log('=========== delete ==========');
+
+    const se = new Set()
+    se.add('foo')
+    console.log(se);
+
+    se.add('foo')
+    console.log(se);
+
+    console.log(se.delete('foo'));
+    console.log(se.delete('foo'));
+
+  </script>
+</body>
+
+</html>

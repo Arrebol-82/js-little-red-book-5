@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /* 内存泄漏 , 就是创建的变量在不使用的时候, 引擎无法删除 , 就会产生内存泄漏 , 留在那的
+    变量无法删除 , 一直在占用内存 */
+
+    // 在此时 , 因为name 没有明确的定义 , 所以他归属于Window
+    function setName() {
+      name = 'Jake'
+    }
+
+    // 还有产生闭包就会在不知不觉中 , 产生内存泄漏
+  </script>
+</body>
+
+</html>

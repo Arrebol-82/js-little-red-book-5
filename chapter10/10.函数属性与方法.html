@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>函数属性与方法</h1>
+  <p>前面就提到过 函数是对象 , 那自然就有 属性和方法 每个函数都有两个属性 : length() 和 Prototype 其中length属性保存函数定义的命名参数的个数</p>
+  <code>
+    <pre>
+         function sayName(name) {
+            console.log(name);
+          }
+
+          function sum(num1, num2) {
+            return num1 + num2
+          }
+
+          function sayHi() {
+            console.log('hi');
+          }
+
+          console.log(sayName.length);
+          console.log(sum.length);
+          console.log(sayHi.length);
+    </pre>
+  </code>
+  <p><strong>调用函数名.length</strong> 就是返回里面有多少个参数</p>
+  <p>[[prototype]]属性是保存引用类型所有实例方法 [[prototype]] 属性他是不可枚举的 , 因此使用for - in 循环不会返回这个属性</p>
+  <ul>
+    <li><strong> 函数名.length</strong>返回函数有多少个形参</li>
+    <li><strong> [[prototype]] </strong>返回函数有多少个形参</li>
+  </ul>
+  <script>
+    function sayName(name) {
+      console.log(name);
+    }
+
+    function sum(num1, num2) {
+      return num1 + num2
+
+    }
+
+    function sayHi() {
+      console.log('hi');
+    }
+
+    console.log(sayName.length);
+    console.log(sum.length);
+    console.log(sayHi.length);
+
+    let a = new sayHi()
+    console.dir(a);
+    console.dir(a.__proto__);
+
+  </script>
+</body>
+
+</html>

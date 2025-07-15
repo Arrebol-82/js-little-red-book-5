@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1 style="color: pink;">异步迭代就是 :: 如果当前的程序是一个网络请求 ,那像同步迭代器的话就会卡在着 ,等到网络请求成功之后才会继续执行代码 ::
+    而如果是异步迭代的话 在请求网络的时候 , 不会卡住页面,在迭代器之外的代码会照样执行 , 等到网络请求成功之后 , 在返回到代码执行
+  </h1>
+
+  <h3>所以核心就是将原本要等待 ,才能继续往下执行的代码 , 把他给方法队列里面, 等到执行完合并回去 , 不会卡住页面执行</h3>
+  <h2>他是严格按照yield顺序来执行的</h2>
+  <script>
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>实例成员</h1>
+  <p>每次通过new调用类标识符都会执行类构造函数 , 在构造函数内部,可以为新创建的实例 , 添加' 自有 ' 属性 ,
+    至于添加什么样的属性 , 没有限制 , 另外,在构造函数执行完后,还可以给实例添加新成员</p>
+  <h2>每个实例都对应一个唯一的成员对象,这意味所有成员都不会再原型上共享 , 都是相互独立的</h2>
+  <code style="font-size: 24px; font-weight: 700;">
+    <pre>
+      class Perosn {
+        constructor() {
+          this.age = 19
+          this.name = new String('Arrebol')
+          this.sayName = function () { console.log(this.name); }
+          this.nicknames = ['Z', 'J-S']
+        }
+      }
+  
+      let p1 = new Perosn(),
+        p2 = new Perosn()
+  
+      p1.sayName()  // String {'Arrebol'}
+      p2.sayName()  // String {'Arrebol'}
+  
+      console.log(p1.name === p2.name);            // false
+      console.log(p1.sayName === p2.sayName);      // false
+      console.log(p1.nicknames === p2.nicknames);  // false
+  
+      p1.name = p1.nicknames[0]
+      p2.name = p2.nicknames[1]
+  
+      p1.sayName() // Z
+      p2.sayName() // J-S
+    </pre>
+  </code>
+  <p class="black">记住这很重要!!! 只有函数才能去调用也就是使用 ( ) , 其他值（对象/原始值）尝试调用都会抛出 TypeError :: 只有函数类型的值可以使用圆括号 () 进行调用</p>
+  <script>
+    class Perosn {
+      constructor() {
+        this.age = 19
+        this.name = new String('Arrebol')
+        this.sayName = function () { console.log(this.name); }
+        this.nicknames = ['Z', 'J-S']
+      }
+    }
+
+    let p1 = new Perosn(),
+      p2 = new Perosn()
+
+    p1.sayName()
+    p2.sayName()
+
+    console.log(p1.name === p2.name);
+    console.log(p1.sayName === p2.sayName);
+    console.log(p1.nicknames === p2.nicknames);
+
+    p1.name = p1.nicknames[0]
+    p2.name = p2.nicknames[1]
+
+    p1.sayName()
+    p2.sayName()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  原始值 , 引用值<br>
+  因为原始值 , 是确定大小的 , 所以是存在栈里面的<br>
+  当复制的时候,也只是复制他的副本<br>
+
+  <strong>String 是引用值</strong>
+  而引用值不一样 是随时可以改变的 , 所以是存在堆里面的<br>
+  所以引用值里面存储的 , 并不是对象 而是地址值<br>
+  当复制的时候 , 是复制对象的地址值 看后面的这是错的<br>
+
+  执行上下文<br>
+  函数作用域 块作用域 全局作用域<br>
+  函数体里面 {}里面 script里面<br>
+  只能子作用域访问父级作用域 , 不能父级作用域访问子级作用域<br>
+
+  回收编程语言<br>
+  当离开作用域的值,没用人指向 , 为null 都会被标记为可回收<br>
+  所以记得当一个变量 不在使用的时候 应该接触引用 , 这样对<br>
+  引擎和浏览器回收都会有提升
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>抽象基类</h1>
+  <p>有时候可能需要定义这样一个类他可供其他类继承 , 但本身不会被实例化 , 这就是抽象基类 , 虽然ECMAscript没有专门支持这种类的语法 , 但是通过new.target 也很容易实现
+    new.target保存通过new 关键字调用的类或函数 , 通过在实例化时检测 new.target 是不是抽象基类 可以阻止对抽象基类的实例化
+  </p>
+  <ul>
+    <li class="circle"><strong>new.target 是每个类和函数都有的 存在于上下文中</strong> 里面返回的是的类或者函数的信息</li>
+    <li class="circle">当然你仔细看的话,是可以看出来这里的 <strong>终止实例化都是手动造成 , 并非引擎自动实现</strong></li>
+    <li class="circle"></li>
+    <li class="circle"></li>
+  </ul>
+  <code>
+    <pre>
+      class Vehicle {
+        constructor() {
+          console.log(new.target);
+          if (new.target === Vehicle) {
+            throw new Error('Vehcle cannot be directly instantiated')
+          }
+        }
+      }
+  
+      // 子类继承
+      class Bus extends Vehicle { }
+  
+      new Bus() // class Bus { }
+      new Vehicle() // class Vehicle { }
+      // Error: Vehcle cannot be directly instantiated
+    </pre>
+  </code>
+  <p>因为是constructor里面有log(new.target) 所以会打印类体</p>
+  <strong>另外,通过在抽象基类构造函数中进行检查 , 可以要求派生类必须定义某个方法 因为原型方法在调用类构造函数之前就已经存在了 ,
+    所以可以通过this关键字来检查相应的方法
+  </strong>
+  <code>
+    <pre>
+      class Veh {
+        constructor() {
+          if (new.target === Veh) {
+            throw new Error('我是抽象基类')
+          }
+          if (!this.foo) {
+            throw new Error('子类要先实现这个方法')
+          }
+          console.log('success !!!');
+        }
+      }
+  
+      class Bu extends Veh {
+        foo() { }
+      }
+  
+      class Van extends Veh { }
+  
+      new Bu()
+      new Van()
+    </pre>
+  </code>
+  <p>因为this.foo , 可以检测当前的实例对象有没个这个方法</p>
+  <script>
+    // 抽象基类
+    class Vehicle {
+      constructor() {
+        console.log(new.target);
+        if (new.target === Vehicle) {
+          throw new Error('Vehcle cannot be directly instantiated')
+        }
+      }
+    }
+
+    // 子类继承
+    class Bus extends Vehicle { }
+
+    new Bus() // class Bus {}
+    // new Vehicle() // class Vehicle { }
+    // Error: Vehcle cannot be directly instantiated
+
+    console.log('============================ 要求子类实现指定方法 ===========================');
+    class Veh {
+      constructor() {
+        if (new.target === Veh) {
+          throw new Error('我是抽象基类')
+        }
+        if (!this.foo) {
+          throw new Error('子类要先实现这个方法')
+        }
+        console.log('success !!!');
+      }
+    }
+
+    class Bu extends Veh {
+      foo() { }
+    }
+
+    class Van extends Veh {
+
+    }
+
+    new Bu()
+    new Van()
+  </script>
+</body>
+
+</html>

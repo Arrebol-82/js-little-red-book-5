@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>箭头函数</h1>
+  <code class="code">
+    <pre>
+      特性                          普通函数                                  箭头函数
+      this 绑定                 动态绑定（由调用者决定）                  静态绑定（定义时确定）
+      构造函数                   ✅ 可用 new 实例化                      ❌ 不能用作构造函数
+      arguments 对象            ✅ 包含传入参数                         ❌ 没有自己的 arguments
+      原型属性                   ✅ 有 prototype 属性                   ❌ 没有 prototype 属性
+      yield 关键字              ✅ 可作为生成器函数                      ❌ 不能用作生成器函数
+      方法简写 ❌           对象方法需 method: function() {}            ✅ 可用 method() {} 简写
+      super 引用                ✅ 可在类方法中使用 super                ❌ 不能使用 super
+      代码简洁性                    相对冗长 更简洁                     （尤其单表达式可省略 return）
+    </pre>
+  </code>
+  <h2>注意!!!</h2>
+  <ul>
+    <li>箭头函数的this定义是看外层作用域的</li>
+    <li>箭头函数的this是不可以被修改的 ,定义的时候就确定了</li>
+    <li>箭头函数不能当作 迭代器 生成器 构造函数当然也是不行的 </li>
+    <li>在同一行定义函数体的话就可以不用return返回值</li>
+    <li>箭头函数没有继承对象 不能统一的接收参数 不像普通函数能使用arguments那样</li>
+    <li><strong>箭头函数只能作为表达式声明 , 只有这一种方法声明</strong> 其他的声明通通不是允许的</li>
+  </ul>
+  <p>使用箭头函数可以像平常定义表达式函数一样定义他们</p>
+  <code>
+    <pre>
+      let arrow = (a, b) => { return a + b }
+
+      let arr = function (a, b) { return a + b }
+  
+      console.log(arrow(6, 7));
+      console.log(arr(8, 5));  
+    </pre>
+  </code>
+  <p>箭头函数的简洁语法非常适合嵌入函数的场景</p>
+  <code>
+    <pre>
+      let ints = [1, 2, 3]
+      
+      console.log(ints.map(function (i) { return i + 1 }));
+      console.log(ints.map((i) => i + 1));
+    </pre>
+  </code>
+  <p>如果只有一个参数 , 也可以不用括号 , 只有没有参数 , 或者有个参数时才需要使用括号</p>
+  <ul>
+    <li><strong>单一参数的时候是不需要加</strong> ( ) 的</li>
+    <li><strong>没有参数的时候</strong> 要加 ( ) </li>
+    <li><strong>多个参数</strong> , 的时候一定要加括号 ( )</li>
+  </ul>
+  <code>
+    <pre>
+      // 以下两种写法都有效
+
+      let doble = (x) => { return 2 * x }
+      let triple = x => { return 2 * x }
+
+      // 没有参数需要括号
+      
+      let getRandom = () => { return Math.random() }
+      
+      // 多个参数是需要括号
+      let sum = (a, b) => { return a + b }
+      
+      // 无效写法
+      let multipy = a, b => { return a + b } // Uncaught SyntaxError: Unexpected token '=>' (at 1.箭头函数.html:88:24)
+    </pre>
+  </code>
+  <p><strong>箭头函数也可以不使用大括号 , 但是这样会改变函数的行为 , 使用大括号就说明了包含函数体 , 可以在其中包含多条语句 如果不使用
+      大括号的话
+    </strong>
+    那么 <i>箭头函数后面就一行代码</i> , 比如一个赋值操作 或者一个表达式</p>
+  <code>
+      <pre>
+        // 这些都是有效的
+        let Do = (x) => { return 2 * x }
+        let tri = (x) => 3 * x
+    
+        // 可以赋值 
+        let value = {}
+        let setName = (x) => x.name = 'Arrebol'
+        setName(value)
+        console.log(value.name);
+    
+        // 无效的写法 
+        // let multiple = (a, b) => return a * b
+      </pre>
+    </code>
+  <ul>
+    <li>tri后面只有一行代码 , 就可以忽略大括号</li>
+    <li>箭头函数是跟普通函数一样的 , 可以直接传参的</li>
+    <li>如果箭头跟函数体是同一行的话 , 不要加return 因为引擎会自动帮我们调用</li>
+  </ul>
+
+  <h2>箭头函数不能使用 arguments , super 和 new.target 也不能用作构造函数. 此外 , 箭头函数也没有 prototype 属性</h2>
+  <script>
+    let arrow = (a, b) => { return a + b }
+
+    let arr = function (a, b) { return a + b }
+
+    console.log(arrow(6, 7));
+    console.log(arr(8, 5));
+
+    console.log('========================= 嵌入 ========================');
+
+    let ints = [1, 2, 3]
+
+    console.log(ints.map(function (i) { return i + 1 }));
+    console.log(ints.map((i) => i + 1));
+
+    console.log('========================= 单一参数 ============================');
+    let doble = (x) => { return 2 * x }
+    let triple = x => { return 2 * x }
+
+    // 没有参数需要括号
+
+    let getRandom = () => { return Math.random() }
+
+    // 多个参数是需要括号
+    let sum = (a, b) => { return a + b }
+
+    // 无效写法 
+    // let multipy = a, b => { return a + b }  // Uncaught SyntaxError: Unexpected token '=>' (at 1.箭头函数.html:88:24)
+
+    console.log('=============================== 箭头函数不同大括号 ================================');
+
+    // 这些都是有效的
+    let Do = (x) => { return 2 * x }
+    let tri = (x) => 3 * x
+
+    // 可以赋值 
+    let value = {}
+    let setName = (x) => x.name = 'Arrebol'
+    setName(value)
+    console.log(value.name);
+
+    // 无效的写法 
+    // let multiple = (a, b) => return a * b
+
+  </script>
+</body>
+
+</html>

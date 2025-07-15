@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 可以更快的人开发人员更快的识别类型 -->
+  <script>
+    // 它是系统给我们定义好的 , 所以打印的是Set
+    let a = new Set()
+
+    console.log(a);
+    console.log(a.toString());
+
+    class Foo { }
+    let foo = new Foo()
+
+    console.log(foo);
+    // 打印的是 Object
+    console.log(foo.toString());
+
+    class Bar {
+      constructor() {
+        // 这里一定要是字符串形式
+        this[Symbol.toStringTag] = 'Bar';
+      }
+    }
+
+    let bar = new Bar()
+
+    console.log(bar);
+    console.log(bar.toString());
+  </script>
+</body>
+
+</html>

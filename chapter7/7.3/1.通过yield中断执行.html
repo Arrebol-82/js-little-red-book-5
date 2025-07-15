@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <section>
+    <h1>通过yield中断执行</h1>
+    <p>这是生成器最具有特色的地方,碰到他会停止,状态被保存,后续可以通过next()恢复执行</p>
+    <p>yield有点像函数的中间返回语句 <strong>yield返回的是false</strong>而<strong>return返回的是true</strong></p>
+    <code>
+          <pre>
+            function* generatorFn() {
+            yield
+            }
+            let generatorObject = generatorFn()
+            console.log(generatorObject.next());
+            console.log(generatorObject.next());
+          </pre>
+        </code>
+    <p>如果是通过reutrn退出的话会返回 true :: 就是直接退出生成器了,不是像yield那样终止</p>
+    <code>
+          <pre>
+            let generatorObject1 = generatorFnB()
+            let generatorObject2 = generatorFnB()
+            
+            console.log(generatorObject1.next()); {value: 'foo', done: false}
+            console.log(generatorObject2.next()); {value: 'foo', done: false}
+            console.log(generatorObject1.next()); {value: 'bar', done: false}
+            console.log(generatorObject2.next()); {value: 'bar', done: false}
+          </pre>
+        </code>
+    <h3>生成器的内部执行流程会对每个生成器对象区分作用域 , 每个生成器对象调用next()是不会影响其他生成器对象 (就是跟迭代器一样)</h3>
+    <h1 style="color: red;">yield是生成器里面的关键字,只能在生成器里的直接作用域使用(只有这样才能被识别)</h1>
+    <p>就是说如果不是在直接作用域下定义的话就会被解析成变量名 , 而在立即执行箭头函数里面发现既不是关键字也没定义,所以就会报错. <strong>运行的话就会报错因为为定义</strong></p>
+    <code>
+          <pre>
+            function* vailGenerator() {
+            yield //有效
+            }
+            
+            function* vailGeneratorA() {
+            function a() {
+            yield //无效
+            }
+            }
+            function* vailGeneratorA() {
+            function a() {
+            yield //无效
+            }
+            }
+            function* vailGeneratorC() {
+            const b = () => {
+            yield //无效
+            }
+            }
+            
+            function* vailGeneratorD() {
+            (() => {
+            yield //运行时报错
+            })() }
+          </pre>
+        </code>
+  </section>
+  <section>
+    <h1>1. 生成器对象作为迭代器对象</h1>
+    <p>因为生成器实现了iterator的接口,所以就可以作为可迭代对象来使用,就不用每次调用next()这么繁琐了</p>
+    <code>
+      <pre>
+        <strong>这样就指定了执行次数,达到了条件之后就会暂停 这就是生成器跟可迭代对象配合使用</strong>
+        function* nTime(item) {
+          while (item--) {
+          yield
+          }
+        }
+        
+        for (const k of nTime(3)) {
+        console.log('1');   
+      }
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h1>2. 使用yield实现输入和输出</h1>
+    <h2 style="color: red;">好好看,理解理解</h2>
+    <p>那其实就是说第一个next就是启动执行生成器, 碰到了yield,第一次执行next是不接收参数的
+      ,所以就在第一个log暂停了 , 第二次调用next() 就会传入参数执行第一个还未执行完的log , 然后以此类推
+      重点其实就是因为第一次执行next是启动生成器 , 不接受参数 , 所以在第一句log的时候停住了 , 还没执行完 , 等第二次next传参 , 所以我的代码是最后是一个log未执行的
+    </p>
+    <code>
+      <pre>
+        // 使用yield实现输入和输出
+        function* generatorFn() {
+        console.log(yield);
+        console.log(yield);
+        console.log(yield);
+        }
+        
+        let GeneratorFn = generatorFn()
+        GeneratorFn.next('bar') 
+        GeneratorFn.next('baz') 
+        GeneratorFn.next('qux')
+
+        //baz
+        //qux
+      </pre>
+    </code>
+    <h3>在看一个</h3>
+    <code>
+      <pre>
+
+      </pre>
+    </code>
+    <h1 style="color: red;">看好以下的特点</h1>
+    <ul>
+      <li>第一次执行的next() 他是不会接收传进来的值的 (虽然说可以传值,但是会忽略掉),因为第一次是启动生成器</li>
+      <li>yield 的双重作用
+        <p><strong>暂停执行</strong> ：遇到 yield 时，生成器暂停，并将值返回给外部。</p>
+        <p><strong>接收参数</strong> ：下一次调用 next(arg) 时，arg 会作为上一个暂停的 yield 的返回值，恢复执行。</p>
+      </li>
+      <li>yield会返回他后面的表达式的值 <strong>只能返回一个(语法上是不支持多个的)</strong></li>
+      <li>yield可以作为参数来使用</li>
+      <li>yield并非只能调用一次</li>
+      <li>yield写在reutrn后面的就永远不会执行到</li>
+    </ul>
+    <h3>如果yield <i>后面有表达式的值就返回表达式的值</i> 没有的话就返回undefined :: 在返回完了之后 (yield 表达式的值) 他们就是一个整体的表达
+      在次传入next(值) 的时候 就是(yield 表达式的值) 的返回值</h3>
+    <code>
+        <pre>
+          function* GeneraTorFn() {
+          return yield 'foo'
+          }
+          
+          let gener = GeneraTorFn()
+          console.log(gener.next());
+          console.log(gener.next('bar'));
+        </pre>
+      </code>
+    <p>总结就是， yield 它会先返回后面的表达式值，然后返回完之后。 yield 'foo' 这一整个表达式 就是第二次 next() 传入的值 yield 'foo' = 第二次next()传入的值
+      , 然后 return 就是它。这一整个 yield foo 的表达式返回值给return 出去了，就把 bar 给 return 出去了。</p>
+    <code>
+        <p>function* Init(n) {
+          for (let i = 0; i < n; i++) {
+            yield i
+          }
+        }
+    
+        for (const k of Init(3)) {
+          console.log(k)
+        }
+    
+        // 简化后
+        
+        function* init(n) {
+          let i = 0
+          while (n--) {
+            yield i++;
+          }
+        }
+    
+        for (const k of init(3)) {
+          console.log(k);
+        }</p>
+      </code>
+    <h4>用yield实现范围填充</h4>
+    <code>
+      <pre>
+         实现范围填充
+        function* start(n) {
+        while (n--) {
+        yield 0
+        }
+        }
+        
+        console.log(start(5));
+        console.log(...start(5));
+        console.log([...start(5)]);
+        console.log(Array.from(start(5)));
+      </pre>
+    </code>
+  </section>
+  <script>
+    function* generatorFn() {
+      yield
+    }
+    let generatorObject = generatorFn()
+    console.log(generatorObject.next());
+    console.log(generatorObject.next());
+
+
+    function* generatorFnA() {
+      yield 'foo'
+      yield 'bar'
+      return 'baz'
+    }
+
+    let generatorA = generatorFnA()
+    console.log(generatorA.next());
+    console.log(generatorA.next());
+    console.log(generatorA.next());
+
+    console.log('========= 分开 ==========');
+
+    function* generatorFnB() {
+      yield 'foo'
+      yield 'bar'
+      return 'baz'
+    }
+
+    let generatorObject1 = generatorFnB()
+    let generatorObject2 = generatorFnB()
+
+    console.log(generatorObject1.next());
+    console.log(generatorObject2.next());
+    console.log(generatorObject1.next());
+    console.log(generatorObject2.next());
+
+    function* vailGenerator() {
+      yield //有效
+    }
+
+    function* vailGeneratorA() {
+      function a() {
+        yield //无效
+      }
+    }
+    function* vailGeneratorA() {
+      function a() {
+        yield //无效
+      }
+    }
+    function* vailGeneratorC() {
+      const b = () => {
+        yield //无效
+      }
+    }
+
+    function* vailGeneratorD() {
+      (() => {
+        // yield //运行时报错
+      })()
+    }
+    console.log(vailGenerator().next())
+    console.log(vailGeneratorA().next())
+    console.log(vailGeneratorC().next())
+    console.log(vailGeneratorD().next())
+
+
+    console.log('========== 生成器对象作为迭代器对象 ==========');
+    function* generator() {
+      yield 1
+      yield 2
+      yield 3
+    }
+
+    for (const k of generator()) {
+      console.log(k);
+    }
+
+    console.log('自定义迭代对象');
+
+
+    // 这样就指定了执行次数,达到了条件之后就会暂停 这就是生成器跟可迭代对象配合使用
+    function* nTime(item) {
+      while (item--) {
+        yield
+      }
+    }
+
+    for (const k of nTime(3)) {
+      console.log('1');
+    }
+
+    console.log('使用yield实现输入和输出');
+
+    // 使用yield实现输入和输出
+    function* generatorFn(inital) {
+      // console.log(inital);
+      console.log(yield);
+      console.log(yield);
+      console.log(yield);
+    }
+
+    let GeneratorFn = generatorFn('foo')
+    GeneratorFn.next('bar')
+    GeneratorFn.next('baz')
+    GeneratorFn.next('qux')
+
+    function* GeneraTorFn() {
+      return yield 'foo'
+    }
+
+    let gener = GeneraTorFn()
+    console.log(gener.next());
+    console.log(gener.next('bar'));
+
+    console.log('==== yield并非只能调用一次 ====');
+    function* generatorFn() {
+      for (let i = 0; ; i++) {
+        yield i
+      }
+    }
+
+    let ator = generatorFn()
+    console.log(ator.next());
+    console.log(ator.next());
+    console.log(ator.next());
+    console.log(ator.next());
+    console.log(ator.next());
+
+    console.log(' 结束条件 ');
+    function* Init(n) {
+      for (let i = 0; i < n; i++) {
+        yield i
+      }
+    }
+
+    for (const k of Init(3)) {
+      console.log(k)
+    }
+
+    // 简化后
+
+    function* init(n) {
+      let i = 0
+      while (n--) {
+        yield i++;
+      }
+    }
+
+    for (const k of init(3)) {
+      console.log(k);
+    }
+
+    function* InIt(n) {
+      let i = 0
+      while (n--) {
+        yield i++
+      }
+    }
+
+    for (const k of InIt(3)) {
+      console.log(k);
+    }
+
+    console.log('实现范围和填充数组');
+
+
+    function* range(start, end) {
+      while (end > start) {
+        yield start++
+      }
+    }
+
+    for (const k of range(4, 7)) {
+      console.log(k);
+    }
+
+    // 填充
+
+    // 实现范围填充
+    function* start(n) {
+      while (n--) {
+        yield 0
+      }
+    }
+
+    console.log(start(5));
+    console.log(...start(5));
+    console.log([...start(5)]);
+    console.log(Array.from(start(5)));
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <p>最简单的代理是空代理 , 既除了作为一个抽象的目标对象什么也不做 默认情况下,在代理对象上执行的所有操作都会无障碍地传播到目标对象 , 因此 ,
+    在任何可以使用目标对象的地方 , 都可以通过同样的方式来使用与之关联的代理对象
+  </p>
+  <strong>代理是使用Proxy构造函数创建的 , 这个构造函数接收两个参数 , ( 目标对象 , 处理程序对象 ) , 缺少其中任何一个参数都会报错</strong>
+  <code>
+    <pre>
+      const target = {
+        id: 'target'
+      }
+  
+      const handler = {}
+  
+      const proxy = new Proxy(target, handler)
+  
+      console.log(target);
+      console.log(handler);
+      console.log(proxy);
+  
+      // id 属性会访问到同一值
+      console.log(target.id); <strong> target</strong>
+      console.log(proxy.id);  <strong> target</strong>
+  
+      /* 给目标属性赋值, 会反映在两个对象上
+      因为两个对象访问的是同一个值 */
+  
+      target.id = 'foo'
+      console.log(target.id);  <strong> foo </strong>
+      console.log(proxy.id);   <strong> foo</strong>
+  
+      // 给代理属性赋值 , 会反映到在两个对象上 
+      // 因为这个赋值会转移到目标对象上
+      proxy.id = 'bax'
+      console.log(target.id);   <strong> bax</strong>
+      console.log(proxy.id);    <strong> bax</strong>
+  
+      console.log(target.hasOwnProperty('id'));  <strong> true</strong>
+      console.log(proxy.hasOwnProperty('id'));   <strong> true</strong>
+  
+      console.log(target === proxy);  <strong> false </strong>
+    </pre>
+  </code>
+  <strong>之所以proxy可以修改target里面的属性 , 就是因为 new Proxy ( 目标对象地址值 , 处理器对象地址值 ) 正是因为 Proxy 里面目标对象的地址值 ,
+    他可以直接访问目标对象 , 就可以进行修改了 ,
+    而处理器对象就不会这样 , 因为他只是一个处理器 , 也没有必要访问和修改他</strong>
+  <p>整个执行流程就是先调用proxy这个代理对象 在去handler处理值 , 通过之后再到target 里面把需要的属性获取出来</p>
+  <code class="code">
+    <pre>
+      拦截器              拦截的操作                  参数列表（按顺序）                              有没有 “目标 / 属性 / 值”？
+
+      get           读取属性（proxy.prop）         target, prop, receiver                       有目标（target）、属性（prop），无值
+
+      set           设置属性（proxy.prop=1）       target, prop, value, receiver                       三者都有（多了 receiver）
+
+      deleteProperty 删除属性（delete proxy.prop） target, prop                                          只有目标和属性，无值
+
+      has           检查属性（prop in proxy）      target, prop                                           只有目标和属性，无值
+
+      apply         调用函数（proxy()）            target, thisArg, args                          无 “属性”“值”，有函数上下文和参数
+
+      construct     实例化（new proxy()）          target, args, newTarget                            无 “属性”“值”，有构造参数
+    </pre>
+  </code>
+  <strong>处理器他是按照你的类型来决定 , 到底接收什么样的参数的 比如 get 就 目标 ,属性, 值 , set 就多了一个调用代理对象 , 是根据不同的处理器来决定的 , 不过好像常用的也就 读取属性 设置属性
+    删除属性</strong>
+  <script>
+    const target = {
+      id: 'target'
+    }
+
+    const handler = {}
+
+    const proxy = new Proxy(target, handler)
+
+    console.log(target);
+    console.log(handler);
+    console.log(proxy);
+
+    // id 属性会访问到同一值
+    console.log(target.id);
+    console.log(proxy.id);
+
+    /* 给目标属性赋值, 会反映在两个对象上
+    因为两个对象访问的是同一个值 */
+
+    target.id = 'foo'
+    console.log(target.id);
+    console.log(proxy.id);
+
+    // 给代理属性赋值 , 会反映到在两个对象上 
+    // 因为这个赋值会转移到目标对象上
+    proxy.id = 'bax'
+    console.log(target.id);
+    console.log(proxy.id);
+
+    console.log(target.hasOwnProperty('id'));
+    console.log(proxy.hasOwnProperty('id'));
+
+    console.log(target === proxy);
+
+
+    // 动态添加日志功能
+    const logger = {
+      get(target, prop) {
+        console.log(target);
+        console.log(prop);
+
+        console.log(`读取 ${prop}`);
+        return target[prop];
+      },
+      set(target, prop, value) {
+        console.log(target);
+        console.log(prop);
+        console.log(value);
+
+        console.log(`设置 ${prop} = ${value}`);
+        target[prop] = value;
+        return true;
+      }
+    };
+
+    const data = { count: 0 };
+    const loggedData = new Proxy(data, logger);
+
+    loggedData.count++;
+    // 控制台输出:
+    // 读取 count
+    // 设置 count = 1
+  </script>
+</body>
+
+</html>

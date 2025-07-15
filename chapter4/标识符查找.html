@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 就是相当于去在种种方面去查找,你的值应该是什么 , 其实可以用就近原则理解 , 毕竟也确实是这样的 因为js代码从上往下执行的
+    let person = {
+      name: 'John',
+      age: 30
+    };
+    console.log(person.name);
+
+    function outer() {
+      let num = 20;
+      function inner() {
+        console.log(num);
+      }
+      inner();
+    }
+    outer(); 
+  </script>
+</body>
+
+</html>

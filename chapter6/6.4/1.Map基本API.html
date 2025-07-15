@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Map</h1>
+  <p>Map新的集合引用, 为这门语音带来了真的键值存储机制</p>
+  <h2>使用数组（中括号包裹）来初始化 Map 和 Set 时，正是利用了数组天然的可迭代性（实现了 Symbol.iterator 接口），让构造函数能方便地从中获取数据来构建实例。</h2>
+  <ul>
+    <li><strong>has()</strong> 检测Map中是否存着此键
+      <p>如果里面的是[] 空数组 那此时查找has(undefined)</p>
+    </li>
+    <li><strong>get()</strong> 获取里面对应的值</li>
+    <li><strong>delete()</strong> 删除对应的键值对</li>
+    <li><strong>clear()</strong> 清除这个Map里面的所有键值对</li>
+    <li>keys() 拿取键 </li>
+    <li>values() 拿取值</li>
+  </ul>
+
+  <code>
+    <pre>
+      const m1 = new Map([
+      ['key1', 'val1'],
+      ['key2', 'val2'],
+      ['key3', 'val3']
+      ])
+      
+      
+      const m2 = new Map({
+      [Symbol.iterator]: function* () {
+      yield ['key1', 'val1']
+      yield ['key2', 'val2']
+      yield ['key3', 'val3']
+      } 
+      
+      const map = new Map().set('key', 'val')
+      .set('key1', 'val1')
+      .set('key2', 'val2')
+      }) 
+      
+      像这三种方法之所以写法完全不同 , 其实就是因为js的设计问题
+    </pre>
+  </code>
+  <script>
+    const m = new Map()
+    console.log(m instanceof Object)  //true
+
+    const m1 = new Map([
+      ['key1', 'val1'],
+      ['key2', 'val2'],
+      ['key3', 'val3']
+    ])
+
+    console.log(m1);
+    console.log(m1.size);
+
+    // 使用自定义迭代器初始化 Map()
+    const m2 = new Map({
+      [Symbol.iterator]: function* () {
+        yield ['key1', 'val1']
+        yield ['key2', 'val2']
+        yield ['key3', 'val3']
+      }
+    })
+
+    console.log(m2);
+    console.log(m2.size);
+
+    const m3 = new Map([[]])
+    console.log(m3.has(undefined));
+    // 拿取名为undefined的值
+    console.log(m3.get(undefined));
+
+    console.log('========= 下半部分 ========');
+
+    const ma = new Map()
+    console.log(ma.has('firstName'));
+    console.log(ma.get('firstName'));
+    console.log(ma.size);
+
+    ma.set('firstName', 'Arrebol')
+      .set('lastName', 'Frisbie')
+
+    console.log(ma.has('firstName'));
+    console.log(ma.get('firstName'));
+    console.log(ma.size);
+
+    // 把lastName对应的键值对删掉
+    ma.delete('lastName')
+    console.log(ma);
+    console.log(ma.has('firstName'));
+    //被删掉了
+    console.log(ma.has('lastName'));
+
+    // 清除这个Map里面的所有键值对
+    ma.clear()
+    console.log(ma);
+    console.log(ma.has('firstName'));
+    console.log(ma.has('lastName'));
+    console.log(ma.size);
+
+    // 因为set() 方法返回实例,因此可以把多个操作连着写
+    const map = new Map().set('key', 'val')
+      .set('key1', 'val1')
+      .set('key2', 'val2')
+
+    console.log(map);
+
+    map.set('key3', 'val3')
+      .set('key4', 'val4')
+    console.log(map);
+    // 同时声明多个
+
+    console.log(' ======== Map键值 ========');
+    const bp = new Map()
+    const functionkey = function () { }
+    const Symbolkey = Symbol()
+    const objectKey = new Object()
+
+    bp.set(functionkey, 'functionkey')
+    console.log(bp.get(functionkey))
+    bp.set(Symbol, 'Symbolkey')
+    console.log(bp.get(Symbol))
+    bp.set(objectKey, 'objectKey')
+    console.log(bp.get(objectKey))
+
+    // 这里面并没有 表示SameValueZero的比较独立的实例并不会冲突
+    console.log(bp.get(function () { }));
+
+    const mp = new Map()
+
+    const objKey = {},
+      objval = {},
+      arrkey = [],
+      arrval = []
+
+    /* 因为set的时候(objKey, objval) 就表示 objkey 指向 objval 然后用get打印的话, 就会返回对应的值,
+    而objkey已经把objval的地址值映射到自己身上, 所以一打印objkey,, 然后指向objval, 返回objval 下面的arr也是同理 */
+
+    mp.set(objKey, objval)
+    mp.set(arrkey, arrval)
+
+    objKey.name = 'uname'
+    objval.age = 16
+    arrkey.push('躺平')
+    arrval.push('打游戏')
+    console.log(mp.get(objKey));
+    console.log(mp.get(arrkey));
+
+    console.log(mp);
+
+    const bm = new Map()
+
+    const a = 0 / "", // NaN
+      b = 0 / "", // NaN
+      pz = +0,
+      nz = -0;
+
+    console.log(a === b); // NaN === NaN false
+    console.log(pz === nz); // 0 === 0
+
+    bm.set(a, 'foo')
+    bm.set(pz, 'bar')
+
+    console.log(bm.get(b));
+    console.log(bm.get(nz));
+
+
+  </script>
+</body>
+
+</html>

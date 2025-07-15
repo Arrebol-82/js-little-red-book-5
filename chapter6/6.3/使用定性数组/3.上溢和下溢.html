@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>上溢和下溢</h1>
+  <p>按F12</p>
+  <script>
+    // Int8Array -128 到 127 (10000000 到 01111111)
+    const ints = new Int8Array(2)
+
+    // Uint8Array 0 到 255 (00000000 到 11111111)
+    const uns = new Uint8Array(2)
+
+    console.log('================= Uint8Array ===================');
+
+    // 太大了 0x100
+    // 缩印只取最低有效的8位 超过了最大值255
+    uns[1] = 256
+    /* 256 的二进制是 100000000（9 位256 的二进制是 100000000（9 位），但 Uint8Array 只能存 8 位。
+    →  截取最低 8 位：00000000（即 0）。 */
+    console.log(uns); // [0,0]
+
+    uns[1] = 511
+    // 511 的二进制是 111111111（9 位），截取最低 8 位：11111111（即 255）。
+    console.log(uns); // [0, 255]
+
+    console.log('==================== 下溢 ====================');
+
+    // 下溢的话会被转换为其等价的元字符
+    uns[1] = -1  // 0xFF
+    /*  - 1 在计算机中用补码表示：11111111（8 位全 1）。
+    → 直接解释为无符号数：255。 */
+    console.log(uns);
+
+
+    console.log('=================== Int8Array ===================');
+
+    ints[1] = 128 //0x88
+    /* 128 的二进制是 10000000（8 位），但在有符号数中：
+    → 最高位 1 表示负数，补码转换为十进制：-128。 */
+    console.log(ints);
+
+
+    ints[1] = 255 // 0xFF
+    // 255 的二进制是 11111111（8 位），补码转换为十进制：-1。
+    console.log(ints);
+
+  </script>
+</body>
+
+</html>

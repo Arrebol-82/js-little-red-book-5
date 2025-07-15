@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>类的构成</h1>
+  <p>类可以包含构造函数, 实例方法 , 获取函数 , 设置函数和静态方法 , 但这些都不是必须的 空的类定义照样有效 默认情况下类定义中的代码 <strong>都在严格模式下执行</strong></p>
+  <strong>还有就是跟构造函数一样的 , 首字母要大写 , 以区别于通过它创建的实例</strong>
+  <code>
+    <pre>
+      // 空类定义 , 有效
+      class Foo { }
+  
+      // 有构造函数的类 , 有效
+      class Bar {
+        constructor() { }
+      }
+  
+      // 有获取函数的类, 有效
+      class Baz {
+        get maBaz() { }
+      }
+  
+      // 有静态方法的类, 有效
+      class Qux {
+        static myQux() { }
+      }
+    </pre>
+  </code>
+  <p>这些写法都是可以的</p>
+  <h2>类表达式的名称是可选的 在把类表达式赋值给变量后,可以通过name属性取得类表达式的名称字符串 , 但是不能在类表达式作用域外访问这个标识符</h2>
+  <code>
+    <pre>
+      let Person = class PersonName {
+        identity() {
+          console.log(Person.name, PersonName.name);
+        }
+      }
+  
+      let p = new Person()
+  
+      p.identity() // PersonName PersonName
+  
+      console.log(Person.name); // PersonName
+      console.log(PersonName); //  ReferenceError: PersonName is not defined
+    </pre>
+  </code>
+  <p>let Person = class PersonName{ } 这段 class PersonName {} 这一段也是块作用域 </p>
+  <h2 class="pink">在平常开发都是使用类定义的 , 除了在一般的特性场景才会使用类表达式</h2>
+  <script>
+    // 空类定义 , 有效
+    class Foo { }
+
+    // 有构造函数的类 , 有效
+    class Bar {
+      constructor() { }
+    }
+
+    // 有获取函数的类, 有效
+    class Baz {
+      get maBaz() { }
+    }
+
+    // 有静态方法的类, 有效
+    class Qux {
+      static myQux() { }
+    }
+
+    console.log('============================ 类表达式的名称 ==========================');
+    let Person = class PersonName {
+      identity() {
+        console.log(Person.name, PersonName.name);
+      }
+    }
+
+    let p = new Person()
+
+    p.identity() // PersonName PersonName
+
+    console.log(Person.name); // PersonName
+    console.log(PersonName); //  ReferenceError: PersonName is not defined
+
+  </script>
+</body>
+
+</html>

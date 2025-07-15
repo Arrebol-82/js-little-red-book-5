@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>实用反射API</h1>
+  <p>某些情况下应该优先使用反射API 这是有有些理由的</p>
+  <section>
+    <h2>反射API与对象API</h2>
+    <p>在使用反射API时 , 要记住</p>
+    <ul>
+      <li class="circle">反射API并不限于捕获处理程序</li>
+      <li class="circle">大多数反射API方法在object类型上有对应的方法</li>
+      <li class="circle">通常object上的方法适用于通用编程,而反射方法适用于细粒度的对象控制与操作</li>
+      <li class="ciecle">可以说object和Reflect这两套API是十分相似的 , 通过用于规范化编码 , 要明确知道是否设置成功 , 而Reflect就会返回true和false</li>
+      <li class="ciecle">日常开发的话用object就可以,因为现在还是主流</li>
+    </ul>
+  </section>
+  <section>
+    <h2>状态标记</h2>
+    <p>很多反射方法的返回称作 '状态标记' 的布尔值 , 表示想要执行的操作是否成功 有时候,状态标记比那些返回修改后的对象或者抛出的错误的反射API更有用</p>
+    <code>
+      <pre>
+        const o = {}
+
+
+        try {
+          Object.defineProperty(o, 'foo', 'bar') // 最后一个要是个对象
+          console.log('success');
+        } catch (e) {
+          console.log('failure');
+        }
+    
+        console.log('========================= 使用Reflect ==================');
+        const O = {}
+    
+        const bool = Reflect.defineProperty(O, 'foo', {})
+        console.log(bool); // true
+    
+        if (bool) {
+          console.log('success');
+        } else {
+          console.log('failure');
+        }
+      </pre>
+    </code>
+    <p>Reflect会返回是true 还是 false</p>
+    <h3> 一下反射方法会提供状态标记</h3>
+    <ul>
+      <li class="circle">Reflect.defineProperty()</li>
+      <li class="circle">Reflect.preventExtensions()</li>
+      <li class="circle">Reflect.setPrototypeOf()</li>
+      <li class="circle">Reflect.set()</li>
+      <li class="circle">Reflect.deleteProperty()</li>
+    </ul>
+  </section>
+  <section>
+    <h2>用一等函数替代操作符</h2>
+    <p>以下反射方法提供只有通过操作符才能完成的操作</p>
+    <ul>
+      <li>Reflect.get() 可替代对象属性访问操作符 <strong>前面用过啦</strong></li>
+      <li>Reflect.set() 可替代=复制操作符</li>
+      <li>Reflect.has() 可替代in操作符或者with()</li>
+      <li>Reflect.deleteProperty() 可替代delete操作符</li>
+      <li>Reflect.construct() 可以替代new 操作符</li>
+    </ul>
+  </section>
+  <section>
+    <h1>安全地应用函数</h1>
+    <p>在通过apply方法调用函数时 , 被调用的函数可能也定义了自己的apply属性 (可能性那是非常非常的小哇)
+      为了避免这个问题 , 可以使用定义在function原型上的apply方法
+    </p>
+    <code>
+      Function.prototype.apply.call(myFunc, thisVal, argunebtlisr)
+      
+      <strong>这种可拍的代码完全可以使用Reflect.apply() 来替代</strong>
+
+      Reflect.apply(myFunc, thisVal, argunebtlisr)
+    </code>
+  </section>
+  <p>总之呀Reflect的好处还是很多的</p>
+  <script>
+    const o = {}
+
+
+    try {
+      Object.defineProperty(o, 'foo', 'bar') // 最后一个要是个对象
+      console.log('success');
+    } catch (e) {
+      console.log('failure');
+    }
+
+    console.log('========================= 使用Reflect ==================');
+    const O = {}
+
+    const bool = Reflect.defineProperty(O, 'foo', {})
+    console.log(bool); // true
+
+    if (bool) {
+      console.log('success');
+    } else {
+      console.log('failure');
+    }
+
+    console.log('=============================== 方法 ===============================');
+    Function.prototype.apply.call(myFunc, thisVal, argunebtlisr)
+
+    Reflect.apply(myFunc, thisVal, argunebtlisr)
+  </script>
+</body>
+
+</html>

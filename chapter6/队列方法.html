@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>队列方法</h1>
+  <p>队列的特性是 <strong>先进先出</strong></p>
+  <p>shift() 是将数组的第一项进行删除 (先进先出)所以删的是第一位</p>
+  <code>
+    <pre>
+      let colors = [];
+      let count = colors.push('red', 'pink')
+      console.log(colors);
+      colors.push('black')
+      console.log(colors);
+      
+      let item = colors.shift();
+      console.log(item);
+      // 从开头开始删
+      console.log(colors);
+    </pre>
+  </code>
+  <h2>unshift()</h2>
+  <p>表示在数组的开头添加一个或者多个元素 通过unshift() 和 pop() 就是可以模仿队列</p>
+  <code>
+    <pre>
+      let color = [];
+      color.unshift('red', 'pink')
+      console.log(color);
+      color.unshift('blue')
+      console.log(color);
+      color.pop()
+      <strong>删除掉最后一个元素</strong>
+      console.log(color);
+    </pre>
+  </code>
+  <script>
+
+    let colors = [];
+    let count = colors.push('red', 'pink')
+    console.log(colors);
+    colors.push('black')
+    console.log(colors);
+
+    let item = colors.shift();
+    console.log(item);
+    // 从开头开始删
+    console.log(colors);
+
+    let color = [];
+    color.unshift('red', 'pink')
+    console.log(color);
+    color.unshift('blue')
+    console.log(color);
+    color.pop()
+    // 删除掉最后一个元素
+    console.log(color);
+
+  </script>
+</body>
+
+</html>

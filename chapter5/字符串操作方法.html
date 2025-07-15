@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 拼接字符串
+    let str = 'hello '
+    let String = str.concat('world!')
+    // 还可以一次拼成多个
+    let String2 = str.concat('world!', '!', '!')
+    console.log(String);
+    console.log(String2);
+    // 但是你都这么写了 , 为什么不用 + ``呢
+    let s = 'hello'
+    console.log(`${s} world!`);
+    console.log(s + ' world!');
+    // 看岂不妙哉
+
+    // 提取字符串
+    // slice() substr() substring()
+    let hello = 'hello world'
+    // slice() 和 substring() 这两个是左闭右开
+    // slice() 和 substring()是从第一个元素 ,截到第二个元素
+    console.log(hello.slice(3));
+    console.log(hello.substring(3));
+    console.log(hello.substr(3));
+    console.log(hello.slice(3, 7));
+    console.log(hello.substring(3, 7));
+    console.log(hello.substr(3, 7));
+    // substr(3, 8) 是从第一个元素 往后截取第二元素的个数
+    console.log(hello.substr(3, 8));
+
+    console.log(hello.slice(-3));
+    console.log(hello.substr(-3));
+    // 以上两个方法如果是单个参数 就是字符串的长度加上里面的负数值
+    // 而substring是直接转换成0 即表示从头开始找
+    console.log(hello.substring(-3));
+
+    // 多个参数
+    /*   两个sub都是直接将负数转成0 ， 
+    而substring是会将转换完之后的值 ， 将大的值放后面 小的在前面 
+    substr 则是直接返回0 所以最终是"" ,毕竟从3到0索引是找不到的 */
+    console.log(hello.substring(3, -4));
+    console.log(hello.substr(3, -4));
+    // slice 是个单个参数一样的 都是长度减去负数
+    console.log(hello.slice(3, -4));
+
+    // 寻找字符串位置的方法 找不到的话就返回 -1
+    // 这俩个表示从头开始
+    console.log(hello.indexOf('o'));
+    // 从尾开始
+    console.log(hello.lastIndexOf('o'));
+
+    // 表示用第6位索引开始往后找
+    console.log(hello.indexOf('o', 6));
+
+    // 表示从第6位索引往 '前' 找
+    console.log(hello.lastIndexOf('o', 6));
+
+    // 遍历的对象
+    let stringValue = 'adfa hdhd hjgj hjkk hklh hdfhdhdh';
+    // 用于存储
+    let array = new Array();
+    // 查找条件
+    let pos = stringValue.indexOf('h');
+
+    // 进行循环
+    while (pos > -1) {
+      // 找到了就推进去数组
+      array.push(pos)
+      // 加一 往后继续找
+      pos = stringValue.indexOf('h', pos + 1)
+      // 最后找不到返回-1 , 结束循环
+    }
+
+    // 打印
+    console.log(array);
+
+    // 查找字符串
+    let meass = 'foobarbaz';
+    // startsWith() 表示从开头查找
+    console.log(meass.startsWith('foo')); //t
+    console.log(meass.startsWith('bar')); //f
+
+    // endsWith() 表示从结尾开始找
+    console.log(meass.endsWith('baz')); //t
+    console.log(meass.endsWith('bar')); //f
+
+    // includes 表示从整个字符串中找
+    console.log(meass.includes('bar'));//t
+    console.log(meass.includes('qux'));//f
+
+    //=================================================
+
+    // startsWith() 表示从开头查找
+    console.log(meass.startsWith('foo')); //t
+    console.log(meass.startsWith('foo', 1)); //t
+
+    // includes 表示从整个字符串中找
+    console.log(meass.includes('bar'));//t
+    console.log(meass.includes('bar', 4));//t
+    //以上的两个方法 第二个参数表示从 指定的位置开始查找
+
+
+    // 而endsWith 不同他是表示从指定位置截断字符窜 从截断的位置作为末尾了
+    // endsWith() 表示从结尾开始找
+    console.log(meass.endsWith('baz')); //t
+    console.log(meass.endsWith('bar', 6)); //t
+
+    // 清除空格
+    let sss = '  foo  ';
+
+    // 清除全部字符 trim()
+    console.log(sss.trim());
+    console.log(sss);
+
+    // 清除前面的 trimStart()
+    console.log(sss.trimStart());
+
+    // 清除前面的 trimEnd()
+    console.log(sss.trimEnd());
+
+    // 复制字符窜
+    // repeat(n) 里面n表示复制多少个
+    // 方法
+    console.log(sss.repeat(5));
+
+    let qux = 'gogogo'
+    // 填充字符, 默认的是用空格填充
+    console.log(qux.padStart(10));
+    // 可以自定义字符
+    console.log(qux.padEnd(10, '1'));
+    console.log(qux.padStart(10, '1'));
+    // 如果填充的长度小于 填充字符串的长度 就会返回原字符串
+    console.log(qux.padStart(5, '1'));
+
+    // 字符串迭代
+    // 可以访问字符串里面的每一个值
+    // 这是因为字符串在原型上暴露了一个 @@iterator 方法,
+    let message = 'abcde'
+    let stringIterator = message[Symbol.iterator]();
+    console.log(stringIterator.next());
+    console.log(stringIterator.next());
+    console.log(stringIterator.next());
+    console.log(stringIterator.next());
+    console.log(stringIterator.next());
+    console.log(stringIterator.next());
+
+    // 还有循环
+    for (const k of message) {
+      console.log(k);
+    }
+
+    // 还有更方便的...展开运算符 记得加[]
+    console.log([...message]);
+
+    //转换大小写
+    let hell = 'hello wrold!!!';
+    let hellbig = 'Hello WrOld!!!';
+    // 转换为大写
+    console.log(hell.toUpperCase());
+    // 转换为小写
+    console.log(hell.toLowerCase());
+
+    // 按地区转化大小写 可以保证每个地区的大小写的装换是没有问题的 如果面向全球化的网站就用这两个属性
+    console.log(hell.toLocaleUpperCase());
+    console.log(hell.toLocaleLowerCase());
+
+  </script>
+</body>
+
+</html>

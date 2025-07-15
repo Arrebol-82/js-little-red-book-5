@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>生成器是非常灵活的,他可以在一个函数块内暂停和恢复代码的执行能力</h1>
+  <h2 style="color: red;">生成器（Generator）本质上是迭代器的 “语法糖 + 增强版”，它们都遵循迭代器协议</h2>
+  <h2>生成器基础: 生成器的形式是一个函数, 在函数名称前面加一个星号( * ) , 表示他是一个生成器,只要可定义函数,那么就可以定义生成器</h2>
+  <strong><i>箭头函数</i>不能用来定义生成器函数</strong>
+  <p>看看</p>
+  <code>
+    <pre>
+      <strong>函数声明</strong> 
+      function* generatorFnA() {}
+      
+      <strong> 函数表达式</strong>
+      let generatorFnB = function* () { }
+      
+      <strong> 对象字面量方法的生成器函数</strong>
+      let foo = {
+      * generatorFnC() { },
+      ge: function* () { }
+      }
+      
+      <strong> 实例方法生成器函数</strong>
+      class Foo {
+      * generatorFnC() { }
+      }
+      
+      <strong> 作为静态方法生成器函数</strong>
+      class bar {
+      static * generatorFnC() { } }
+    </pre>
+  </code>
+  <h2> * 号是不受两侧空格影响的</h2>
+  <code>
+    <pre>
+      function* a() { }
+      function * a() { }
+      function *a() { }
+      <strong>都是一样的</strong>
+    </pre>
+  </code>
+
+  <strong>调用生成器,会生成一个生成器对像,生成器对象也实现了iterator接口,并且也有next()方法,调用它可以使生成器开始或者恢复执行</strong>
+  <h3>value属性的值是生成器函数的返回值 , 可以通过生成器的返回值来指定</h3>
+  <h1>生成器要想执行就要调用next()方法</h1>
+  <h1>生成器对象是实现了Iterator接口, 他们默认的迭代器指向自身 (生成器 === 迭代器 , 迭代器 != 生成器)</h1>
+  <code>
+    <pre>
+      function* generatorFnD() {
+      console.log('执行生成器函数');
+      
+      console.log('Arrebol');
+      }
+      
+      const D = generatorFnD() //空的
+      console.log(D.next());
+      //执行生成器函数
+      //Arrebol
+      //{value: undefined, done: true}
+    </pre>
+  </code>
+  <script>
+    // 函数声明
+    function* generatorFnA() {
+
+    }
+
+    // 函数表达式
+    let generatorFnB = function* () { }
+
+    // 对象字面量方法的生成器函数
+    let foo = {
+      * generatorFnC() { },
+      ge: function* () { }
+    }
+
+    // 实例方法生成器函数
+    class Foo {
+      * generatorFnC() { }
+    }
+
+    // 作为静态方法生成器函数
+    class bar {
+      static * generatorFnC() { }
+    }
+
+
+    console.log('================= next ==================');
+    function* generatorFn() { }
+    const g = generatorFn()
+    console.log(g);
+    console.log(g.next);
+    console.log(g.next());
+
+
+    console.log('============= value =============');
+    function* generatorFnZ() {
+      return 'Arrebol'
+    }
+    function* generatorFnG() {
+      return [1, 2, 3, 4, 5, 6]
+    }
+
+    const Z = generatorFnZ()
+    const G = generatorFnG()
+    console.log(Z.next);
+    console.log(Z.next()); //{value: 'Arrebol', done: true}
+    console.log(G.next());
+
+    console.log('========== 执行生成器 ===========');
+    function* generatorFnD() {
+      console.log('执行生成器函数');
+
+      console.log('Arrebol');
+    }
+
+    const D = generatorFnD()
+    console.log(D.next());
+
+
+    console.log('========= 生成器对象是实现了Iterator接口, 他们默认的迭代器指向自身  ==========');
+    function* generatorFnE() { }
+
+    console.log(generatorFnE);
+    console.log(generatorFnE()[Symbol.iterator]);
+
+
+    console.log(generatorFnE());
+    // 此时的迭代器是指向生成器自生
+    console.log(generatorFnE()[Symbol.iterator]());
+
+    console.log('============ E ===========');
+
+    const E = generatorFnE()
+    console.log(E);
+    console.log(E[Symbol.iterator]);
+    console.log(E[Symbol.iterator]());
+
+    console.log(E === E[Symbol.iterator]());
+
+
+  </script>
+</body>
+
+</html>

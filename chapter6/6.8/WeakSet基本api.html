@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>弱集合</h1>
+  <p>他是set的兄弟,其方法也是继承set的</p>
+  <ul>
+    ：add(value), has(value), delete(value)。
+  </ul>
+  <script>
+    // 空的WeakMap集合
+    const ws = new WeakSet()
+
+    // 和WeakMap一样, 只接收引用值
+
+    const key1 = { id: 1 },
+      key2 = { id: 2 },
+      key3 = { id: 3 }
+
+    const Ws1 = new WeakSet([key1, key2, key3])
+    console.log(Ws1.has(key1));
+    console.log(Ws1.has(key2));
+    console.log(Ws1.has(key3));
+    console.log(Ws1);
+
+
+    // 因为weakSet是弱引用, 所以只能存储地址值
+    // const Ws2 = new WeakSet([key1, '不能是原始值', key3])
+
+    const stringKey = new String('key1')
+    console.log(stringKey);
+    const vm3 = new WeakSet([stringKey])
+    console.log(vm3.has(stringKey));
+
+
+    // 可以使用add添加新值
+    console.log('============ add ===================');
+
+    const Ws = new WeakSet()
+
+    const val1 = { id: 1 },
+      val2 = { id: 2 }
+
+    console.log(Ws.has(val1));
+
+    Ws.add(val1)
+    Ws.add(val2)
+    console.log(Ws.has(val1));
+    console.log(Ws.has(val2));
+
+    console.log('========== delete ==========');
+
+    Ws.delete(val1)
+    console.log(Ws.has(val1));
+    console.log(Ws.has(val2));
+
+    const map = new WeakSet().add({ id: 1 })
+      .add({ id: 1 })
+      .add({ id: 1 })
+
+    console.log(map);
+
+    map.add({ id: 1 })
+      .add({ id: 1 })
+    console.log(map);
+    // 同时声明多个
+  </script>
+</body>
+
+</html>

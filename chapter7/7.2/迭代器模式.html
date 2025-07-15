@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>迭代器模式</h1>
+  <p>迭代器模式 ,<strong>其实就是存储和读取相分离</strong>迭代对象(Iterable)和迭代器(iterator)是互不干预的</p>
+  <ul>
+    <li>只要是实现了Symbol.iterator接口和迭代器协议的都可以使用迭代器</li>
+    <li>迭代器是一次性的,会从头遍历到尾,遍历完一次就没了</li>
+    <li>每个迭代器都会关联一个next()的API,他是返回符合条件的返回值,每次调用只会返回一个值,按顺序从头到尾返回符合的值(要使用多次API才能返回全部)
+    <li>迭代对象和迭代器是相分离的: <strong>迭代对象是按照自己的方法来存储数据</strong> , 而<strong>迭代器是按照自己的方法来读取数据的</strong> 互不干预的</li>
+    </li>
+    <li>
+      <h2>常见的迭代对象: 数组、字符串、Map、Set、生成器、自定义迭代器</h2>
+    </li>
+  </ul>
+  <script>
+    /* 常见的数字
+    需要索引访问 */
+    let arr = [3, 1, 4]
+
+    /* 常见的集合
+    访问时,可以按插入的顺序打印 */
+    let set = new Set().add(3).add(1).add(4)
+
+
+
+  </script>
+</body>
+
+</html>

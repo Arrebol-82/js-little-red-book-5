@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px auto;
+    }
+
+    .pink {
+      color: pink;
+      font-size: 20px;
+    }
+
+    .skyblue {
+      color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>属性的类型 (内部特性)</h1>
+  <p>分为数据属性 和 访问器属性</p>
+  <section>
+    <h2>数据属性</h2>
+    <ul>
+      <li><strong>[[Configurable]]:</strong> 表示是否可以通过delete删除并重新定义 , 修改特性 ,是否可以改为访问器属性 <strong
+          class="pink">默认true</strong> <br> 一旦设为 false，无法再改回 true，也无法删除属性。但 writable 可以从 true → false</li>
+      <li><strong>[[Enumerable]]:</strong> 表示是否可以通过for-in循环返回 <strong class="pink">默认true</strong></li>
+      <li><strong>[[Writable]]:</strong>表示值是否可以修改 <strong class="pink">默认true</strong></li>
+      <li><strong>[[Value]]:</strong>包含属性实际的值 <strong>也就是属性的默认值:undefined</strong>
+        <code>
+          <pre>
+            let arr = {
+              name: 'Arrebol'
+              <strong>这里的name 从undefined 变成了 'Arrebol'</strong>
+            }
+          </pre>
+        </code>
+      </li>
+    </ul>
+    <h3>Object.defineProperty()</h3>
+    <ul>
+      <li>第一个参数是要修改的对象</li>
+      <li>第二个是要修改的属性</li>
+      <li>第三个参数就是{} 你要修改的特性</li>
+      <li>
+        <code>
+           <pre>
+            参数位置       含义        示例值                                  必选？
+            第 1 个     目标对象     const obj = {}                             ✅
+            第 2 个      属性名   <strong>（字符串 / Symbol） 'name' 或 Symbol()</strong>       ✅
+            第 3 个    描述符对象  { value: 1, writable: false }                ✅
+           </pre>
+        </code>
+      </li>
+      <li class="pink">
+        <h2>每个对象只能配置一次 , 再次配置的话就会报错</h2>
+      </li>
+      <li>
+        <h1>总结一下</h1>
+        <p>当在对象里面定义了属性之后所有 Configurable , Enumerable , Writable 的都是true : : 而书上说的是未定义的 , 也就是对象里面没有的定义的属性,对象里面不存在的 ,
+          即使在Object.defineProperty 里面value定义了值 , 但是 Configurable , Enumerable , Writable 还是false ,</p>
+        <code>
+            <pre>
+              对象字面量/赋值创建的属性：三特性默认为 true
+              
+              Object.defineProperty() 创建的新属性：
+              
+              即使指定了 value
+              
+              Configurable、Enumerable、Writable 默认为 false
+              
+              修改已有属性：未指定的特性保持原值
+            </pre>
+          </code>
+      </li>
+    </ul>
+  </section>
+  <section>
+    <h1 class="skyblue">访问器属性</h1>
+    <ul>
+      <li><strong>[[Contfigurable]]:</strong> 表示属性是否通过delete 删除并重新定义,是否可以修改他的特性,以及是否可以改为数据属性 <strong
+          class="pink">默认true</strong>
+      </li>
+      <li><strong>[[Enumerable]]:</strong> 表示属性是否通过for...in遍历 <strong class="pink">默认true</strong></li>
+      <li><strong>[[Get]]:</strong> 获取函数,在读取属性时调用 默认为undefined</li>
+      <li><strong>[[Set]]:</strong> 设置函数,在写入属性时调用 默认为undefined</li>
+    </ul>
+  </section>
+  <script>
+    // 'use strict' // 严格模式
+
+    let arr = {
+      name: 'Arrebol',
+      // 这里的name 从undefined 变成了 'Arrebol'
+    }
+
+    console.log('================= 修改值 ================');
+
+    console.log(arr.name);
+
+    Object.defineProperty(arr, 'name', {
+      // 表示不可以修改值
+      writable: false,
+      // 改为arrebol值
+      value: 'arrebol'
+    })
+
+    console.log(arr.name);
+
+    console.log('在严格模式下会报错');
+    arr.name = 'ao'
+    console.log(arr.name);
+
+    console.log('================= 删除 =================');
+
+    const remove = {}
+
+    Object.defineProperty(remove, 'name', {
+      configurable: false,
+      value: 'zhu'
+    })
+
+    console.log(remove.name);
+    delete remove.name
+    console.log('是无法删除的');
+    console.log(remove.name);
+
+    console.log('每个属性只能配置一次 , 所以在次配置就会出错');
+
+    // Object.defineProperty(remove, 'name', {
+    //   configurable: true,
+    // })
+
+    console.log('================= for...in ==================');
+    const obj = {
+      name: 'Arrebol',
+      age: 16,
+      gender: '男'
+    }
+
+    for (const k in obj) {
+      console.log(obj[k]);
+    }
+
+    console.log('Arreol没办法被for in 遍历到了');
+
+    Object.defineProperty(obj, 'name', {
+      enumerable: false
+    })
+
+    // obj.age = 24
+    // delete obj.gender
+    for (const k in obj) {
+      console.log(obj[k]);
+    }
+
+    console.log('=================== 默认 ================');
+    const Default = {
+      name: 'sen'
+    }
+    Object.defineProperty(Default, 'name', {
+    })
+    Object.defineProperty(Default, 'age', {
+      value: 'g'
+    })
+    console.log(Object.getOwnPropertyDescriptor(Default, 'name', {}));
+    console.log(Object.getOwnPropertyDescriptor(Default, 'age', {}));
+
+    Default.name = 'jiansen'
+    console.log(Default.name);
+    console.log(Default.age);
+
+    console.log('=================================  ================ 访问器属性 ===============  ====================================');
+
+    let book = {
+      year_: 2023,
+      edition: 1
+    }
+
+    Object.defineProperty(book, 'year', {
+      get() {
+        return this.year_
+      },
+      set(newValue) {
+        if (newValue > 2023) {
+          this.year_ = newValue
+          this.edition += newValue - 2023
+        } else {
+          this.edition
+        }
+      }
+    })
+
+    console.log(book.edition);
+    console.log(book.year_);
+    console.log(book);
+    book.year = 202
+    console.log(book.year_);
+
+  </script>
+</body>
+
+</html>

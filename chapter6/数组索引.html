@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>获取索引</h2>
+  <code>
+    <pre>
+      let color = ['red', 'blue', 'green'];
+
+      console.log(color[0]); //red 表示是0索引值
+      console.log(color[1]); //bule 表示是1索引值
+      console.log(color[2]); //green 表示是2索引值
+      console.log(color[3]); //undefined 因为没有返回undefined
+
+      console.log(color.length);
+      color.length = 2
+      console.log(color[2]); 
+      <h2>undefined 因为整个数组的长度是2 , 原来的是3, 现在设置数组的长度设置成了2 , 所以访问的话就是会返回undefined</h2>
+    </pre>
+  </code>
+
+  <h2>length使用方法</h2>
+  <p>可以通过length进行添加或者删除数组</p>
+  <p>删除是从尾往头删除</p>
+  <ul>
+    <li>length的值永远返回的都是0或者大于0的值</li>
+    <li>给数组长度设置比原数组更长的话就是添加数组 , <strong>在末尾 值是undefined</strong></li>
+    <li>给数组的长度设置比原数组更短的长度就会<strong>从末尾把</strong> 超出的删除掉</li>
+  </ul>
+  <code>
+    <pre> 
+      color[color.length] = 'pink';
+      console.log(color);
+    </pre>
+  </code>
+  <p>可以使用color[color.length] 快速向数组的最后一位添加元素</p>
+
+  <p>at() 元素可以快速的访问数组对应元素的索引位置</p>
+  <code>
+    <pre>
+      console.log(color.at(0));red
+      console.log(color.at(1));blue
+      console.log(color.at(-1));pink
+      console.log(color.at(-2));blue
+    </pre>
+  </code>
+  <ul>
+    <li>如果是整数的话就是按正常访问</li>
+    <li>如果是<strong>负数</strong>的话就是 <strong>从后面往前面访问</strong></li>
+  </ul>
+  <script>
+    let color = ['red', 'blue', 'green'];
+    console.log(color[0]); //red 表示是0索引值
+    console.log(color[1]); //bule 表示是1索引值
+    console.log(color[2]); //green 表示是2索引值
+    console.log(color[3]); //undefined 因为没有返回undefined
+
+    console.log(color.length);
+    color.length = 2
+    console.log(color[2]); //undefined 因为整个数组的长度是2 , 原来的是3, 现在设置数组的长度设置成了2 , 所以访问的话就是会返回undefined
+
+    // 可以用length向数组最后一位添加
+    console.log(color.length);
+
+    color[color.length] = 'pink';
+    console.log(color);
+
+
+    console.log(color.at(0));
+    console.log(color.at(1));
+    console.log(color.at(-1));
+    console.log(color.at(-2));
+
+  </script>
+</body>
+
+</html>

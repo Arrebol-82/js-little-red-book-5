@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>构造函数模式</h1>
+    <p>构造函数的写法应该是 <strong>this.属性名</strong> 这样才能挂载到实例对象上面</p>
+    <section>
+        <h1>前提</h1>
+        <h2>三个特点</h2>
+        <ul>
+            <li>
+                <strong class="pink">不会显示的创建对象</strong>
+                <p>因为没有调用Object()和 {} 使用了 new 关键字创建了对象(隐式操作,是引擎把我执行的)</p>
+            </li>
+            <li>
+                <strong class="pink">属性和方法都是直接定义给this的</strong>
+                <p>因为this是执行实例对象的,所以里面的方法都是挂载到实例上面 (隐藏类)</p>
+            </li>
+            <li>
+                <strong class="pink">定义构造函数的时候开头字母是大写的</strong>
+                <p>因为按照惯例是: <strong>函数用小写 , 构造函数用大写</strong> 这样才能更好的的分清 , 哪个是函数 哪个是构造函数</p>
+            </li>
+            <li>
+                <strong class="pink">没有return</strong>
+                <p>这个return他返回的是自己就是构造函数 , 而不是this , 而且在日常的使用的并不高 , 可以说是非常不创见 , 而且连框架这些厉害的作者都会去避免 , 所以说平时开发最好就是不要使用 ,
+                    因为构造函数本来就是用来初始化对象的</p>
+            </li>
+            <li>
+                <h2>接下来就是使用new 关键字的执行流程</h2>
+                <ul>
+                    <li class="circle">会在内存创建一块新对象</li>
+                    <li class="circle">将构造函数的原型挂载到内存新新创建的对象原型上面</li>
+                    <li class="circle">函数里面的this赋值成这个新对象(<strong>既this指向调用者(实例者)</strong>)</li>
+                    <li class="circle">会添加内部函数的代码 , 然后执行 <strong>(将构造函数里面的代码添加到新对象里面,并执行)</strong></li>
+                    <li class="circle">最后就是如果构造函数返回非空对象,则返回该实例 , 否则 , 返回刚刚创建的对像 , 意事就是如果这个构造函数是空的,那么就返回刚刚在内存创建的新对象 ,
+                        不是空的话就会返回初始化的实例对象 </li>
+                </ul>
+            </li>
+            <li>
+                <h3>每个对象都是独立的</h3>
+                <code>
+                            <pre>
+                                console.log(a1.constructor === Person); //true
+                                console.log(a2.constructor === Person); //true
+                                console.log(a1 === a2);                 //false
+                            </pre>
+                        </code>
+                <p class="pink">可以看到都是实例对像的原型是和构造函数的原型是一样的</p>
+                <strong>每个实例对象是互不影响的</strong>
+            </li>
+            <li>
+                <strong class="pink">instanceof</strong>
+                <p>"这个对象是不是这个构造函数生的？" 如果按这句话理解的话,不就是检测这个实例是否使用当前的构造函数创建的 , 用更专业的说法其实就是检测
+                    当前的构造函数的原型是否在实列对象的原型链上 </p>
+            </li>
+            <li>
+                <h2>不仅可以使用函数,使用函数表达式也是可以的</h2>
+                <code>
+                            <pre>
+                                let PreSon = function (name, age, hobby) {
+                                    this.name = name
+                                    this.age = age
+                                    this.hobby = hobby
+                                    this.sayName = function () {
+                                        console.log(this.name);
+                                    }
+                                    // function sayName() {
+                                    //     console.log(this.name);
+                                    // }
+                                }
+                        
+                            </pre>
+                        </code>
+            </li>
+            <li>
+                <strong class="pink">如果只需要初始化对象,不需要传参的话,可以不加括号</strong>
+                <code>
+                            <pre>
+                                function Per() {
+                                    this.name = 'Arrebol'
+                                    this.sayname = function () {
+                                        console.log(this.name);
+                                    }
+                                }
+                        
+                                const per1 = new Per()
+                                const per2 = new Per
+                        
+                                console.log(per1); // {name: 'Arrebol', sayname: ƒ}
+                                console.log(per2); // {name: 'Arrebol', sayname: ƒ}
+                            </pre>
+                        </code>
+                <strong>只要不传参 per1 和 per2 是一样的</strong>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h1>构造函数也是函数</h1>
+        <strong class="pink">构造函数也是函数 , 跟普通函数是一样的 , <i>只是调用方式不同而已</i> </strong>
+        <h2>总结就是没有任何方法把函数定义为构造函数 ,只能调用的时候使用new 定义 , 函数自身是没有任何办法的</h2>
+        <code>
+            <pre>
+                function ConstruCtor() {
+                    this.name = 'Arrebol82'
+                    this.sayName = function () {
+                        console.log(this.name);
+                    }
+                }
+                console.log('构造函数 =====');
+        
+                const Cons = new ConstruCtor()
+                Cons.sayName()
+        
+                console.log('正常函数 =====');
+        
+                ConstruCtor()
+                window.sayName()
+        
+                console.log('使用继承 =====');
+        
+                let o = new Object()
+                ConstruCtor.call(o)
+                o.sayName()
+            </pre>
+        </code>
+        <ul>
+            <li class="circle"><strong>如果是普通的函数,那么里面的this是指向Global(就是浏览器的window) :: 所以这个方法就挂载到window身上</strong>
+                <p>只有是实例对象调用,里面的this才会指向实例对象</p>
+            </li>
+            <li class="circle">当然可以使用call() </li>
+            <li class="circle">或者apply() 用于改变内部的this指向</li>
+            <li>
+                <code>
+                    <pre>
+                        // 普通调用
+                        函数(参数)
+                        
+                        // call调用
+                        函数.call(新this, 参数1, 参数2, ...)
+                        
+                        // apply调用
+                        函数.apply(新this, [参数1, 参数2, ...])
+                    </pre>
+                </code>
+                <strong class="skyblue">所以总结这两个方法就是 call(要绑定的this , 参数 ... ) 如果函数这个还可以添加参数就继续添加 , 其实就是将原来函数里面的this ,
+                    指向call里面要绑定的this , 而 apply也是这样不过就是一个是数组
+                    一个逗号</strong>
+                <h2>通过这两个方法可以改变this的指向了</h2>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>构造函数的问题</h2>
+        <p>所以说书上的构造函数的问题 和 刚刚的那段话 , 其实说的就是每个实例都是独立的太浪费内存 , 互不影响</p>
+        <code>
+            <pre>
+                function issue(name, age, job) {
+                    this.name = name
+                    this.age = age
+                    this.job = job
+                    this.sayName = new Function(console.log(this.name))
+                }
+        
+                const is1 = new issue('Arrebol')
+                const is2 = new issue('Arrebol')
+                is1.sayName()
+                is2.sayName()
+        
+        
+                console.log(is1.sayName === is2.sayName); //false
+            </pre>
+        </code>
+        <p>这里的is1 和 is2 是两个不同的对象 , 而里面的sayName也是会创建新的实例对象 , 所以就是不相同的 返回 false</p>
+        <h3>解决方法:</h3>
+        <code>
+            <pre>
+                function solve(name, age, job) {
+                    this.name = name
+                    this.age = age
+                    this.job = job
+                    this.sayName = sayName
+                }
+        
+                function sayName() {
+                    console.log(this.name);
+                }
+        
+                const so1 = new solve('Arrebol', 16, 'code')
+                const so2 = new solve('javascript', 1, 'coding')
+                console.log(so1);
+                console.log(so2);
+        
+                so1.sayName()
+                so2.sayName()   
+            </pre>
+        </code>
+        <strong>这样就能很好的解决了,重复创建的问题, 因为this.sayName里面存储的是一个地址值 , 所以不管怎么创建,只要调用这个方法,还是一样的 , <i>但是问题也是非常的明显</i></strong>
+        <h2 class="pink">如果像上面这样写就会造成作用域混乱因为他是全局 , 现在只定义一个还好,如果有多个方法的话 , 就会非常的乱 <i class="skyblue">所以看好,要讲原型!!! 了</i>
+        </h2>
+    </section>
+    <script>
+        function Person(name, age, hobby) {
+            this.name = name
+            this.age = age
+            this.hobby = hobby
+            this.sayName = function () {
+                console.log(this.name);
+            }
+            // function sayName() {
+            //     console.log(this.name);
+            // }
+
+        }
+
+        const a1 = new Person('Arrebol', 16, 'ZZZ')
+        const a2 = new Person('Zhu', 18, 'JQL')
+        console.log(a1);
+        console.log(a2);
+        a1.sayName()
+        console.log(Person());
+
+
+        console.log(a1.constructor === Person);  //true
+        console.log(a2.constructor === Person);  //true
+        console.log(a1 === a2);                  //false
+
+        console.log(a1 instanceof Object);
+        console.log(a1 instanceof Person);
+        console.log(a2 instanceof Object);
+        console.log(a1 instanceof Person);
+
+
+        console.log('========================= 函数表达式 ======================');
+
+
+        let PreSon = function (name, age, hobby) {
+            this.name = name
+            this.age = age
+            this.hobby = hobby
+            this.sayName = function () {
+                console.log(this.name);
+            }
+            // function sayName() {
+            //     console.log(this.name);
+            // }
+        }
+
+
+        const a3 = new PreSon('Arrebol', 16, 'ZZZ')
+        const a4 = new PreSon('Zhu', 18, 'JQL')
+
+        console.log(a3);
+        console.log(a4);
+
+
+        console.log('======================== 括号 ===========================');
+
+        function Per() {
+            this.name = 'Arrebol'
+            this.sayname = function () {
+                console.log(this.name);
+            }
+        }
+
+        const per1 = new Per()
+        const per2 = new Per
+
+        console.log(per1); // {name: 'Arrebol', sayname: ƒ}
+        console.log(per2); // {name: 'Arrebol', sayname: ƒ}
+
+        console.log('************************* 构造函数也是函数 ***************************');
+        function ConstruCtor() {
+            this.name = 'Arrebol82'
+            this.sayName = function () {
+                console.log(this.name);
+            }
+        }
+        console.log('构造函数 =====');
+
+        const Cons = new ConstruCtor()
+        Cons.sayName()
+
+        console.log('正常函数 =====');
+
+        ConstruCtor()
+        window.sayName()
+
+        console.log('使用继承 =====');
+
+        let o = new Object()
+        ConstruCtor.call(o)
+        o.sayName()
+
+
+        console.log('************************ 构造函数的问题 ***********************');
+
+        function issue(name, age, job) {
+            this.name = name
+            this.age = age
+            this.job = job
+            this.sayName = new Function(console.log(this.name))
+        }
+
+        const is1 = new issue('Arrebol')
+        const is2 = new issue('Arrebol')
+        is1.sayName()
+        is2.sayName()
+
+
+        console.log(is1.sayName === is2.sayName); //false
+
+
+        console.log('========= 解决方法 ========');
+        function solve(name, age, job) {
+            this.name = name
+            this.age = age
+            this.job = job
+            this.sayName = sayName
+        }
+
+        function sayName() {
+            console.log(this.name);
+        }
+
+        const so1 = new solve('Arrebol', 16, 'code')
+        const so2 = new solve('javascript', 1, 'coding')
+        console.log(so1);
+        console.log(so2);
+
+        so1.sayName()
+        so2.sayName()   
+    </script>
+</body>
+
+</html>

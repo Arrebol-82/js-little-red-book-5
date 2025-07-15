@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>选择是Map还是object </h1>
+  <ul>
+    <li>
+      <h1>键</h1>
+      <p><strong>object</strong>的话只能使用 整数 字符串 符号为键 而<strong>Map</strong>是啥都可以</p>
+    </li>
+    <li>
+      <h1>内存占用</h1>
+      <p>object 和 Map 在不同的浏览器有不同差异 但如果是固定大小的内存, 那么Map 大约可以比object多存储50%的键值对</p>
+    </li>
+    <li>
+      <h1>插入性能</h1>
+      <p>两者的插入性能消耗的是差不多的, 如果涉及大量的插入操作那还是用Map比较好</p>
+    </li>
+    <li>
+      <h1>查找速度</h1>
+      <p>在查找方面的话两者的差异并不是很大 , 少量的话object会更快 ,如果大量的话引擎是会对其优化的,所以不管怎么样还是object更厉害</p>
+    </li>
+    <li>
+      <h1>删除性能</h1>
+      <p>object的删除问题一直不尽人意,目前也是如此 , 所以很多时候是设置null和undefined的, 但是也不太好 , 对大多数引擎来说而Map是比查找和插入更快,
+        所以在涉及大量的删除的时候,一定要选择Map
+      </p>
+    </li>
+  </ul>
+</body>
+
+</html>

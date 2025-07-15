@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Array</h1>
+  <section>
+    <h2>与其他语言的区别</h2>
+    <p>像C java C# 这些语言中定义数组 , 是要严格按照数据类型,来定义的 , <br>
+      特别是在 C 中 数组的长度是要事先定义好的
+    </p>
+    <p>而的javascript就不一样了 你想<strong>存什么就存什么 (7个原始值 一个引用,数组和函数是在对象的原型上的)都可以</strong> <br>
+      并且数组的长度是会根据你的操作进行变大或者变小</p>
+  </section>
+
+  <section>
+    <h1>创见数组的方法</h1>
+    <p>常见的方法</p>
+    <ul>
+      <li>let colors = new Array()</li>
+      <li>let colors = Array()</li>
+      <li>let colors = []</li>
+    </ul>
+
+    <div class="new">
+      <h2>使用new创建</h2>
+      <p>他会去实例化Array函数</p>
+      <code>
+        <pre>
+          let colors = new Array();
+          let color = new Array(0);
+          let name = new Array('blue', 'red', 'yellow');
+          
+          color[4] = '张三'
+          console.log(colors);
+          console.log(color);
+          console.log(color[4]);
+          
+          console.log(name);
+        </pre>
+      </code>
+    </div>
+    <div class="not_new">
+      <h2>省略new创建</h2>
+      <p>第二种方法跟第一种方法没啥区别,因为引擎会帮你调用new Array() 所以推荐直接使用 不用new 毕竟你看string number boolean （记得: 省略的话就是放回原始值 ,
+        使用new才会返回对应的包装对象）<br>
+        也是如此不是吗 都是推荐直接使用对应的函数 不过最最最推荐的还是使用字面量创建(性能 简洁 理解)</p>
+      <h3>它的核心原理其实: 因为构造函数是通过this创建的嘛 , 如果没显示返回对象 ; 引擎默认返回新实例字面量则通过底层隐式机制创建对象，无需调用构造函数。 </h3>
+    </div>
+  </section>
+  <section>
+    <h2>使用对象字面量</h2>
+    <p>就是直接使用[]创建 他的底层原理跟Object是一样的</p>
+    <h3>底层</h3>
+    <p>在引擎运行的时候会对 代码进行解析 , 如果解析到{} 时就代表一个对象 , 浏览器会在内存的堆里面开辟一个空间 , 把里面的属性,方法,变量放进去
+      并将this指向创建的变量名 ,最后将它的原型链指向Array.prototype 虽然说他不会显示的调用Array 但是还是要涉及到Array的</p>
+    <h1>最后最后能先使用对象字面量就优先使用对象字面量</h1>
+  </section>
+  <section>
+    <h2>在深入了解之前,先理解几个概念</h2>
+    <div class="leishuzu">
+      <h3>类数组</h3>
+      <div class="shuzu" style="margin-left: 50px;">
+        <strong>五大核心</strong>
+        <div>
+          <li><strong>有索引</strong> 使用 0:'1' , 1: '2' 作为索引</li>
+          <li><strong>有length</strong>要为0或者是正整数,决定元素数量。</li>
+          <li><strong>非数组</strong>用不了Array原型上的方法 (.push .add)</li>
+          <li><strong>可装换</strong>可以装换成真数组</li>
+          <li><strong>本质还是对象</strong>因为是用{}创建</li>
+        </div>
+      </div>
+      <p>所以类数组要有 '索引' 0: '1' , 1: '2' 要有长度'length' 为0或者正整数 , 类数组不能用Array原型上的方法 , 并且也不是真正的数组 , 不过可以装换 , 而且类数组都是使用{}
+        的属于object</p>
+    </div>
+    <div class="meizu">
+      <h2>可枚举属性就是判断这个属性是否可以被遍历</h2>
+      <p>而在for in 中创建了两个实例对象 并且enumerable: true (可枚举) 用for in遍历的话就会把两个实例对象里面的可枚举属性打印出来 <br>
+        但是如果只有一个实例对象的话, 它的原型就是object.portotype ,但是因为object.portotype 的很多enumerable 都是: false (不可枚举)
+        所以大多数情况只会看到自己定义的可以枚举值</p>
+    </div>
+    <div class="kedidai">
+      <h1>可迭代对象</h1>
+      <ul>
+        <li>个对象若具有Symbol.iterator属性，那它就是可迭代对象 通过调用该属性对应的函数会返回一个迭代器。</li>
+        <li>这个迭代器有next()方法，调用next()方法返回的对象中，value代表当前迭代到的值，done是布尔值，false意味着迭代还未结束，还有更多值可获取；true则表示迭代已经结束，没有更多值了。</li>
+        <li>而且迭代器确实会记住当前的位置，每次调用next()方法，都是从上一次调用后的位置接着往后获取值，直到done变为true。这样</li>
+      </ul>
+      <div>
+        <h2>一些常见的可迭代对象</h2>
+        <ul>
+          <li>数组（Array） : 最典型的可迭代对象，元素按顺序存储，可通过索引访问。</li>
+          <li>字符串（String）：每个字符都是可迭代元素，按 Unicode 码点拆分（非字节）。</li>
+          <li>Set ：元素唯一，迭代顺序为插入顺序。</li>
+          <li>Map : 键值对集合，迭代顺序为插入顺序，可通过 entries()、keys()、values() 生成不同的迭代器。</li>
+          <li>DOM 集合（NodeList/HTMLCollection） :DOM 查询返回的集合（如 querySelectorAll 返回 NodeList），类似数组但属于类数组对象。</li>
+          <li>Generator 函数生成器（Generator Object） ：通过 function* 定义，yield 逐个生成值，迭代器会记住当前状态。</li>
+          <li>类数组对象（Array-like Objects）</li>
+          <li>自定义类数组对象 记得加上手动实现迭代器协议</li>
+          <li>可迭代的异步对象（ES2021+）</li>
+          <li>不可迭代对象（对比参考） 不能用for of 遍历的 <strong>这个不是可迭代对象</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <h2>链式调用</h2>
+    <ul>
+      <li>
+        <h2>数组链式</h2>
+        <code>
+          <pre>
+            const unmber = [1, 2, 3, 4, 5];
+            const result = unmber
+            // 过滤筛选偶数
+            .filter(n => n % 2 === 0)
+            // 拿到返回值, 在×2
+            .map(n => n * 2)
+            // 拿到返回值, 相加从0索引开始
+            .reduce((sum, n) => sum + n, 0)
+            console.log(result);        
+          </pre>
+        </code>
+        <p>就是上个方法处理完，返回值在交给下一个方法用</p>
+      </li>
+      <li>
+        <h2>字符串链式</h2>
+        <code>
+            <pre>
+              const text = ' 你好,世界! ';
+              const cleanText = text
+              // 去空格
+              .trim()
+              // 去完之后 , 改字符
+              .replace('世界', 'Arrebol')
+              //转小写
+              .toLowerCase()
+              console.log(cleanText);              
+            </pre>
+          </code>
+        <p>就是上个方法处理完，返回值在交给下一个方法用</p>
+      </li>
+      <li>
+        <h2>自定义对象链式</h2>
+        <code>
+            <pre>
+              class pl {
+              constructor() {
+              this.name = '111';
+              this.hp = 100;
+              }
+              
+              setName(name) {
+              this.name = name
+              // 这里返回this是需要把原型的指向创建的
+              return this
+              }
+              
+              setHp(hp) {
+              this.hp = hp
+              return this
+              }         }
+            </pre>
+          </code>
+        <p>就是上个方法处理完，返回值在交给下一个方法用 , 如果返回this就可以实现无限调用了 但是要注意</p>
+        <div>
+          this 就是当前对象自己，在类的方法里，它指向你创建的那个具体实例（比如 user、calc）。<br>
+          返回 this 是为了让后续方法能继续在 同一个实例 上操作（可变对象），或者在新对象上操作（不可变对象，如数组）。<br>
+          链式调用想停就停，不是无限调用，只是把 “操作对象” 像接力棒一样传下去，用到哪算哪～
+        </div>
+      </li>
+    </ul>
+    <h2> 就是多个方法用.连起来 前一个方法运算完的结果,拿回去给下一个方法处理</h2>
+    <p>注意 , 要对应的值,使用对应的方法</p>
+    <p>不要写太长 , 最多三个就好了</p>
+  </section>
+  <section>
+    <h2>了解这么多 , 可以了解 of 和 from 了</h2>
+    <p>from 接收 <strong>类数组 和 可迭代对象</strong> 并且会将里面的内容拆开,一个一个的放进数组里面</p>
+    <p>of 接收 <strong>啥都可以接收</strong> 他是按照一个整体返回的 , 并不会拆开</p>
+    <code>
+      <pre>
+        <strong>把Matt拆开 一个个放进数组里面</strong>
+        console.log(Array.from('Matt')); //['M', 'a', 't', 't']
+        <strong>而of并不会拆开 直接返回Matt</strong>
+        console.log(Array.of('Matt')); //['Matt']
+      </pre>
+    </code>
+    <p>更详细的用法</p>
+    <code>
+      <pre>
+        const m = new Map()
+        
+        <strong>这里多出来会被移除掉 ,因为set方法只接受2个值 前两个值</strong>
+        
+        .set(1, 2, 4, 5)
+        .set(3, 5);
+        
+        console.log(m);
+        
+        const s = new Set()
+        .add(1)
+        .add(2)
+        .add(3)
+        .add(4)
+        
+        <strong> Map 是用来存储键值对的 而set 是用于创建键值对的 , 相辅相成的 ,因为他们 所以以返回的是 [1,2]</strong>
+
+        console.log(Array.from(m)); // [Array(2), Array(2)]
+
+        <strong>这是用来打印原数组的</strong>
+        
+        console.log(JSON.stringify(Array.from(m))); //[[1,2],[3,5]]
+        console.log(Array.from(s)); // [1, 2, 3, 4]  
+      </pre>
+    </code>
+
+    <h2>类数组/可迭代对象</h2>
+    <code>
+      <pre>
+        <strong>
+          // 你应该也好奇是怎么实现的吧
+          // 1. 调用 iter[Symbol.iterator]() 获取迭代器。
+          // 2. 调用next() 方法, 将value放回到数组里面, 为true就停止
+          // 3. 返回最终的数组。
+        </strong>
+        
+        const iter = {
+        *[Symbol.iterator]() {
+        <strong>yield 关键字的作用就是定义迭代器每次调用 next() 时返回的 value。具体来说：</strong>
+        yield 1;
+        yield 'sss';
+        yield function () { };
+        yield a3;
+        }
+        }
+        
+        console.log(Array.from(iter));
+        
+        function getArgsArray() {
+        return Array.from(arguments)
+        }
+        
+        <h3>arguments表示当前函数的所有形参 , arguments他是类数组</h3>
+        console.log(getArgsArray(1, 2, 3, 4));
+        
+        <h2>类数组</h2>
+        const arrayLikeObject = {
+        0: 1,
+        1: 2,
+        2: 3,
+        3: 4,
+        length: 6
+        }
+      </pre>
+    </code>
+
+    <h1>是赋值的话就是浅复制</h1>
+    <code>
+      <pre>
+        const a1 = [1, 2, 3, 4];
+        // 这是对现有的数组进行浅复制 赋值地址值
+        
+        const a2 = Array.from(a1);
+        const a3 = a1
+        console.log(a1 === a3);
+        console.log(a1 ===a2);
+      </pre>
+    </code>
+  </section>
+  <search>
+    <h1>arguments </h1>
+    <p>arguments
+      在以前是使用Array.prototype.slice.call(arguments)这个方法来创建数组的，但是es6之后有了array.of.就不用在使用旧方法，这么麻烦了，但是书上的代替也不准确，因为，如果arguments里面有迭代器，或者更复杂的类型of
+      就不好处理了，更推荐使用from 所以要看场景使用，要说替代的话，更应该是from</p>
+  </search>
+  <script>
+    let array = ['sdf', 32, function () {
+      console.log(111);
+    }]
+    console.log(array[2]);
+    console.log(Function instanceof Object);
+
+    let colors = new Array();
+    let color = new Array(0);
+    let name = new Array('blue', 'red', 'yellow');
+
+    color[4] = '张三'
+    console.log(colors);
+    console.log(color);
+    console.log(color[4]);
+
+    console.log(name);
+
+
+    let co = ['1', '2', '3'];
+    let names = [];
+    let values = [1, 2,]
+    console.log(co);
+    console.log(names);
+    console.log(values);
+
+
+    console.log(Array.from('Matt')); //['M', 'a', 't', 't']
+    console.log(Array.of('Matt')); //['Matt']
+
+
+    const str = String()
+      .charAt(1)
+      .charAt(3)
+      .charAt(56)
+      .charAt(7)
+
+
+
+    const unmber = [1, 2, 3, 4, 5];
+    const result = unmber
+      // 过滤筛选偶数
+      .filter(n => n % 2 === 0)
+      // 拿到返回值, 在×2 
+      .map(n => n * 2)
+      // 拿到返回值, 相加从0索引开始
+      .reduce((sum, n) => sum + n, 0)
+    console.log(result);
+
+
+    const text = '  你好,世界!  ';
+    const cleanText = text
+      // 去空格
+      .trim()
+      // 去完之后 , 改字符
+      .replace('世界', 'Arrebol')
+      //转小写
+      .toLowerCase()
+
+    console.log(cleanText);
+
+
+    class pl {
+      constructor() {
+        this.name = '111';
+        this.hp = 100;
+      }
+
+      setName(name) {
+        this.name = name
+        // 这里返回this是需要把原型的指向创建的
+        return this
+      }
+
+      setHp(hp) {
+        this.hp = hp
+        return this
+      }
+    }
+
+
+
+    const m = new Map()
+      //这里多出来会被移除掉 ,因为set方法只接受2个值 前两个值
+      .set(1, 2, 4, 5)
+      .set(3, 5);
+
+    console.log(m);
+
+    const s = new Set()
+      .add(1)
+      .add(2)
+      .add(3)
+      .add(4)
+
+    // Map 是用来存储键值对的 而set 是用于创建键值对的 , 相辅相成的 ,因为他们 所以以返回的是 [1,2]
+    console.log(Array.from(m)); // [Array(2), Array(2)]
+    //这是用来打印原数组的
+    console.log(JSON.stringify(Array.from(m))); //[[1,2],[3,5]]
+    console.log(Array.from(s)); // [1, 2, 3, 4]
+
+
+    const a1 = [1, 2, 3, 4];
+    // 这是对现有的数组进行浅复制 赋值地址值 
+
+    const a2 = Array.from(a1);
+    const a3 = a1
+    console.log(a1 === a3);
+    console.log(a1 === a2);
+
+    // 可迭代对象
+
+    // 你应该也好奇是怎么实现的吧
+    // 1. 调用 iter[Symbol.iterator]() 获取迭代器。
+    // 2. 调用next() 方法, 将value放回到数组里面, 为true就停止
+    // 3. 返回最终的数组。
+
+    const iter = {
+      *[Symbol.iterator]() {
+        // yield 关键字的作用就是定义迭代器每次调用 next() 时返回的 value。具体来说：
+        yield 1;
+        yield 'sss';
+        yield function () { };
+        yield a3;
+      }
+    }
+
+    console.log(Array.from(iter));
+
+    function getArgsArray() {
+      return Array.from(arguments)
+    }
+
+    // arguments表示形参 , arguments类数组
+    console.log(getArgsArray(1, 2, 3, 4));
+
+    // 类数组
+    const arrayLikeObject = {
+      0: 1,
+      1: 2,
+      2: 3,
+      3: 4,
+      length: 6
+    }
+
+    console.log(Array.from(arrayLikeObject));
+
+
+    const a = [1, 2, 3, 4];
+    // x 表示当前迭代到的元素值 这就是映射函数  
+    const b = Array.from(a, x => x ** 2);
+    const c = Array.from(a, function (x) { return x ** this.exponent }, { exponent: 2 });
+
+    console.log(b);
+    console.log(c);
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>异步迭代器如何处理拒绝</h1>
+  <p>因为异步迭代器是要跟同步一样,按照顺序执行 ,所以一遇到拒绝请求的 ,异步迭代又不能跳过 ,所以就会强制跳出异步迭代器</p>
+  <script>
+    class emitter {
+      constructor(max) {
+        this.max = max
+        this.index = 0
+      }
+
+      async *[Symbol.asyncIterator]() {
+        while (this.max > this.index) {
+          if (this.index < 3) {
+            yield this.index++
+          } else {
+            throw 'Exited loop'
+          }
+        }
+      }
+    }
+
+    const Eitter = new emitter(5)
+
+    async function AsyncIterator() {
+      const asyncIt = Eitter[Symbol.asyncIterator]()
+      for await (const k of asyncIt) {
+        console.log(k);
+      }
+    }
+
+    AsyncIterator()
+  </script>
+</body>
+
+</html>

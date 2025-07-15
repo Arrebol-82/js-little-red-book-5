@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let s1 = Symbol('foo'),
+      s2 = Symbol('bar'),
+      s3 = Symbol('baz'),
+      s4 = Symbol('qux');
+
+    let o = {
+      [s1]: 'foo val'
+    }
+
+    Object.defineProperty(o, s2, { value: 'bar val' })
+    //                    传入的对象 , 类名 , 属性  
+    //  这个方法中适用于传入一个对象属性
+
+    Object.defineProperties(o, {
+      [s3]: { value: 'bar val' },
+      [s4]: { value: 'qux val' }
+    })
+    console.log(o);
+
+
+  </script>
+</body>
+
+</html>

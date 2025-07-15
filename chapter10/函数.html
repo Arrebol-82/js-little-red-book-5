@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>函数</h1>
+  <p>函数几乎是ECMAscript中最有意思的部分 , 这主要是因为函数实际上对象 ( 众所周知 ) , 每个函数都是Function类型的实例 , 而Function也有
+    属性和方法 , 跟其他引用类型一样 , 因为函数是对象 , 所以函数名就是指向函数对象的指针 ,而且不一定与函数本身紧密绑定
+  </p>
+  <strong>函数声明</strong>
+  <code>
+    <pre>
+      function sum(num1, num2) {
+        return num1 + num2
+      }
+    </pre>
+  </code>
+  <strong>函数表达式</strong>
+  <code>
+    <pre>
+      let sum = function (num1, num2) {
+        return num1 + num2
+      };
+    </pre>
+  </code>
+  <p>记住可以函数声明不用加 ; 函数表达式加 ;</p>
+  <strong>箭头函数</strong>
+  <code>
+    <pre>
+        function sum (num1 + num2) => {
+          return num1 + num2
+        }
+    </pre>
+  </code>
+  <p>注意this</p>
+  <strong>Function构造函数</strong>
+  <code>
+    <pre>
+      let sum = new Funtion('num1' , 'num2' , 'num1 + num2') <strong>// 不推荐</strong>
+    </pre>
+  </code>
+  <p>这个定义方法的 <strong>最后一个参数是 函数体 </strong> 还有就是这样定义会影响到性能</p>
+  <h2>这几种实例化函数对象的方式之间存在微妙但重要的差别</h2>
+  <script>
+    function sum(num1, num2) {
+      return num1 + num2
+    }
+
+    let sum = function (num1, num2) {
+      return num1 + num2
+    }
+
+
+  </script>
+</body>
+
+</html>

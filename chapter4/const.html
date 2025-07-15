@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const aaa = {}
+    aaa.name = ''
+    console.log(aaa);
+    // aaa = {} //报错
+
+
+    Object.freeze()
+    // 表示全都不可以修改
+    const bbb = Object.freeze({})
+    bbb.name = ''
+    console.log(bbb.name);
+
+  </script>
+</body>
+
+</html>

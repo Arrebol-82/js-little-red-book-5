@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>对象静态方法</h1>
+  <p>在objec中有着许多的静态方法 ,因为在javascript中除了原始值,其他的都是继承object 所以这些方法可以用于任何对象 </p>
+  <ul>
+    <li><strong>Object.assign()</strong> 从一个或者多个源对象复制所有可枚举属性的值 语法: <br>
+      <i>Object.assign(要复制的对象 ， 源对象1 源对象2 ... )</i>
+    </li>
+    <li><strong>Objec.create()</strong> 基于指定的原型对象和属性创建新的对象 <br>
+      <i>Object.create(原型对象, [属性描述符对象]); </i>
+    </li>
+    <li><strong>Object.defineProperties()</strong> 使用多个属性描述符定义或者修改对象的多个属性
+      <code>
+              <pre>
+                  Object.defineProperties(目标对象, {
+                      属性名1: {
+                        value: 值,
+                        writable: true/false,
+                        enumerable: true/false,
+                        configurable: true/false
+                      },
+                      属性名2: {
+                        get() { /* 读取时触发 */ },
+                        set(newValue) { /* 赋值时触发 */ }
+                      }
+                      // 更多属性...
+                    });
+              </pre>
+          </code>
+    </li>
+    <li><strong>Object.defineProperty()</strong> 前面讲过了 ， 不想讲了</li>
+
+    <li><strong>Obj.entries()</strong> 返回对象自有可枚举字符率属性的键-值对数组<br>
+      <i>将对象转换为键值对数组，返回 [key, value] 形式的数组，方便遍历或转换对象结构。</i>
+      <strong>Object.entries(obj);</strong>
+      <code>
+        <pre>
+          console.log('========================== Obj.entries() ==============================');
+          const key_value = Object.entries(Obj)
+          console.log(key_value); //[Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
+        </pre>
+      </code>
+    </li>
+    <li><strong>Obj.freeze()</strong> 冻结对象，防止再添加新属性及修改成期除已有属性 <br>
+      <i>const frozenObj = Object.freeze(目标对象);</i>
+      <p>浅冻结 , 禁止修改对象的属性（包括新增、删除、修改值），防止对象被篡改</p>
+      <code>
+        <pre>
+          const user = {
+          name: 'Alice',
+          address: { city: 'New York' }
+          };
+          
+          Object.freeze(user);
+          
+          <strong> 尝试修改属性（严格模式下报错，非严格模式静默失败）</strong>
+          user.name = 'Bob';  <strong> 无效</strong>
+          delete user.name;   <strong> 无效</strong>
+          user.age = 30;      <strong> 无效</strong>
+          
+          <strong> 嵌套对象仍可修改（浅冻结）</strong>
+          user.address.city = 'London'; <strong> 有效</strong>
+        </pre>
+      </code>
+    </li>
+    <li><strong>Obj.fromEntries()</strong> 基于传入的键-值对可选代对象(如数组或映射)返国一个新对象 <br>
+      <i>const obj = Object.fromEntries(键值对数组);</i>
+      <code>
+          <pre>
+            const arr = [['key1', 1], ['key2', 2], ['key3', 3]]
+            const fromEntries = Object.fromEntries(arr)
+            console.log(fromEntries); // {key1: 1, key2: 2,key3: 3}
+          </pre>
+        </code>
+    </li>
+    <li><strong>Object.getOwnPropertyDescriptor()</strong> 返回描述对象上指定属性配置的描述符 <br>
+      <i>语法: const descriptor = Object.getOwnPropertyDescriptor(对象, 属性名);</i>
+      <p>用于检测里面的属性是否进行了配置 Object.getOwnPropertyDescriptor :: Configurable(删除特性 , 转为访问器) , Enumerable(可枚举) ,
+        Writable(是否可以修改) 检测以上是否进行了配置
+      </p>
+    </li>
+    <li><strong>Object.getOwnPropertyDescriptors()</strong> 返回描述对象上多个指定属性配置的措述符对象 <br>
+      <i>语法: const descriptors = Object.getOwnPropertyDescriptors(对象);</i>
+      <p>用于检测对象里面的所有属性 , 检测他们的配置</p>
+      <code>
+        <pre>
+          const user = {
+            name: 'Alice',
+            age: 30
+          };
+          
+          Object.defineProperty(user, 'email', {
+            value: 'alice@example.com',
+            enumerable: false
+          });
+          
+          const descriptors = Object.getOwnPropertyDescriptors(user);
+
+          name: { value: 'Alice', writable: true, enumerable: true, configurable: true },
+          age: { value: 30, writable: true, enumerable: true, configurable: true },
+          email: { value: 'alice@example.com', writable: false, enumerable: false, configurable: false }
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.getOwnPropertyNames()</strong> 返回对象所有自有属性名(包括不可枚举属性)的数组 <br>
+      <i>语法: const propertyNames = Object.getOwnPropertyNames(对象);</i>
+      <p>获取对象自身的所有属性名（包括不可枚举的属性，但不包括 Symbol 类型的属性）属性为number的话会按顺序排列 {2:a , 1:b} => [1, 2]</p>
+      <code>
+        <pre>
+          const obj = {
+            a: 1,
+            [Symbol('sym')]: 'symbol-value' // Symbol 属性
+          };
+          
+          Object.defineProperty(obj, 'b', {
+            value: 2,
+            enumerable: false // 不可枚举属性
+          });
+          
+          const names = Object.getOwnPropertyNames(obj);
+          // 结果：['a', 'b']（不包含 Symbol 属性） 
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.getOwnPropertySymbols()</strong> 返回对象所有自有符号属性(包括不可枚举属性)的数组 <br>
+      <i>语法: const symbolProperties = Object.getOwnPropertySymbols(对象);</i>
+      <p>用于获取对象自身的所有 Symbol 类型属性名（不包含字符串属性，且无论是否可枚举）仅包含 Symbol 属性：不管是否可以枚举</p>
+      <code>
+        <pre>
+          const sym1 = Symbol('key1');
+          const sym2 = Symbol('key2');
+          
+          const obj = {
+            [sym1]: 'value1',
+            regularProp: 'normal'
+          };
+          
+          Object.defineProperty(obj, sym2, {
+            value: 'value2',
+            enumerable: false // 不可枚举的 Symbol 属性
+          });
+          
+          const symbols = Object.getOwnPropertySymbols(obj);
+          // 结果：[Symbol(key1), Symbol(key2)]
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.getPrototypeOf()</strong> 返回指定对象的原型(即内部的[[Prototype]]属性) <br>
+      <i>语法: const prototype = Object.getPrototypeOf(对象);</i>
+      <p>获取对象的原型对象（即 __proto__ 属性），用于检查对象的继承关系。=== 对象.__proto__; // 非标准，不推荐直接使用</p>
+      <code>
+        <pre>
+          const animal = { speak() { console.log('I am an animal'); } };
+          将animal里面的原型方法进行继承,创建dog
+          const dog = Object.create(animal); // dog 的原型是 animal
+          判断他的原型是谁
+          console.log(Object.getPrototypeOf(dog) === animal); // true
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.hasOwn()</strong> 确定对象是否拥有指定的自有属性 <br>
+      <i>const hasProp = Object.hasOwn(对象, 属性名);</i>
+      <p>判断对象是否自身拥有某个属性（不包括继承的属性），<strong class="pink">替代 hasOwnProperty() 方法。</strong></p>
+      <code>
+        <pre>
+          const animal = { eat: true };
+          const dog = Object.create(animal);
+          dog.bark = true;
+          
+          console.log(Object.hasOwn(dog, 'bark')); // true（自身属性）
+          console.log(Object.hasOwn(dog, 'eat')); // false（继承属性）
+          console.log(dog.hasOwnProperty('eat')); // 等价写法（但有原型污染风险）
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.is()</strong> 确定两个值是不是同一个值，考虑边界情形NaN和-0 <br>
+      <i>const isSame = Object.is(value1, value2);</i>
+      <p>精确比较两个值是否相同，解决 === 和 == 的一些边界问题。</p>
+      <code>
+        <pre>
+          Object.is(NaN, NaN)  //true 
+          NaN === NaN // false 
+
+          Object.is(+0,-0) //false
+          +0 === -0 //false
+
+          其他跟 === 一致
+
+          <strong>内部算法</strong>
+          function is(x, y) {
+            if (x === y) {
+              // 处理 +0 和 -0 的情况
+              return x !== 0 || 1 / x === 1 / y;
+            } else {
+              // 处理 NaN 的情况
+              return x !== x && y !== y;
+            }
+          }
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.isExtensible()</strong> 确定对象是否可以扩展、即是否可以添加新属性 <br>
+      <i>语法: const isExtensible = Object.isExtensible(对象)</i>
+      <p>判断对象是否可扩展（即能否添加新属性）。 浅检查</p>
+      <ul>
+        <li class="circle">true：对象可扩展（默认状态）；</li>
+        <li class="circle">false：对象不可扩展（已被 Object.preventExtensions()、Object.seal() 或 Object.freeze() 处理）。</li>
+      </ul>
+      <code>
+        <pre>
+          const obj = { a: 1 };
+          
+          // 默认可扩展
+          console.log(Object.isExtensible(obj)); // true
+          
+          // 禁止扩展
+          Object.preventExtensions(obj);
+          console.log(Object.isExtensible(obj)); // false
+          
+          // 尝试添加新属性（静默失败或报错）
+          obj.b = 2; // 非严格模式下静默失败，严格模式下报错
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.isFrozen()</strong> 确定对象是否被冻结，即是否不可扩展且所有属性都不可配置<br>
+      <i>语法: const isFrozen = Object.isFrozen(对象);</i>
+      <p>判断对象是否被完全冻结（即不可扩展、不可删除属性、不可修改属性值）。 浅检查</p>
+      <ul>
+        <li class="circle">true：对象被 Object.freeze() 冻结；</li>
+        <li class="circle">false：对象未被冻结或仅部分锁定（如 seal() 或 preventExtensions()）。</li>
+      </ul>
+      <code>
+        <pre>
+          const obj = { a: 1 };
+          
+          // 默认可修改
+          console.log(Object.isFrozen(obj)); // false
+          
+          // 冻结对象
+          Object.freeze(obj);
+          console.log(Object.isFrozen(obj)); // true
+          
+          // 尝试修改（静默失败或报错）
+          obj.a = 2; // 非严格模式下静默失败，严格模式下报错
+          delete obj.a; // 无效
+          obj.b = 3; // 无效
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.isSealed()</strong> 确定对象是否被封存，即是否不可扩展且所有属性都不可配置<br>
+      <i>语法: const isSealed = Object.isSealed(对象);</i>
+      <p><strong>判断</strong>对象是否被密封（即不可扩展且不可删除属性，但可修改属性值）。就是只能修改</p>
+      <ul>
+        <li class="circle">true：对象被 Object.seal() 密封；</li>
+        <li class="circle">false：对象未被密封或被其他方法锁定（如 freeze()）。</li>
+      </ul>
+      <code>
+        <pre>
+          const obj = { a: 1 };
+          
+          // 默认可修改
+          console.log(Object.isSealed(obj)); // false
+          
+          // 密封对象
+          Object.seal(obj);
+          console.log(Object.isSealed(obj)); // true
+          
+          // 尝试添加/删除属性（无效）
+          obj.b = 2; // 无效
+          delete obj.a; // 无效
+          
+          // 但可修改现有属性值
+          obj.a = 100; // 允许
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.keys()</strong> 返回对象自有可枚举属性名的数组 <br>
+      <i>const keys = Object.keys(对象);</i>
+      <p>获取对象自身的可枚举<strong>属性名</strong> （字符串类型，不含 Symbol 属性）。</p>
+      <code>
+        <pre>
+          const user = {
+          name: 'Alice',
+          age: 30,
+          [Symbol('id')]: 123 // Symbol 属性会被忽略
+          };
+          
+          Object.defineProperty(user, 'email', {
+          value: 'alice@example.com',
+          enumerable: false // 不可枚举属性
+          });
+          
+          const keys = Object.keys(user);
+          // 结果：['name', 'age']（仅可枚举的字符串属性）
+        </pre>
+      </code>
+    </li>
+    <li><strong>Object.preventExtensions()</strong> 将对象设置为不可扩展，即不能添加新属性<br>
+      <code style="font-size: 24px;">
+        <pre>
+          const obj = { a: 1 };
+          Object.preventExtensions(obj); // 禁止扩展
+          
+          // 尝试添加新属性（无效）
+          obj.b = 2; // 非严格模式下静默失败，严格模式下报错
+        </pre>
+      </code>
+      <p>禁止对象添加新属性（但允许修改或删除现有属性）。</p>
+      <ul>
+        <li><strong>不可逆操作：</strong><br>
+          一旦对象被设为不可扩展，无法恢复（无对应 Object.allowExtensions() 方法）。</li>
+        <li><strong>仅影响直接属性：</strong><br>
+          嵌套对象不受影响，仍可添加属性。</li>
+      </ul>
+    </li>
+    <li><strong>Object.seal()</strong> 封存对象，防止再添加新属性及删除或配置已有属性 <br>
+      <code>
+      <pre>
+        const obj = { a: 1 };
+        Object.seal(obj); // 密封对象
+        
+        // 尝试添加/删除属性（无效）
+        obj.b = 2; // 失败
+        delete obj.a; // 失败
+        
+        // 允许修改现有属性
+        obj.a = 100; // 成功
+      </pre>
+    </code>
+      <p>密封对象：禁止添加 / 删除属性，但允许修改现有属性的值。 <strong>他是不可逆的 浅密封</strong></p>
+    </li>
+    <li><strong>Object.setPrototypeOf()</strong> 将对象的原型(即内部的[[Prototype]属性)设置为指定对象或null <br>
+      <code>
+        <pre>
+          const obj = {};
+          const prototype = { greet() { console.log('Hello'); } };
+          
+          Object.setPrototypeOf(obj, prototype); // 设置原型
+          obj.greet(); // 输出: "Hello"
+        </pre>
+      </code>
+      <p>动态修改对象的原型（即 __proto__ 属性）</p>
+      <ul>
+        <li>改变对象的继承关系。里面的属性的原型也会被改变</li>
+        <li>动态修改原型非常缓慢,造成性能受损</li>
+        <li>若设置导致循环引用（如 A 的原型是 B，B 的原型又指向 A），会抛出错误。</li>
+      </ul>
+    </li>
+    <li><strong>Object.values()</strong> 返回对象自有可枚举属性值的数组<br>
+      <i>语法: const values = Object.values(对象);</i>
+      <p>获取对象自身的可枚举属性值（不含 Symbol 属性）。</p>
+      <code>
+        <pre>
+          const user = {
+            name: 'Alice',
+            age: 30,
+            [Symbol('id')]: 123 // Symbol 属性会被忽略
+          };
+          
+          Object.defineProperty(user, 'email', {
+            value: 'alice@example.com',
+            enumerable: false // 不可枚举属性
+          });
+          
+          const values = Object.values(user);
+          // 结果：['Alice', 30]（仅可枚举的字符串属性的值）
+        </pre>
+      </code>
+      <strong>跟Object.key() 一样都是返回由对象自身可枚举属性值组成的数组</strong>
+    </li>
+  </ul>
+  <script>
+    const obj = {
+      name: 'Arrebol',
+      age: 16,
+      gender: '男',
+      hobby: {
+        playgame: 'ZZZ',
+        game: 'cod'
+      },
+      Time: [1, 2, 3, 4, 5, 6, 7]
+    }
+    const Obj = { a: 1 }
+
+    console.log('===================== Object.assign() ========================');
+
+    Object.assign(Obj, obj)
+    console.log(Obj);
+
+    console.log('=========================== Objec.create() ========================');
+    const animal = {
+      speak() {
+        console.log('I am amimal');
+      }
+    }
+
+    const dog = Object.create(animal)
+    dog.bark = () => console.log('Woof!');
+
+    dog.speak()
+    dog.bark()
+
+    console.log('========================== Obj.entries() ==============================');
+    const key_value = Object.entries(Obj)
+    console.log(key_value); //[Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
+
+    console.log('========================= Obj.fromEntries() ========================');
+    const arr = [['key1', 1], ['key2', 2], ['key3', 3]]
+    const fromEntries = Object.fromEntries(arr)
+    console.log(fromEntries); // {key1: 1, key2: 2, key3: 3}
+
+    console.log('================== Object.seal ===================');
+    const ob = { a: 1 };
+    Object.seal(ob); // 密封对象
+
+    // 尝试添加/删除属性（无效）
+    ob.b = 2; // 失败
+    delete ob.a; // 失败
+
+    console.log(ob);
+
+    // 允许修改现有属性
+    ob.a = 100; // 成功
+    console.log(ob);
+
+  </script>
+</body>
+
+</html>

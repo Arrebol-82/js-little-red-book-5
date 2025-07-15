@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>get , set , has</h1>
+  <section>
+    <h2>get()</h2>
+    <p>get捕获器会在获取属性值操作的中 , 对应的反射API是 Reflect.get()</p>
+    <ul>
+      <li>property 为属性的意思</li>
+    </ul>
+    <code>
+      <pre>
+        const myTarget = {
+          foo: 'sfsf'
+        }
+    
+        const proxy = new Proxy(myTarget, {
+          get(target, property, received) {
+            console.log('get');
+            return Reflect.get(...arguments)
+          }
+        })
+    
+        proxy.foo  // get
+      </pre>
+    </code>
+    <p>最终打印的是 get 因为被拦截了 所以不是打印sfsf</p>
+    <code class="code">
+      <pre>
+        _________________________________________________________________________________________________________________________
+        返回值                                     无限制
+        _________________________________________________________________________________________________________________________
+
+        拦截操作                                    proxy.property
+                                                   proxy.[property]
+                                                   Object.create(proxy)[property]
+                                                   Reflect.get( target, property, received )
+
+        捕获器处理程序参数                           target: 目标对象
+
+                                                   property: 引用的目标上的字符串键属性
+
+                                                   received: 代理对象或者继承代理对象的对象
+
+        捕获器不变式                                如果 target.property 是不可配置 不可写 则处理程序返回的值必须target.property
+                                                   匹配 <i>(也就是捕获器返回出来的值必须与目标对象的值一样)</i>
+
+                                                   如果 target.property 不可配置且[[Get]]特性为 undefined 处理程序的返回值也必须
+                                                   undefined 
+        _________________________________________________________________________________________________________________________                                           
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h2>set()</h2>
+    <p>set() 捕获器会在设置属性值的操作中被调用 , 对应的反射API是Reflect.set()</p>
+    <code>
+      <pre>
+        const mySet = {
+          foo: 'bar'
+        }
+    
+        const proXy = new Proxy(mySet, {
+          set(target, property, value, received) {
+            console.log('set()');
+            return Reflect.set(...arguments)
+          }
+        })
+    
+        proXy.foo = 'qux' // set()
+      </pre>
+    </code>
+    <p>最终打印的是 set() 因为被拦截了 所以不是打印 'qux'</p>
+    <code class="code">
+      <pre>
+        _________________________________________________________________________________________________________________________
+        返回值                                     返回true 表示修改成功 , 返回false 表示修改失败 严格模式下返回false会报错TypeError
+        _________________________________________________________________________________________________________________________
+
+        拦截操作                                    proxy.property   = value
+                                                   proxy.[property] = value
+                                                   Object.create(proxy)[property] = value
+                                                   Reflect.set( target, property, value, received )
+
+        捕获器处理程序参数                           target: 目标对象
+
+                                                   property: 引用的目标上的字符串键属性
+
+                                                   value: 要赋值给属性的值
+
+                                                   received: 代理对象或者继承代理对象的对象
+
+        捕获器不变式                                如果 target.property 是不可配置 不可写 则不能修改目标对象的值
+
+                                                   如果 target.property 不可配置且[[Set]]特性为 undefined 则不能修改目标对象的值
+
+                                                   在严格模式下 , 处理程序中返回false或抛出TypeError
+        _________________________________________________________________________________________________________________________ 
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h2>has()</h2>
+    <p>has() 捕获器会在 in操作符中被调用 , 对应反射API方法是 Reflect.has()</p>
+    <code>
+      <pre>
+        const myHas = {
+          foo: 'bar'
+        }
+    
+        const prox = new Proxy(myHas, {
+          has(target, property) {
+            console.log('has');
+            return Reflect.has(...arguments)
+          }
+        })
+    
+        'foo' in prox // has
+      </pre>
+    </code>
+    <p>最终打印的是 get() 因为被拦截了 所以不是打印 'bar'</p>
+    <code class="code">
+          <pre>
+            _________________________________________________________________________________________________________________________
+            返回值                                     has() 必须返回布尔值 , 表示属性是否存在 返回非布尔值的话会被转换为布尔值
+            _________________________________________________________________________________________________________________________
+    
+            拦截操作                                    property in proxy
+                                                       property in Object.create('proxy')
+                                                       with (proxy) { property }
+                                                       Reflect.has( proxy ,  property )
+    
+            捕获器处理程序参数                           target: 目标对象
+    
+                                                       property: 引用的目标上的字符串键属性
+    
+    
+            捕获器不变式                                如果 target.property 是不可配置 不可写 则返回的必须是 true
+
+                                                       如果 target.property 存在且目标对象不可扩展 则返回的必须是true (因为不可扩展就表示不会在新增新的属性
+                                                       之前的依然还在 这是因为不变式)
+            _________________________________________________________________________________________________________________________ 
+          </pre>
+        </code>
+  </section>
+  <script>
+    console.log('====================== get ====================');
+    const myTarget = {
+      foo: 'sfsf'
+    }
+
+    const proxy = new Proxy(myTarget, {
+      get(target, property, received) {
+        console.log('get');
+        return Reflect.get(...arguments)
+      }
+    })
+
+    proxy.foo  // get
+
+    console.log('======================= set =====================');
+
+    const mySet = {
+      foo: 'bar'
+    }
+
+    const proXy = new Proxy(mySet, {
+      set(target, property, value, received) {
+        console.log('set()');
+        return Reflect.set(...arguments)
+      }
+    })
+
+    proXy.foo = 'qux' // set()
+
+    console.log('====================== has =====================');
+    const myHas = {
+      foo: 'bar'
+    }
+
+    const prox = new Proxy(myHas, {
+      has(target, property) {
+        console.log('has');
+        return Reflect.has(...arguments)
+      }
+    })
+
+    'foo' in prox // has
+  </script>
+</body>
+
+</html>

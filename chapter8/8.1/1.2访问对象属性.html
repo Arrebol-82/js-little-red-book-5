@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        li {
+            list-style: decimal;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>访问对象属性</h1>
+    <ul>
+        <li>
+            <h2>点语法:</h2>
+            <p>语法: obj<strong>.</strong>name</p>
+        </li>
+        <li>
+            <h2>方括号语法</h2>
+            <p>语法: obj<strong>['name']</strong></p>
+        </li>
+    </ul>
+    <h3 style="color: pink;">这两种方法的结果是相同的，但是是方括号更适合需要动态确定或者包含特殊字符或空格。<i>不过静态代码分析工具不一定总认为obj.name 和 obj['name']是一样的</i> ，
+        因此还是推荐点语法</h3>
+    <script>
+        const obj = {
+            name: 'Arrebol',
+            age: 16
+        }
+
+        console.log('点访问');
+        console.log(obj.name);
+        console.log(obj.age);
+
+        console.log('方括号' + '把属性作为 “ 字符串访问 ” ');
+        console.log(obj['name']);
+        console.log(obj['age']);
+    </script>
+</body>
+
+</html>

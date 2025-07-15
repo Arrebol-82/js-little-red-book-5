@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let str = 'car, bar, baz, sat'
+    let patter = /ba./g
+
+    // exec方法是将字符串写里面的 应为他是 RegExp 的方法所以里面写的是字符串
+    let ba = patter.exec(str)
+    // 他得多次调用才能继续获得后面的匹配值
+    console.log(ba);
+    // 在次调用,他会在上次查找完的位置,继续往下找
+    ba = patter.exec(str)
+    console.log(ba);
+
+    console.log(ba[0]);
+    console.log(ba.index);
+
+
+    // 他是一次性返回 所有的匹配的正确的结果
+
+    // 而match matchAll search 是将正则写在里面的 应为他是 String 的方法所以里面写的是正则
+    let matcher = str.match(patter)//['bar', 'baz']
+    console.log(matcher);
+    console.log(matcher.index);
+    console.log(matcher[0]);
+
+
+    // 因为他是一个迭代器, 所以要用for of 循环 和 ... 展开运算符 才能拿到数据
+    let Matcher = str.matchAll(patter)
+    for (const k of Matcher) {
+      console.log(k);
+
+    }
+    console.log('===============');
+
+    // 这里是看不到的 , 因为迭代器是一次性的 ,上面的of 循环已经将matcher里面的迭代器里面的值使用过了 ,所以不能使用了
+    console.log(...Matcher);
+
+    let pos = str.search(patter)
+    console.log(pos);
+
+
+    // 替换字符
+    // replace() 第一个参数只能是 正则 字符  第二个参数就是 字符 或者是 函数
+    const text = 'cat, bat, sat, fat';
+    console.log(text);
+    console.log(text.replace(/at/g, 'od'));
+    // 如果直接使用字符的话就是默认只对第一次找的值有效
+    console.log(text.replace('at', 'oo'));
+    // 所以就可以使用replaceAll方法了
+    console.log(text.replaceAll('at', 'oo'));
+
+
+    // 特殊字符
+    // $$ 表示替换成 $
+
+    // $ & 返回匹配到的字符
+
+    // $' 返回匹配到之前的字符
+
+    // $` 返回匹配到之后的字符
+
+    // $n 返回捕获组的字符串 ,如果是$1 就是返回第一个匹配到的捕获组的内容 , $2  就是返回第二个匹配到的捕获组的内容 .. 没有的话就是返回null
+
+    // $nn 如果正则的捕获组大于10组 ,就要用 $12 表示返回第12个捕获组 $01 $02 $03 $...
+    // 补充 /(/w)(/d)/ 每一个() 就是一个单独的捕获组  
+
+
+    // 例子
+    let string = 'cat, bat, sat, fat'
+    // 因为$n / $nn 他们都是按照() 捕获组来执行的 , 所以在下面的这条表达式中 , 因为没加所以是直接输出了 word($1)
+
+    console.log(string.replace(/.at/g, "word ($1)")); // word ($1), word ($1), word ($1), word ($1)
+
+    // 因为这里是加了捕获组 , 所以$1 找到了 (.at)  第一个捕获组 , 然后正则 , 替换 
+    console.log(string.replace(/(.at)/g, "word ($1)")); // word (cat), word (bat), word (sat), word (fat)
+
+    // 接下来试着传个函数吧
+    function htmlEscape(text) {
+      // 如果是多个捕获组的情况下 , 可以增加形参 用于接收其他捕获组
+      // function (match, pos, originalText) 这样这能接收一个捕获组 后两个参数是代表 匹配的位置 原字符串
+      // function (match, match1, match2, pos, originalText) 这样这能接收三个捕获组 后两个参数是代表 匹配的位置 原字符串
+
+      return text.replace(/[<>"&]/g, function (match, pos, originalText) {
+        //                                  匹配到的值  匹配值的位置  原字符串
+        // [<>"&]表示匹配[]里面的任意一个字符
+        console.log(pos);
+
+        // 返回原字符串
+        console.log(originalText);
+
+        switch (match) {
+          case "<":
+            return "<"
+          case ">":
+            return ">"
+          case "&":
+            return "&"
+          case "\"":
+            return "'";
+        }
+      })
+    }
+
+    console.log(htmlEscape("<p class=\"greeting\">Hello world! </p>"));
+
+
+    // split() 表示将传入的参数,当做分割符,切开字符串,最后放入数组中
+    let colorText = 'red,blue,green,yellow'
+    // 以,分割开来
+    console.log(colorText.split(','));
+    // 如果传入了第二个参数, 就是代表数组的大小
+    console.log(colorText.split(',', 2));
+    // 还可以是正则表达式
+
+    /*     这里表示是匹配除了,以外的字符 所以red blue green yellow 就会被当作分割符 , red前面是空的,返回就是空的 
+        而red到blue 是, 分开的 , 所以返回的是, 而yellow也是同理后面是空的 */
+    console.log(colorText.split(/[^,]+/)); //['', ',', ',', ',', ''] 
+
+    // localeCompare() 比较字符串的大小, 他是按照英文的字母列表去比较的
+    // 如果匹配的字符串是 大于 当前的字符串 就返回 1 
+    // 如果匹配的字符串是 小于 当前的字符串 就返回 - 1
+    // 如果匹配的字符串是 等于 当前的字符串 就返回 0
+
+    // 冷知识他是跟据地区转化,所以在各个地区是不一样的
+
+    let stringValue = 'cod';
+    console.log(stringValue.localeCompare('aod')); // 1
+    console.log(stringValue.localeCompare('eod')); // -1
+    console.log(stringValue.localeCompare('cod')); // 0
+
+    let goo = 'yellow'
+    function deterOrder(value) {
+      let restul = goo.localeCompare(value);
+      if (restul === 1) {
+        console.log('大了');
+      } else if (restul === -1) {
+        console.log('小了');
+      } else {
+        console.log('等于');
+      }
+    }
+
+    deterOrder('zoo')
+    deterOrder('yellow')
+    deterOrder('brick')
+  </script>
+</body>
+
+</html>

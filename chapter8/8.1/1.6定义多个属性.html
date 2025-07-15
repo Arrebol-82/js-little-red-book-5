@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>定义多个属性</h1>
+    <p>要在一个对象上面同时定义多个属性 ，Object.defineProperties() <strong>可以通过多个描述符，定义多个属性</strong></p>
+    <ul>
+        <li>语法： Object.defineProperties(对象, {要修改的属性})</li>
+        <li>
+            <code>
+                <pre>
+                    let book = {}
+                    Object.defineProperties(book, {
+                        year_: {
+                            value: 2025,
+                            // writable:true
+                        },
+                        edition: {
+                            value: 1
+                        },
+                        year: {
+                            get() {
+                                return this.year_;
+                            },
+                            set(item) {
+                                if (item > 2025) {
+                                    this.year_ = item
+                                    this.edition += item - 2025
+                                }
+                            }
+                        }
+                    })
+                </pre>
+            </code>
+        </li>
+        <li>这段代码是不能修改的 <strong>因为Object.defineProperties 的默认配置。是 writable , configurable , enumerable</strong>都是false
+        </li>
+        <li>要想使用的话就要将 writable , configurable , enumerable 改为<strong>true</strong></li>
+        <li>
+            <h1 class="pink">使用Object.defineProperties() 语法的话就必须使用 get: function() { ... } 的完整语法，因为这是属性描述符对象的标准格式！</h1>
+        </li>
+    </ul>
+    <script>
+
+        let book = {}
+        Object.defineProperties(book, {
+            year_: {
+                value: 2025,
+                // writable:true
+                // configurable
+                // enumerable
+            },
+            edition: {
+                value: 1
+            },
+            year: {
+                get: function () {
+                    return this.year_;
+                },
+                set: function (item) {
+                    if (item > 2025) {
+                        this.year_ = item
+                        this.edition += item - 2025
+                    }
+                }
+            }
+        })
+
+        console.log(book);
+        console.log(Object.getOwnPropertyDescriptors(book));
+        book.year_ = 2027
+        console.log(book);
+    </script>
+</body>
+
+</html>

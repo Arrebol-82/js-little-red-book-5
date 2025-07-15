@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+    <h1>扩展操作符</h1>
+    <p>扩展操作符可以让我们把两个对象以类似数组拼接的方式组合到一起，应用到内部对象的扩展操作 ， 将所有的可枚举的自有属性（包括符号）浅拷贝到外部对象</p>
+    <code>
+        <pre>
+            const Foo = { a: 1 }
+        const Bar = { b: 2 }
+
+        const Foobar = { c: 3, ...Bar, ...Foo }
+        console.log(Foobar); // {c: 3, b: 2, a: 1}
+
+        const baz = { c: 4 }
+        const foobarbaz = { ...Foo, ...Bar, c: 2, ...baz }
+        console.log(foobarbaz) // a:1 , b:2 , c:4 ;
+        </pre>
+    </code>
+    <h2 class="pink">俩特性，看好了</h2>
+    <ul>
+        <li>扩展操作符会严格按照扩展操作符的植入顺序，来植入对象 </li>
+        <li>第二就是跟平时写属性一样 ， 后面的属性会覆盖前面的属性</li>
+        <li>
+            <strong>来看看示例代码：</strong>
+            <code>
+                <pre>
+                    const Foo = { a: 1 }
+                    const Bar = { b: 2 }
+            
+                    const Foobar = { c: 3, ...Bar, ...Foo }
+                    console.log(Foobar); // {c: 3, b: 2, a: 1}
+            
+                    const baz = { c: 4 }
+                    const foobarbaz = { ...Foo, ...Bar, c: 2, ...baz }
+                    console.log(foobarbaz) // a:1 , b:2 , c:4 ;
+                </pre>
+            </code>
+        </li>
+        <li>
+            <h2>浅拷贝</h2>
+            <code>
+                <pre>
+                    const Fo = { a: 1 }
+                    const Ba = { b: 2, c: { d: 3 } }
+                    const FoBa = {...Fo , ...Ba}
+
+                    console.log(FoBa); // {a: 1, b: 2, c: {…}}
+                    console.log(Ba.c === FoBa.c); // true
+                </pre>
+            </code>
+        </li>
+    </ul>
+    <script>
+        const s = Symbol();
+        const foo = { a: 1 }
+        const bar = { [s]: 2 }
+
+        const foobar = { ...foo, c: 3, ...bar }
+
+        console.log(foobar);
+        // { a: 1 , c: 3, [Symbol () ]: 2 }
+
+        console.log('============= 两个特性 ============');
+
+        const Foo = { a: 1 }
+        const Bar = { b: 2 }
+
+        const Foobar = { c: 3, ...Bar, ...Foo }
+        console.log(Foobar); // {c: 3, b: 2, a: 1}
+
+        const baz = { c: 4 }
+        const foobarbaz = { ...Foo, ...Bar, c: 2, ...baz }
+        console.log(foobarbaz) // a:1 , b:2 , c:4 ;
+
+        console.log('============== 也是浅拷贝 =============');
+        const Fo = { a: 1 }
+        const Ba = { b: 2, c: { d: 3 } }
+        const FoBa = {...Fo , ...Ba}
+
+        console.log(FoBa); // {a: 1, b: 2, c: {…}}
+        console.log(Ba.c === FoBa.c); // true
+    </script>
+</body>
+
+</html>

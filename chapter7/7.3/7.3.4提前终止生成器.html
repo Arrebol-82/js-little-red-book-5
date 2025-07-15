@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>提前终止生成器</h1>
+  <p>当前的方法就是 return() 和 throw() </p>
+  <p style="color: skyblue; font-size: 20px;">return() 如果遇到了return那就是直接终止生成生成器 ,返回true</p>
+  <p style="color: pink; font-size: 20px;">throw() 是通过抛异常的方式来干预流程，内部处理得当的话，还有恢复迭代的可能性，处理不好就彻底终止</p>
+  <h2>return() 和 throw() 都会将生成器强制进入关闭状态 就是关闭</h2>
+
+  <section>
+    <h1>return()</h1>
+    <p>当前的value 会返回return(值) 里面的值</p>
+    <p>只要执行完了return() 后面的done 就会返回true了</p>
+    <code>
+      <pre>
+        function* generatorFn() {
+          for (const k of [1, 2, 3]) {
+          yield k
+          }
+        }
+        
+        const G = generatorFn()
+        console.log(G); //generatorFn {<suspended>}
+      
+        for (const k of generatorFn()) {
+        console.log(k);
+        }
+      
+        console.log(G.return(4));
+        // 此时生成器已经被终止了
+        console.log(G);  //generatorFn {<closed>}
+      </pre>
+    </code>
+    <p>所以就是一开始是1 条件不成立 , 然后是2 条件成了,虽然是会终止生成器 , 但是还是会执行完最后一句log 所以打印的是 1, 2 分析的对不对</p>
+    <code>
+      <pre>
+        function* GeneratorFn() {
+          for (const k of [1, 2, 3]) {
+          yield k
+          }
+        }
+        
+        const gene = GeneratorFn() for (const x of gene) {
+          if (x > 1) {
+          gene.return(4)
+          }
+        console.log(x);
+      }
+      </pre>
+    </code>
+  </section>
+  <section>
+    <h1>throw() </h1>
+    <p>throw会在暂停的时候将一个提供的错误注入到生成器对象里面 , 如果错误未被处理 , 那么生成器就会被关闭</p>
+    <code>
+      <pre>
+        console.log(' 内部处理异常的情况 ');
+        
+        function* GenerAtorFn() {
+        for (const k of [1, 2, 3]) {
+          try {
+            yield k
+          } catch (e) {
+            console.log(e);
+            }
+          }
+        }
+        
+        const Gene = GenerAtorFn()
+        
+        console.log(Gene.next()); //{value: 1, done: false}
+        Gene.throw(5)             // 5
+        console.log(Gene.next()); //{value: 3, done: false}
+      </pre>
+    </code>
+    <h2>就像上面那样,如果生成器里面处理了异常 , 那么就会继续执行, 但是当前的值yield不会执行 , 就是当前的值如果时处理异常的对应的yield 关键字 , 那么这个关键字不会进行处理执行</h2>
+    <h3>此外如果在还没运行生成器之前就执行throw()的话,这个异常不会被里面的生成器捕获,而是外面的函数块抛的错误 , 所以里面的代码也不会执行</h3>
+  </section>
+  <script>
+    function* geneatorFn() { }
+    const g = geneatorFn()
+    // console.log(geneatorFn().next());
+    console.log(g);
+    console.log(g.next);
+    console.log(g.return);
+    console.log(g.throw);
+
+
+    console.log('============= return ==============');
+    function* generatorFn() {
+      for (const k of [1, 2, 3]) {
+        yield k
+      }
+    }
+
+    const G = generatorFn()
+    console.log(G); //generatorFn {<suspended>}
+
+    for (const k of generatorFn()) {
+      console.log(k);
+    }
+
+    console.log(G.return(4));
+    // 此时生成器已经被终止了 
+    console.log(G); //generatorFn {<closed>}
+
+    console.log(' 执行完return ');
+
+    function* GeneratorFn() {
+      for (const k of [1, 2, 3]) {
+        yield k
+      }
+    }
+
+    const gene = GeneratorFn()
+    // console.log(gene.next());
+    // console.log(gene.return(4));
+    // console.log(gene.next());
+    // console.log(gene.next());
+    // console.log(gene.next());
+
+    for (const x of gene) {
+      if (x > 1) {
+        console.log('看看看');
+
+        gene.return(4)
+      }
+      console.log(x);
+    }
+
+
+    console.log(' ============ throw =============== ');
+    function* generAtorFn() {
+      for (const k of [1, 2, 3]) {
+        yield k
+      }
+    }
+
+    const gener = generAtorFn()
+
+    console.log(gener);
+    try {
+      gener.throw('foo')
+    } catch (e) {
+      console.log(e);
+    }
+
+    console.log(gener);
+
+    console.log(' 内部处理异常的情况 ');
+
+    function* GenerAtorFn() {
+      for (const k of [1, 2, 3]) {
+        try {
+          yield k
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+
+    const Gene = GenerAtorFn()
+
+    console.log(Gene.next());
+    Gene.throw(5)
+    console.log(Gene.next());
+
+  </script>
+</body>
+
+</html>

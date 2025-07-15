@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>数据绑定与可观测对象</h1>
+  <p>通过代理可以把运行时中原本不相关的部分联系在一起 这样就可以实现各种模式了 , 从而让不同的代码互相操作</p>
+  <i>比如 , 可以将被代理的类绑定到一个全局实例集合 , 让所有创建的实例都被添加到这个集合里面</i>
+  <code>
+    <pre>
+      const userList = []
+
+      class User {
+        constructor(name) {
+          this.name_ = name
+        }
+      }
+  
+      const proxy = new Proxy(User, {
+        construct() {
+          const newUser = Reflect.construct(...arguments)
+          userList.push(newUser)
+          return newUser
+        }
+      })
+  
+      new proxy('john')
+      new proxy('ZZZ')
+      new proxy('JQL')
+  
+      console.log(userList);
+    </pre>
+  </code>
+  <strong>一个小细节 ...arguments 是可跳过预先声明形参的这一步 , 直接捕获所有传入的参数</strong>
+  <p>所以才可以实例化成功</p>
+  <strong>另外 , 还可以把集合绑定到一个事件分派程序 , 每次插入新实例时都会发送消息</strong>
+  <code>
+    <pre>
+      const list = []
+
+      function emit(newvalue) {
+        console.log(newvalue);
+      }
+  
+      const pr = new Proxy(list, {
+        set(target, property, value, received) {
+          const result = Reflect.set(target, property, value, received)
+          if (result) {
+            emit(Reflect.get(target, property, received))
+          }
+          return result
+        }
+      })
+  
+      pr.push('john')
+      pr.push('jacob')
+  
+      /*
+      john
+      1
+      jacob
+      2
+       */
+    </pre>
+  </code>
+  <p>先是定义了一个空数组 , 然后定义emit方法用于打印 后面用pr代理 数组list 设置set捕获器 如果set设置成功就返回true 则回去调用emit这个方法 , 从而实现修改就会自动打印</p>
+  <strong>这里还会打印1, 2 是因为push要保证同步维护数组的元素和长度 所以是触发了两个set 因为length进行了更改 像这样的还有 (push、pop、splice 等)</strong>
+  <script>
+    const userList = []
+
+    class User {
+      constructor(name) {
+        this.name_ = name
+      }
+    }
+
+    const proxy = new Proxy(User, {
+      construct() {
+        const newUser = Reflect.construct(...arguments)
+        userList.push(newUser)
+        return newUser
+      }
+    })
+
+    new proxy('john')
+    new proxy('ZZZ')
+    new proxy('JQL')
+
+    console.log(userList);
+
+    // 另外 , 还可以把集合绑定到一个事件分派程序 , 每次插入新实例时都会发送消息
+
+    const list = []
+
+    function emit(newvalue) {
+      console.log(newvalue);
+    }
+
+    const pr = new Proxy(list, {
+      set(target, property, value, received) {
+        const result = Reflect.set(target, property, value, received)
+        if (result) {
+          emit(Reflect.get(target, property, received))
+        }
+        return result
+      }
+    })
+
+    pr.push('john')
+    pr.push('jacob')
+
+    /*
+    john
+    1
+    jacob
+    2
+     */
+  </script>
+</body>
+
+</html>

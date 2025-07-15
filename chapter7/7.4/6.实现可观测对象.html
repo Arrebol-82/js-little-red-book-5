@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>实现可以关测对象</h1>
+  <button>测试 (F12) </button>
+  <code>
+    <pre>
+      class Obsevable {
+        constructor() {
+          // 创建一个空数组, 用于放置任务
+          this.pormiseQueue = []
+  
+          //保存队列中下一个期约的解决方法
+          this.resolve = null;
+  
+          //把最初的期约推人队列 , 该期约将通过第一个观测到的事件解决
+          this.enqueue()
+        }
+  
+        //创建新的期约 , 保存其方法 
+        // 将其推进队列
+  
+        enqueue() {
+          this.pormiseQueue.push(new Promise(resolve => this.resolve = resolve))
+        }
+  
+        // 取出队列前端的期约
+        // 并返回这个期约
+        dequeue() {
+          return this.pormiseQueue.shift()
+        }
+      }
+  
+    </pre>
+  </code>
+  <ul>
+    <li>
+      <h2>enqueue:</h2>
+      <p>所以其实就是因为for-await-of 只会一次处理一个promise ,然后promise会等执行完里面的代码 ,
+        或者说等你调用它的时候,他才会运行 , 开始执行看看返回的是成功还是失败 ,
+        <strong>所以可以提前放个pormise在那卡住for循环 , 不然他停止 ,不然每次调用重新调用for 来获取值 , 麻烦且不合理</strong>
+      </p>
+    </li>
+    <li>
+      <h2>为什么要null</h2>
+      <p><strong>闭包会引用内部每一个值</strong> , 把他们放到内存 , 这样其实外部没有人引用他们 , 但是还是有闭包在引用 ,
+        所以引擎才不会回收 , 此时就要用到this.resolve 因为是他把里面的resolve 放回到外面, 放到数组里面
+        , 形成了闭包了 ,所以要对他进行null进行解除引用 , 把内存释放出来 , 如果不释放的话 , 就会不停的撑大内存</p>
+    </li>
+    <li>
+      <h2>第一阶段总结:</h2>
+      <p><strong>通过 promiseQueue 存储 Promise 队列，enqueue() 提前占位并持续补充，dequeue() 按顺序消费，配合 this.resolve = null
+          释放闭包引用，实现了异步事件的有序、持续迭代，且避免内存泄漏。</strong></p>
+    </li>
+    <li>
+      <code style="font-weight: 700;">
+        <pre>
+          class Obsevable {
+            constructor() {
+              
+              创建一个空数组, 用于放置任务
+              this.pormiseQueue = []
+
+              
+              保存队列中下一个期约的解决方法
+              this.resolve = null;
+      
+              
+              把最初的期约推人队列 , 该期约将通过第一个观测到的事件解决
+              this.enqueue()
+            }
+      
+            创建新的期约 , 保存其方法 
+            
+            将其推进队列
+      
+            enqueue() {
+              this.pormiseQueue.push(new Promise(resolve => this.resolve = resolve))
+            }
+      
+            
+            取出队列前端的期约
+            
+             并返回这个期约
+            dequeue() {
+              return this.pormiseQueue.shift()
+            }
+      
+            
+            要使用这个期约对象 , 还要定义一个异步生成器方法  这个生成器应该可以处理任何类型的事件
+      
+            async * fromEvent(element, eventType) {
+              
+              当事件生成时,解决队列前的期约结构
+              
+              传入事件对象, 同时入队另一个期约
+              element.addEventListener(eventType, (event) => {
+                this.resolve(event)
+                this.enqueue()
+              })
+              
+              每个被解决的队列前端的期约
+              
+              都会向异步迭代器常出的事件对象
+              while (1) {
+                yield await this.dequeue()
+              }
+            }
+          };
+      
+          (async function () {
+            const observable = new Obsevable()
+      
+            const button = document.querySelector('button')
+            const mouseClickIterator = observable.fromEvent(button, 'click')
+      
+            for await (const k of mouseClickIterator) {
+              console.log(k);
+            }
+          })()
+        </pre>
+      </code>
+    </li>
+    <li>
+      <h1 style="color: pink;">最终总结:</h1>
+      <p>先是定义了pormiseQueue 空数组 , 然后this.resolve 用于切断闭包的引用 然后定义 enqueue 将pormise的引用添加到数组里面 , 和 dequeue () 删除数组开头第一项 ,
+        定义异步生成器 ,
+        实现自动化 里面就是把DOM节点的信息传入到原来的resolve() 对象里面 , <strong>然后执行enqueue()添加空的pormise占位 , 防止for-await-of暂停</strong>
+        ,最后返回删掉的节点出去 ,
+        左后就是用异步函数遍历拿值了</p>
+    </li>
+  </ul>
+  <script>
+    class Obsevable {
+      constructor() {
+        // 创建一个空数组, 用于放置任务
+        this.pormiseQueue = []
+
+        //保存队列中下一个期约的解决方法
+        this.resolve = null;
+
+        //把最初的期约推人队列 , 该期约将通过第一个观测到的事件解决
+        this.enqueue()
+      }
+
+      //创建新的期约 , 保存其方法 
+      // 将其推进队列
+
+      enqueue() {
+        this.pormiseQueue.push(new Promise(resolve => this.resolve = resolve))
+      }
+
+      // 取出队列前端的期约
+      // 并返回这个期约
+      dequeue() {
+        return this.pormiseQueue.shift()
+      }
+
+      // 要使用这个期约对象 , 还要定义一个异步生成器方法  这个生成器应该可以处理任何类型的事件
+
+      async * fromEvent(element, eventType) {
+        //当事件生成时,解决队列前的期约结构
+        //传入事件对象, 同时入队另一个期约
+        element.addEventListener(eventType, (event) => {
+          this.resolve(event)
+          console.log('这里可以添加事件');
+          console.log(this.pormiseQueue);
+          this.enqueue()
+          console.log(this.pormiseQueue);
+        })
+
+        //每个被解决的队列前端的期约
+        //都会向异步迭代器常出的事件对象
+        while (1) {
+          yield await this.dequeue()
+        }
+      }
+    };
+
+    (async function () {
+      const observable = new Obsevable()
+
+      const button = document.querySelector('button')
+      const mouseClickIterator = observable.fromEvent(button, 'click')
+
+      for await (const k of mouseClickIterator) {
+        console.log(k);
+        await new Promise(r => setTimeout(r, 1000));
+        console.log('点击时间:', k.timeStamp);
+      }
+    })()
+
+
+    // const button = document.querySelector('button')
+    // button.addEventListener('click', (e) => {
+    //   console.log(e);
+
+    // })
+
+
+    // 原代码（你的写法）
+    // let count = 0;
+    // button.addEventListener('click', () => {
+    //   count++;
+    //   console.log(count);
+    // });
+
+    // 重构（用Observable+异步生成器）
+    class Observa {
+      constructor() {
+        // 创建一个空数组, 用于放置任务
+        this.pormiseQueue = []
+
+        //保存队列中下一个期约的解决方法
+        this.resolve = null;
+
+        //把最初的期约推人队列 , 该期约将通过第一个观测到的事件解决
+        this.enqueue()
+      }
+      enqueue() {
+        this.pormiseQueue.push(new Promise(resolve => this.resolve = resolve))
+      }
+
+      // 取出队列前端的期约
+      // 并返回这个期约
+      dequeue() {
+        return this.pormiseQueue.shift()
+      }
+    }
+    async function* fromEvent(element, eventType) {
+      const observable = new Observa(); // 实例化队列管理器
+      element.addEventListener(eventType, () => {
+        observable.resolve(event);
+        observable.dequeue();
+        observable.enqueue();
+      });
+
+      while (1) {
+        yield await observable.dequeue()
+      }
+    }
+
+
+    (async () => {
+      const button = document.querySelector('button');
+
+      const clickStream = fromEvent(button, 'click');
+      let count = 0;
+      for await (const e of clickStream) {
+        count++;
+        console.log(count);
+        // 试试加延迟：await new Promise(r => setTimeout(r, 1000));
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    })();
+
+
+  </script>
+</body>
+
+</html>

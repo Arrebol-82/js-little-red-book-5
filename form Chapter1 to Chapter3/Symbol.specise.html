@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    class A extends Array { }
+    class B extends Array {
+      static get [Symbol.species]() {
+        return Array
+      }
+    }
+
+    let a = new A()
+    console.log(a instanceof Array);
+    console.log(a instanceof A);
+
+    // 这个方法是会去查找A的构造函数里面的 Symbol.species 的方法 , 
+    // 而new 的时候是直接调用类来初始化的
+    a = a.concat('a')
+    console.log(a instanceof Array);
+    console.log(a instanceof A);
+    let b = new B()
+    console.log(b instanceof Array);
+    console.log(b instanceof B);
+
+    // 这个方法是会去查找A的构造函数里面的 Symbol.species 的方法 , 
+    // 而new 的时候是直接调用类来初始化的
+    // 这是b里面的Symbol是指向Array的
+    b = b.concat('a')
+    console.log(b instanceof Array);
+    console.log(b instanceof B); // false
+  </script>
+</body>
+
+</html>

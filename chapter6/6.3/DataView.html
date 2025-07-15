@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+      margin: 10px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>DataView</h1>
+  <p>这个方法允许读写ArrayBuffer()</p>
+  <ul>
+    <li>第一个参数,指向的是二进制缓冲区的本身</li>
+    <li>第二个参数,指向操作起始字节位点</li>
+    <li>第三个参数,限制视图为前x字节</li>
+  </ul>
+  <img src="./image/微信图片_20250526174257.jpg" alt="" style="width: 1000px;">
+
+  <h2>有符号整数 </h2>
+  <p>有符号整数表示 0, 正数 , <strong>负数</strong></p>
+  <h2>无符号整数</h2>
+  <p>无符号整数表示 0 , 正数</p>
+  <p>如果只设置了一个偏移位置,那么同时也设置定了长度</p>
+  <h4>他们都是按位权来进行转换的 , 但是有符号数,要看最高位的数0 / 1 看是否是负数,是的话就要进行反码和补码</h4>
+  <h3>大端字节和小端字节是不一样的,主要是他们的排序方式不同</h3>
+  <script>
+
+    const buf = new ArrayBuffer(16)
+    const fulldataView = new DataView(buf)
+    // 指明操作起始字节位点 0
+    console.log(fulldataView.byteOffset)
+    // 确定可操作的字节数量范围
+    console.log(fulldataView.byteLength)
+    // 认DataView关联的与创建时的ArrayBuffer是否为同一对象
+    console.log(fulldataView.buffer === buf)
+
+
+    // 接收一个字节偏移量和字节长度
+    const fullHalfdataView = new DataView(buf, 0, 8)
+    console.log(fullHalfdataView.byteOffset); // 0
+    console.log(fullHalfdataView.byteLength); // 8
+    console.log(fullHalfdataView.buffer === buf);
+
+    //只传一个 
+    const secondfdataView = new DataView(buf, 8)
+    // 表示偏移到8后面 ,从9索引开始存
+    console.log(secondfdataView.byteOffset); // 8
+    // 能存储的长度为 8
+    console.log(secondfdataView.byteLength); // 8
+    console.log(secondfdataView.buffer === buf);
+
+
+    console.log('================ ElementType =========================');
+
+
+    const but = new ArrayBuffer(2)
+    const view = new DataView(but)
+
+    // 总共两字节, 一个int8表示一个字节, 所以缓冲区的全是零
+    console.log(view.getInt8(0));
+    console.log(view.getInt8(1));
+    // 检查整个缓冲区 因为int16 表示2字节
+    console.log(view.getInt16(0));
+    view.setUint8(0, 255)
+
+    view.setUint8(1, 0xFF)
+    console.log(view.getUint16(0));
+
+
+    console.log('=================== 字节序 ======================');
+    const butt = new ArrayBuffer(2)
+    const vuie = new DataView(butt)
+
+    vuie.setUint8(0, 0x80)
+    vuie.setUint8(1, 0x01)
+
+    // 按大端字节序读取 Uint16
+    // 0x80 是高字节，0x01 是低字节
+    // 0x8001 = 2^15 + 2^0 = 32768 + 1 = 32769
+    console.log(vuie.getUint16(0));
+
+
+    // 按小端字节序读取 Uint16
+    // 0x01 是高字节，0x80 是低字节
+    // 0x0180 = 2^8 + 2^7 = 256 + 128 = 384
+    console.log(vuie.getUint16(0, true));
+
+    vuie.setUint16(0, 0x0004)
+    console.log(butt);
+    console.log(vuie.getUint8(0));
+    console.log(vuie.getUint8(1));
+    vuie.setUint16(0, 0x0002, true) // 小端写人,所是按反方向来的 , 0x0200
+    console.log(butt);
+    // 在打印的时候,又转换为10进制
+    console.log(vuie.getInt8(0)); // 0000 0010
+    console.log(vuie.getInt8(1)); // 0000 0000
+
+
+  </script>
+</body>
+
+</html>

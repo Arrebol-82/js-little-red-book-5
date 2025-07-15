@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>控制对象是否可修改</h1>
+  <p>Object提供了操作对象的很多方法 , 可以冻结 , 不可修改 , 不能枚举 等等 </p>
+  <section>
+    <h2>冻结对象 (Object.freeze())</h2>
+    <p>对于冻结的对象,把他变成完全<strong>不可改修改的状态</strong>, <strong>不能扩展</strong> , <strong>里面的所有属性都不能进行配置</strong>
+      ,<strong>不能添加新属性</strong> ,<strong>已有的属性也不能进行修改或删除 <i>对象的原型也是不能改变的</i></strong></p>
+    <h3>可以使用Object.isFrozen() 检测对象是否被冻结了</h3>
+    <h2 class="pink" style="font-size: 30px;">冻结是不能撤销的,是一个永久性不可逆转的操作</h2>
+    <ul>
+      <li class="circle">冻结是浅冻结 , 也就是说<strong>只能冻结对象里面的直接属性</strong>如果某个属性里面仍是对象 ,那么他里面的对象还是可以修改的</li>
+      <li class="circle">要想深度冻结对象的话 , 那必须要配合递归使用,冻结所有的引用值</li>
+    </ul>
+  </section>
+  <section>
+    <h2>封存对象 (Object.seal())</h2>
+    <p>Object.seal()方法提供了封存对象</p>
+    <ul>
+      <li>让对象变得不可扩展, 并将其全部已有属性标记为不可配置, <strong>阻止了对象进行删除和添加</strong>但是<strong>可以修改已有的属性的值</strong></li>
+      <li>对象封存之后就不能再添加新属性 , 但是可以修改啊 ,记住</li>
+      <li>如果对象配置了Writable:false 那么就不能进行更改了</li>
+      <li>使用Object.isSealed() 可以检测对象是否被封存</li>
+    </ul>
+    <p>虽然说不会阻止已有属性的修改 , 但是还是会阻止添加和删除 , 对比冻结对象条件是宽松了些的</p>
+  </section>
+  <section>
+    <h1>控制可扩展能力 (Object.preventExtensions())</h1>
+    <strong>Object.preventExtensions()用于将对象设置为不可扩展</strong>
+    <ul>
+      <li class="circle">也就是不能添加新属性</li>
+      <li>默认情况下javascript,都是可以扩展的 , 也就是可以添加属性</li>
+      <li>可以使用Object.isExtensible()访问是否能扩展</li>
+    </ul>
+  </section>
+  <h2>都是浅操作</h2>
+  <script>
+
+    // 'use strict'
+
+    const person = {
+      name: 'Arrebol',
+      age: 16
+    }
+
+    console.log('===================== 冻结对象 ==========================');
+
+    console.log(Object.isFrozen(person)); //false
+    Object.freeze(person)
+    console.log(Object.isFrozen(person)); //true
+
+    //非严格模式会忽略
+    //严格模式下会报错
+    person.name = 'zhu'
+
+    console.log('====================== 封存对象 ==================');
+    const Person = {
+      name: 'Arrebol',
+      age: 16
+    }
+
+    console.log(Object.isSealed(Person)); //false
+    Object.seal(Person)
+    console.log(Object.isSealed(Person)); //true
+
+    Person.name = 'zhujiansen'
+    console.log(Person.name);
+
+    //添加属性 
+    Person.gender = '男'
+    //非严格模式会忽略
+    //严格模式下会报错
+
+    //删除属性
+    delete Person.age
+    //非严格模式会忽略
+    //严格模式下会报错
+    console.log(Person);
+
+    console.log('======================== 控制可扩展能力 ==========================');
+
+
+
+    const extend = {
+      name: 'Arrebol',
+      age: 16
+    }
+
+    console.log(Object.isExtensible(extend)); //false
+    Object.preventExtensions(extend)
+    console.log(Object.isExtensible(extend)); //true
+
+    extend.name = 'jiansen'
+    console.log(extend.name);
+
+    extend.gender = '男'
+    //非严格模式会忽略
+    //严格模式下会报错
+
+    console.log(extend);
+
+    delete extend.age
+    console.log(extend);
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 教你怎么计算二进制
+    let num = 18
+    console.log(num.toString(2));
+    // 从右往左看
+    // 10010
+    (2 ^ 4 * 1) + (2 ^ 3 * 0) + (2 ^ 2 * 0) + (2 ^ 1 * 1) + (2 ^ 0 * 0)
+    //   16     +     0       +      0      +      2      +      0       = 18 
+    let sum = 1
+    for (let i = 0; i < 4; i++) {
+      sum *= 2
+
+    }
+    console.log(sum);
+
+  </script>
+</body>
+
+</html>

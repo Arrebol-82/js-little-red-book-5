@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      list-style: decimal;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>剩余操作符</h1>
+  <p>用于将剩余的值，全部放进去，通常用于函数参数和结构赋值</p>
+  <h2>我想你也很好奇 ,为什么剩余操作符可以接收这么多值吧 :来给你解释一下</h2>
+  <ul>
+    <li>JavaScript 函数不强制校验参数数量：<br>
+      即使函数定义时声明了 2 个参数，调用时传入 5 个参数也不会报错。<br>
+      多余的参数会被 “忽略”，但可以通过 arguments 对象或剩余操作符获取。</li>
+    <li>当函数参数中使用 ...args 时，JavaScript 引擎会在函数调用时：<br>
+      先将已命名的参数（如 fn(a, b, ...args) 中的 a 和 b）逐个匹配接收。<br>
+      将剩余的所有参数（无论数量多少）封装成一个数组，赋值给 args。</li>
+  </ul>
+  <p>本质：剩余操作符是语法糖，底层等价于用数组收集参数，但写法更简洁、语义更清晰。</p>
+  <p>注意: 他是一个数组,不是迭代器</p>
+  <h2>示例</h2>
+  <code>
+    <pre>
+      <strong>函数</strong>
+      function sum(...number) {
+      return number.reduce((to, num) => to + num, 0);
+      }
+      
+      console.log(sum(1, 2, 3, 4, 5));
+      
+      <strong>数组结构</strong>
+      let [f, s, ...arr] = [1, 2, 3, 4, 5, 6]
+      console.log(f);//1
+      console.log(s);//2
+      console.log(arr);//[3, 4, 5,6]
+    </pre>
+  </code>
+  <script>
+    function sum(...number) {
+      return number.reduce((to, num) => to + num, 0);
+    }
+
+    console.log(sum(1, 2, 3, 4, 5));
+
+    // 数组结构
+    let [f, s, ...arr] = [1, 2, 3, 4, 5, 6]
+    console.log(f);//1
+    console.log(s);//2
+    console.log(arr);//[3, 4, 5, 6]
+
+
+  </script>
+</body>
+
+</html>
