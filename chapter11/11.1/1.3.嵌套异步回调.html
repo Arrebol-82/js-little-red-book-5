@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>嵌套异步函数</h1>
+  <p>如果异步返值又依赖另一个异步返回值，那么回调的情况还会进一步变复杂 在实际的代码中这个要求嵌套回调</p>
+  <code>
+    <pre>
+    function double(value, success, failure) {
+      setTimeout(() => {
+        try {
+          if (typeof value !== 'number') {
+            throw 'Must provide number as first argument'
+          }
+          success(value * 2)
+        } catch (en) {
+          failure(en)
+        }
+      }, 1000)
+    }
+
+    const successCallback = (x) => {
+      double(x, (y) => console.log(`Buccess ${y}`))
+    }
+
+    const failuerCallback = (e) => console.log(`Failure ${e}`)
+
+    double(3, successCallback, failuerCallback)
+    </pre>
+  </code>
+  <p>
+    double(3, successCallback, failuerCallback) 这段代码是不是先是执行了 successCallback 取的 6 这个6就会被当作参数传进箭头函数里面的 x
+    然后因为里面的箭头函数调用了double
+    又再重新执行过double 在将6 * 2 最终返回 Buccess 12 <strong>所以这里总共耗时了 2 秒</strong></p>
+  <p>显然，随着代码越来越复杂、回调策略是不具有扩展性的。“回调地狱”这个称呼可谓实至名归 , (前面有一章写过的) 嵌套回调的代码维护起来就是噩梦</p>
+  <script>
+    function double(value, success, failure) {
+      setTimeout(() => {
+        try {
+          if (typeof value !== 'number') {
+            throw 'Must provide number as first argument'
+          }
+          success(value * 2)
+        } catch (en) {
+          failure(en)
+        }
+      }, 1000)
+    }
+
+    const successCallback = (x) => {
+      double(x, (y) => console.log(`Buccess ${y}`))
+    }
+
+    const failuerCallback = (e) => console.log(`Failure ${e}`)
+
+    double(3, successCallback, failuerCallback)
+  </script>
+</body>
+
+</html>

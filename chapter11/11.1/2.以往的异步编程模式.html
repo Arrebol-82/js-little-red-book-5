@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>以往的异步编程模式</h1>
+  <p>异步行为是javascript的基础 , 但以前的实现不理想 , 早期的javascript只支持回调函数来表明异步操作完成 串联多个异步操作是一个常见的问题 ,
+    通常需要深度嵌套的回调函数(俗称回调地狱)</p>
+  <p class="retract">假设有以下异步函数，使用了setrimeout 在一秒之后执行某些操作:</p>
+  <code>
+    <pre>
+    function double(value) {
+      setTimeout(() => console.asyncLog(value * 2), 1000)
+    }
+
+    double(3) // 6 大约 1000 毫秒后
+    </pre>
+  </code>
+  <p>这里的代码没有什么神秘的 但是关键的是理解为什么说他是一个异步函数 , setTimeout 可以定义一个倒计时器在指定的时间之后被调度执行的回调函数 , 对这个
+    例子而言 , 1000 毫秒之后 javascript 运行会把回调函数 推到自己的消息队列上去等待执行 推到队列之后 , 回调什么时候出队被执行对jacascript代码就完全不可见了 还有一点
+    double() 函数在setTimeout成功调度异步操作之后会立即退出 <strong> 在同步执行 double 的时候 执行到setTIme() 成功调度异步就会 理解退出函数 ,
+      因为函数下面没有同步代码了</strong></p>
+  <script>
+
+    console.asyncLog = (...args) => setTimeout(console.log, 0, ...args);
+
+
+    function double(value) {
+      setTimeout(() => console.asyncLog(value * 2), 1000)
+    }
+
+    double(3) // 6 大约 1000 毫秒后
+  </script>
+</body>
+
+</html>

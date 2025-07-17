@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>失败处理</h1>
+  <p>异步操作的失败处理在回调模型中也要考虑，因此自然就出现了成功回调和失败回调:</p>
+  <code>
+    <pre>
+    function double(value, success, failure) {
+      setTimeout(() => {
+        try {
+          if (typeof value !== 'number') {
+            throw 'Must provide number as first argument'
+          }
+          success(2 * value)
+        } catch (en) {
+          failure(en)
+        }
+      }, 1000)
+    }
+
+    const successCallback = (x) => console.log(`Success ${x}`);
+    const failuerCallback = (e) => console.log(`Failure ${e}`);
+
+    double(6, successCallback, failuerCallback)  // Success 12
+    double('abc', successCallback, failuerCallback) // Failure Must provide number as first argument
+    </pre>
+  </code>
+  <p>这里的double之所以使用函数就是为了 封装 和 复用 , 用在生产环境十分合适</p>
+  <p>这种模式已经不可取了，因为必须在初始化异步操作时定义回调。异步函数的返回值只在短时间内存着 , 只有预备好将这个短时间内存在的值作为参数的回调才能接收到它</p>
+  <p>在初始化的时候就要写一个函数他用来输出结果的 , 而double这个函数就是用来专门处理需要等待处理了的函数 还有就是返回来的值 只会存在一会, 久了就会被回收掉 , 还有就是异步返回的值 不会一直存在 ,
+    只有提前准备好的回调函数，才能在结果出现的短时间内接住它 , 把他当作参数传给回调函数</p>
+  <script>
+    function double(value, success, failure) {
+      setTimeout(() => {
+        try {
+          if (typeof value !== 'number') {
+            throw 'Must provide number as first argument'
+          }
+          success(2 * value)
+        } catch (en) {
+          failure(en)
+        }
+      }, 1000)
+    }
+
+    const successCallback = (x) => console.log(`Success ${x}`);
+    const failuerCallback = (e) => console.log(`Failure ${e}`);
+
+    double(6, successCallback, failuerCallback)  // Success 12
+    double('abc', successCallback, failuerCallback) // Failure Must provide number as first argument
+
+    function arr() {
+      return 5
+    }
+    function obj(arr) {
+      return arr() + 6
+    }
+
+    console.log(obj(arr));
+
+  </script>
+</body>
+
+</html>
