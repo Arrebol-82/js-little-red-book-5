@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用Promise.prototype.finally()</h1>
+  <p>promise.prototype.finally()方法用于给期约添加 onFinally处理程序，这个处理程序在期约转换为兑现或拒绝状态时都会执行 这个方法可以避免 onFulfilled和
+    onRejected 处理程序中出现冗余 但onFinally 处理程序没有办法知道期约状态是兑现还是拒绝 , 所以这个方法主要用于添加清理代码
+  </p>
+  <strong>就跟do ... while 循环一样, 不管你循不循环 ,但是都会执行一次 , 也就是对应上 不管你成功还是失败 , 都会执行</strong>
+  <code>
+    <pre>
+    let p1 = Promise.resolve()
+    let p2 = Promise.reject()
+    let onFinally = function () {
+      console.asyncLog('Finally!')
+    }
+
+    p1.finally(onFinally)
+    p2.finally(onFinally)
+    </pre>
+  </code>
+  <p>Promise.prototype.finally() <strong>方法返回一个新的期约实例</strong></p>
+  <code>
+    <pre>
+    let pr1 = new Promise(() => { })
+    let pr2 = pr1.finally()
+    console.asyncLog(pr1)          // Promise {<pending>}
+    console.asyncLog(pr2)          // Promise {<pending>}
+    console.asyncLog(pr1 === pr2)  // false
+    </pre>
+  </code>
+  <p>这个新期约实例不同于then()或catch()方式返回的实例。因为onFinally 被设计为一个状态无关的方法,所以在大多数情况下它将表现为父期约的传递者。对于已兑现状态和被拒绝状态都是如此。</p>
+  <p><strong>finally 的回调函数（onFinally）里的 return 本质上是 “无效的”</strong> —— 不管你 return 任何值（普通值、Promise
+    等），都不会改变后续链式调用收到的值。甚至哪怕你什么都不写（连 return
+    都没有），它也会自动把父期约的状态和值原封不动地传递下去。</p>
+  <code>
+      <pre>
+    let P1 = Promise.resolve('foo');
+
+    // 这里都会原样后传
+    let P2 = P1.finally()
+    let P3 = P1.finally(() => undefined)
+    let P4 = P1.finally(() => { })
+    let P5 = P1.finally(() => Promise.resolve())
+    let P6 = P1.finally(() => 'bar')
+    let P7 = P1.finally(() => Promise.resolve('bar'))
+    let P8 = P1.finally(() => Error('qux'))
+
+    console.asyncLog(P2) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P3) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P4) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P5) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P6) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P7) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P8) // Promise {<fulfilled>: 'foo'}
+      </pre>
+    </code>
+  <p>如果返回的是一个待定的期约，或者onpina1lly 处理程序抛出了错误(显式抛出或返回了一个拒绝期约) , 则会返回相应的期约 (待定或拒绝) 如下所示:</p>
+  <p>onFinally里面有异步行为 , 会等到里面的异步代码执行完 , 才会去返回父期约的值 , 如果onFinally 自身抛出了错误 , 那么就不会返回父期约的值 , 因为自身出问题还没解决</p>
+  <code>
+      <pre>
+    // Promise.resolve() 保留返回的期约
+    let P9 = P1.finally(() => new Promise(() => { }))
+    let P10 = P1.finally(() => Promise.reject())
+    // Uncaught (in promise) undefined
+
+    console.asyncLog(P9)  // Promise {<pending>}
+    console.asyncLog(P10)  // Promise {<rejected>: undefined}
+
+    let P11 = P1.finally(() => { throw 'baz' })
+    // Uncaught (in promise) baz
+    console.asyncLog(P11) // Promise {<rejected>: 'baz'}     
+      </pre>
+    </code>
+  <p>返回待定期约的情形并不常见, 这是因为只要期约一解决, 新期约仍然会原样后传初始的期约</p>
+  <code>
+    <pre>
+    let per1 = Promise.resolve('foo')
+
+    // 忽略兑现的值
+    let per2 = per1.finally(() => new Promise((resolve, reject) => setTimeout(() => resolve('bar'), 100)))
+
+    console.asyncLog(per2) // Promise {<pending>}
+
+    setTimeout(() => console.asyncLog(per2), 200)
+
+    // 200毫秒
+    // Promise {<fulfilled>: 'foo'}
+    </pre>
+  </code>
+  <p>：finally 里的异步操作返回的 'bar' 完全没用，per2 最终的值只和 per1 有关 ——finally 只是 “耽误了点时间”，但没改变最终要传递的结果。</p>
+  <p>这正是 finally 的设计初衷: <strong>负责执行异步收尾工作，但不干预原结果的传递。</strong></p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = Promise.resolve()
+    let p2 = Promise.reject()
+    let onFinally = function () {
+      console.asyncLog('Finally!')
+    }
+
+    p1.finally(onFinally)
+    p2.finally(onFinally)
+
+    // Promise.prototype.finally() 方法返回一个新的期约实例
+
+    let pr1 = new Promise(() => { })
+    let pr2 = pr1.finally()
+    console.asyncLog(pr1)
+    console.asyncLog(pr2)
+    console.asyncLog(pr1 === pr2)
+
+    console.asyncLog('================================== finally 回调 ==============================');
+    let P1 = Promise.resolve('foo');
+
+    // 这里都会原样后传
+    let P2 = P1.finally()
+    let P3 = P1.finally(() => undefined)
+    let P4 = P1.finally(() => { })
+    let P5 = P1.finally(() => Promise.resolve())
+    let P6 = P1.finally(() => 'bar')
+    let P7 = P1.finally(() => Promise.resolve('bar'))
+    let P8 = P1.finally(() => Error('qux'))
+
+    console.asyncLog(P2) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P3) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P4) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P5) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P6) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P7) // Promise {<fulfilled>: 'foo'}
+    console.asyncLog(P8) // Promise {<fulfilled>: 'foo'}
+
+    console.asyncLog('======================= onpina1lly =========================')
+    // Promise.resolve() 保留返回的期约
+    let P9 = P1.finally(() => new Promise(() => { }))
+    let P10 = P1.finally(() => Promise.reject())
+    // Uncaught (in promise) undefined
+
+    console.asyncLog(P9)  // Promise {<pending>}
+    console.asyncLog(P10)  // Promise {<rejected>: undefined}
+
+    let P11 = P1.finally(() => { throw 'baz' })
+    // Uncaught (in promise) baz
+    console.asyncLog(P11) // Promise {<rejected>: 'baz'}
+
+    // 返回待定期约的情形并不常见, 这是因为只要期约一解决, 新期约仍然会原样后传初始的期约
+
+    let per1 = Promise.resolve('foo')
+
+    // 忽略兑现的值
+    let per2 = per1.finally(() => new Promise((resolve, reject) => setTimeout(() => resolve('bar'), 100)))
+
+    console.asyncLog(per2) // Promise {<pending>}
+
+    setTimeout(() => console.asyncLog(per2), 200)
+
+    // 200毫秒
+    // Promise {<fulfilled>: 'foo'}
+  </script>
+</body>
+
+</html>

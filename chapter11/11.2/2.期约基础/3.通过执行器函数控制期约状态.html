@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>通过执行器函数控制期约状态</h1>
+  <p>
+    由于期约的状态是私有的，因此只能在内部进行操作;内部操作在期约的执行器函数中完成,执行器函数主要有两项职责;初始化期约的异步行为和控制状态的最终转换。控制期约状态的转换是通过调用它的两个函数参数实现的。
+    这两个函数参数通常都命名为res1ve和reject。调用resoive() 会把状态切换为兑换,调用reject() 会把状态切换为拒绝抛出错误 (后面讨论)
+  </p>
+  <code>
+    <pre style="font-size: 20px;">
+      Promise 的执行器函数（就是 new Promise(这里的函数)）会收到两个 “工具函数”（由 JavaScript 自动传入），通常叫 resolve 和 reject：
+
+      · 调用 resolve() → 告诉 Promise “成功了”，状态变成 “兑现”；
+      · 调用 reject() → 告诉 Promise “失败了”，状态变成 “拒绝”。
+    </pre>
+  </code>
+  <code>
+    <pre>
+          console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+          let p1 = new Promise((resolve, reject) => resolve())
+          
+          console.asyncLog(p1) // Promise {<fulfilled>: undefined} 兑现
+    </pre>
+  </code>
+  <p>这里面返回了一个 Promise{<fulfilled>} , 而这里的fulfilled表示满足 , 也就是返回了成功</p>
+  <code>
+      <pre>
+          let p2 = new Promise((resolve, reject) => reject())
+          console.asyncLog(p2) //  Promise {<rejected>: undefined}  拒绝
+          // Uncaught (in promise) undefined     
+      </pre>
+    </code>
+  <p>这里面返回了一个 Promise {<rejected>: undefined} , 而这里的rejected表示失败 , 也就是返回了失败 , 而这里后面还输出了 <strong>Uncaught (in promise)
+        undefined</strong>
+      表示了 , 当前函数体里面并没有捕获到错误信息</p>
+  <p>在前面的例子中 , 并没有什么异步操作 , 因为在初始化期约时 , 执行器函数已经改变了每个期约的状态 , 这里的关键在于 ,
+    执行器函数是同步执行的 , 这是因为执行器函数期约的初始化通过下面的例子可以看出上面代码的执行顺序</p>
+  <code>
+      <pre>
+        new Promise(() => console.asyncLog('executor'))
+        console.asyncLog('promise initialized');
+
+        // 添加setTimeout可以推迟切换状态
+
+        let p = new Promise((resolve, reject) => setTimeout(resolve, 1000))
+
+        console.asyncLog(p) // Promise {<pending>}
+      </pre>
+    </code>
+  <p>可以看到是先执行Promise的代码里面 , 输出 'executor' ,然后再到'promise initialized' <strong>不要忘记asyncLog是异步的喔</strong> , 接下的是
+    Promise {
+    <pending>}, 因为他是异步的所以不会阻碍主线程 , 会执行到asyncLog() 注意asyncLog只延迟0秒 , 所以执行输出代码的时候的上面的异步代码还未执行完 , 自然输出 Promise {<pending>}
+  </p>
+  <p>无论resolve 和 reject 中的哪个被调用 , 状态转换都是不可撤销的 于是继续修改状态会静默失败</p>
+  <code>
+    <pre>
+    let P = new Promise((resolve, reject) => {
+      resolve()
+      reject() //没有效果
+      console.asyncLog(1)
+    })
+
+    console.asyncLog(P) // Promise {<fulfilled>: undefined}
+    </pre>
+  </code>
+  <p>回了状态之后 , 之后是不可以在进行修改的 , 但是不会影响后面代码的执行 , 输出 <strong>1</strong> ,在输出 <strong>Promise {<fulfilled>:
+        undefined}</strong></p>
+  <p>为避免期约卡在待定状态 , 可以添加一个定时退出功能 , 比如 , 可以通过setTimeout 设置一个 10 秒后无论如何都会拒绝期约的回调</p>
+  <code>
+    <pre>
+    const Pro = new Promise((resolve, reject) => {
+      setTimeout(reject, 10000)
+    })
+    console.asyncLog(Pro) // Promise {<pending>}
+
+    setTimeout(console.log, 110000, Pro) //  Uncaught (in promise) undefined
+    </pre>
+  </code>
+  <p>这样访问Promise 会卡在那一直等待 , 等到10后 就会返回失败</p>
+  <p>因为期约的状态只能改变一次，所以这里的超时拒绝逻辑可以放心地设置让期约处于待定状态的最长时间 。 如果执行器中的代码在超时之前已经解决或拒绝 , 那么超时回调再尝试拒绝也会静默失败</p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+    let p1 = new Promise((resolve, reject) => resolve())
+
+    console.asyncLog(p1)  // Promise {<fulfilled>: undefined}  满足
+
+    let p2 = new Promise((resolve, reject) => reject())
+    console.asyncLog(p2) //  Promise {<rejected>: undefined}  拒绝
+    // Uncaught (in promise) undefined
+
+    console.asyncLog('============================== 状态 ===========================');
+    new Promise(() => console.asyncLog('executor'))
+    console.asyncLog('promise initialized');
+
+    // 添加setTimeout可以推迟切换状态
+
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000))
+
+    console.asyncLog(p) // Promise {<pending>}
+
+    let P = new Promise((resolve, reject) => {
+      resolve()
+      reject() //没有效果
+      console.asyncLog(1)
+    })
+
+    console.asyncLog(P) // Promise {<fulfilled>: undefined}
+
+    console.asyncLog('-------------------------- 太久 ------------------------')
+
+    const Pro = new Promise((resolve, reject) => {
+      setTimeout(reject, 10000)
+    })
+    console.asyncLog(Pro) // Promise {<pending>}
+
+    setTimeout(console.log, 110000, Pro) //  Uncaught (in promise) undefined
+  </script>
+</body>
+
+</html>

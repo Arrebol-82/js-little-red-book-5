@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>使用Promise.prototype.then()</h1>
+  <p>Promise.prototype.then()是为期约实例添加处理程序的主要方法。这个then()方法最多接收 , 两个参数:onFu1fi11ed处理程序和onRejected处理程序。这两个参数都是可选的，如果提供的话 ,
+    则会在期约分别进入“兑现”和“拒绝”状态时执行。
+  </p>
+  <code>
+    <pre>
+          function onFulfilled(id) {
+            console.asyncLog(id, 'fulfiled')
+          }
+
+          function onRejected(id) {
+            console.asyncLog(id, 'rejected')
+          }
+
+          let p1 = new Promise((resolve, reject) => setTimeout(resolve, 3000))  <strong>定义为成功</strong>
+          let p2 = new Promise((resolve, reject) => setTimeout(reject, 3000))   <strong>定义为失败</strong>
+
+          p1.then(() => onFulfilled('p1'),
+            () => onRejected('p1'));
+          p2.then(() => onFulfilled('p2'),
+            () => onRejected('p2'))
+
+          // (3 秒后 )
+          // p1 fulfiled
+          // p2 rejected
+    </pre>
+  </code>
+  <p>因为期约只能转换为最终状态一次 , 所以这两个操作一定是互斥的</p>
+  <p>如前所述，两个处理程序参数都是可选的。而且，传给then()的任何非函数类型的参数都会被静默忽略掉 , 如果想只提供 onRejected 参数，
+    那就要在 onFulfilled 参数的位置上传 nu1l 或 undefinet , 这样有助于避免在内存创建多余的对象 , 对期待函数参数的类型系统也是一个交代
+  </p>
+  <code>
+    <pre>
+    // 非函数处理程序会被静默忽略 , 不推荐
+    p1.then('gobbltygook')
+
+    //不传 onFulfilled 处理程序的规范写法
+    p2.then(null, () => onRejected('p2'))
+
+    // p2 rejected (3秒后)
+
+    // Promise.prototype.then() // 方法返回一个新的期约
+
+    let P1 = new Promise(() => { })
+    let P2 = P1.then()
+    console.asyncLog(P1);         // Promise {<pending>}
+    console.asyncLog(P2);         // Promise {<pending>}
+    console.asyncLog(P1 === P2);  // false   
+    </pre>
+  </code>
+  <p>像第一个表达式 , 因为传的不是函数,所以就会被忽略掉 : 当你不想给第一个参数,传参的时候的,就可以使用null 或者是 undefined ; 正常情况下是不能直接调用Promise.prototype.then()
+    P1 是一个空Promise , 将他传给 P2 ,但是 p2 是有自己独立的地址
+  </p>
+  <code>
+      <pre>
+        then() 一定会返回一个新 Promise，这个新 Promise 的结果，由「你写的成功处理函数（onFulfilled）」决定，规则超简单：
+
+
+        如果你写了处理函数， <strong>且有 return 值</strong> → 新 Promise 结果就是这个「值」<strong>(可以对旧期约的进行处理)</strong> ；
+
+        如果你写了处理函数，<strong>但没 return</strong> → 新 Promise 结果就是 undefined（默认返回）；
+
+        如果你没写处理函数 → 新 Promise 结果和上一个 Promise 的结果一样（原封不动传过来）。
+      </pre>
+    </code>
+  <p>这个新期约实例基于onFulfiled 处理程序的返回值构建。换句话说、该处理程序的返回值会通过 Promise.resolve() 包装来生成新期约 如果没有提供这个处理程序 , 则 Promise.resolve()
+    就会包装上一个期约兑现之后的值 , 如果没有显式的返回语句 , 则Proimse.resolve() 会包装默认的返回值 undefined <strong>(Promise.resolve()会创建新的
+      Promise)</strong></p>
+  <code>
+      <pre>
+    let prm1 = Promise.resolve('foo')
+
+     <strong> 若调用then()时不传处理程序，则原样向后传</strong>
+
+    let prm2 = prm1.then()  <strong> 被动的直接接受值</strong>
+    console.asyncLog(prm2)
+
+     <strong> 这些都是一样的</strong>
+    let p3 = prm1.then(() => { })  <strong> 没return </strong>
+    let p4 = prm1.then(() => undefined)  <strong> 手动返回undefined </strong>
+    let p5 = prm1.then(() => Promise.resolve())  <strong> 返回一个值为undefined 的 Promise</strong>
+
+    console.asyncLog(p3)    <strong> Promise {<fulfilled>: undefined}</strong>
+    console.asyncLog(p4)    <strong> Promise {<fulfilled>: undefined}</strong>
+    console.asyncLog(p5)    <strong> Promise {<fulfilled>: undefined}</strong>
+      </pre>
+    </code>
+  <p>如果有显示的返回 , 则Promise.resolve() 会包装这个值</p>
+  <code>
+    <pre>
+    // 这些都一样  
+    let p6 = prm1.then(() => 'baz')
+    let P7 = prm1.then(() => Promise.resolve('qux'))
+
+    console.asyncLog(p6) // Promise {<fulfilled>: 'baz'}
+    console.asyncLog(P7) // Promise {<fulfilled>: 'qux'}
+
+    //  Promise.resolve() 保留返回的期约
+    let P8 = prm1.then(() => new Promise(() => { }))
+    let P9 = prm1.then(() => Promise.reject()) //  Uncaught (in promise) undefined
+
+    console.asyncLog(P8) // Promise {<pending>}
+    console.asyncLog(P9) // Promise {<rejected>: undefined}
+    </pre>
+  </code>
+  <p>抛出异常会返回拒绝的期约:</p>
+  <code>
+    <pre>
+    let p10 = prm1.then(() => { throw 'baz' })
+    // Uncaugth
+
+    console.asyncLog(p10) // Promise {<rejected>: 'baz'}
+    
+    <strong>这里是想要直接进去里面进行报错 , 而throw他是一个语句 , 所以要加 {} 而Proimse 会把报错信息捕获 , 并且返回 , 也就会把 bar 返回出去当成错误信息</strong>
+    </pre>
+  </code>
+  <p>注意: 返回错误值不会触发上面的拒绝行为 , 而会把错误对象包装再一个兑现的期约中</p>
+  <code>
+    <pre>
+    let p11 = prm1.then(() => Error('zjs'))
+
+    console.asyncLog(p11) // Promise {<fulfilled>: Error: zjs at http://127.0.0.1:5501/chapter11/11.2/3.%E6%9C%9F%E7%BA%A6%E7%9A%84%E5%AE%9E%E4%BE…}
+    </pre>
+  </code>
+  <p>onRejected 处理程序也与之类似: onRejected处理程序返回的值也会被Promise.resolve()包装 , 乍一看这可能有点儿违反直觉，但是想一想,
+    onRejected 处理程序的任务不就是捕获异步错误吗? 因此 , 拒绝处理程序在捕获错误不抛出异常是符合预期的行为 , 应该返回一个兑现期约
+  </p>
+  <code>
+    <pre>
+    let re1 = Promise.reject('foo')
+
+    // 若调用 then() 时不传处理程序 , 则原样向后传
+    let re2 = re1.then() // Uncaught (in promise) foo
+
+    console.asyncLog(re2) // Promise {<rejected>: 'foo'}
+
+    // 这些都一样 
+    let re3 = re1.then(null, () => undefined)
+    let re4 = re1.then(null, () => { })
+    let re5 = re1.then(null, () => Promise.resolve())
+
+    console.asyncLog(re3)  // Promise {<fulfilled>: undefined}
+    console.asyncLog(re4)  // Promise {<fulfilled>: undefined}
+    console.asyncLog(re5)  // Promise {<fulfilled>: undefined}
+
+    // 这些都一样 
+    let re6 = re1.then(null, () => 'bar')
+    let re7 = re1.then(null, () => Promise.resolve('bar'))
+
+    console.asyncLog(re6)  // Promise {<fulfilled>: 'bar'}
+    console.asyncLog(re7)  // Promise {<fulfilled>: 'bar'}
+
+    console.asyncLog('========== 保留返回的期约 =======');
+
+    // Promise.resolve 保留返回的期约
+    let re8 = re1.then(null, () => new Proimse(() => { }))
+    let re9 = re1.then(null, () => Promise.reject())
+    // Uncaught(in promise):undefined
+
+    console.asyncLog(re8) // Promise {<rejected>: ReferenceError: Proimse is not defined at http://127.0.0.1:5501/chapter11/11.2/3.%E6%9C%9F%E7%B…}
+    console.asyncLog(re9) // Promise {<rejected>: undefined}
+
+    let re10 = re1.then(null, () => { throw 'baz' })
+    // Uncaught(in promise)baz
+    console.asyncLog(re10) // Promise {<rejected>: 'baz'}
+
+    let ret11 = re1.then(null, () => Error('qux'))
+
+    console.asyncLog(ret11) // Promise {<fulfilled>: Error: qux
+    </pre>
+  </code>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    function onFulfilled(id) {
+      console.asyncLog(id, 'fulfiled')
+    }
+
+    function onRejected(id) {
+      console.asyncLog(id, 'rejected')
+    }
+
+    let p1 = new Promise((resolve, reject) => setTimeout(resolve, 3000))
+    let p2 = new Promise((resolve, reject) => setTimeout(reject, 3000))
+
+    p1.then(() => onFulfilled('p1'),
+      () => onRejected('p1'));
+    p2.then(() => onFulfilled('p2'),
+      () => onRejected('p2'))
+
+    // (3 秒后 )
+    // p1 fulfiled
+    // p2 rejected
+
+    // 非函数处理程序会被静默忽略 , 不推荐
+    p1.then('gobbltygook')
+
+    //不传 onFulfilled 处理程序的规范写法
+    p2.then(null, () => onRejected('p2'))
+
+    // p2 rejected (3秒后)
+
+    // Promise.prototype.then() // 方法返回一个新的期约
+
+    let P1 = new Promise(() => { })
+    let P2 = P1.then()
+    console.asyncLog(P1);
+    console.asyncLog(P2);
+    console.asyncLog(P1 === P2);
+
+    console.asyncLog('=========================== 新期约 ==========================')
+
+    let prm1 = Promise.resolve('foo')
+
+    // 若调用then()时不传处理程序，则原样向后传
+
+    let prm2 = prm1.then() // 被动的直接接受值
+    console.asyncLog(prm2)
+
+    // 这些都是一样的
+    let p3 = prm1.then(() => { }) // 没return 
+    let p4 = prm1.then(() => undefined) // 手动返回undefined
+    let p5 = prm1.then(() => Promise.resolve()) // 返回一个值为undefined 的 Promise
+
+    console.asyncLog(p3)   // Promise {<fulfilled>: undefined}
+    console.asyncLog(p4)   // Promise {<fulfilled>: undefined}
+    console.asyncLog(p5)   // Promise {<fulfilled>: undefined}
+
+    // 如果有显示的返回, 则Promise.resolve() 会包装这个值
+
+    // 这些都一样  
+    let p6 = prm1.then(() => 'baz')
+    let P7 = prm1.then(() => Promise.resolve('qux'))
+
+    console.asyncLog(p6) // Promise {<fulfilled>: 'baz'}
+    console.asyncLog(P7) // Promise {<fulfilled>: 'qux'}
+
+    //  Promise.resolve() 保留返回的期约
+    let P8 = prm1.then(() => new Promise(() => { }))
+    let P9 = prm1.then(() => Promise.reject()) //  Uncaught (in promise) undefined
+
+    console.asyncLog(P8) // Promise {<pending>}
+    console.asyncLog(P9) // Promise {<rejected>: undefined}
+
+    console.asyncLog('========================= **** ========================')
+    let p10 = prm1.then(() => { throw 'baz' })
+    // Uncaugth
+
+    console.asyncLog(p10) // Promise {<rejected>: 'baz'}
+
+    console.asyncLog('======================== 返回错误值不会触发上面的拒绝行为 , 而会把错误对象包装再一个兑现的期约中 =============================');
+    let p11 = prm1.then(() => Error('zjs'))
+
+    console.asyncLog(p11) // Promise {<fulfilled>: Error: zjs at http://127.0.0.1:5501/chapter11/11.2/3.%E6%9C%9F%E7%BA%A6%E7%9A%84%E5%AE%9E%E4%BE…}
+
+    console.asyncLog('=================================== rejected ===================================');
+    let re1 = Promise.reject('foo')
+
+    // 若调用 then() 时不传吃力程序 , 则原样向后传
+    let re2 = re1.then() // Uncaught (in promise) foo
+
+    console.asyncLog(re2) // Promise {<rejected>: 'foo'}
+
+    // 这些都一样 
+    let re3 = re1.then(null, () => undefined)
+    let re4 = re1.then(null, () => { })
+    let re5 = re1.then(null, () => Promise.resolve())
+
+    console.asyncLog(re3)  // Promise {<fulfilled>: undefined}
+    console.asyncLog(re4)  // Promise {<fulfilled>: undefined}
+    console.asyncLog(re5)  // Promise {<fulfilled>: undefined}
+
+    // 这些都一样 
+    let re6 = re1.then(null, () => 'bar')
+    let re7 = re1.then(null, () => Promise.resolve('bar'))
+
+    console.asyncLog(re6)  // Promise {<fulfilled>: 'bar'}
+    console.asyncLog(re7)  // Promise {<fulfilled>: 'bar'}
+
+    console.asyncLog('========== 保留返回的期约 =======');
+
+    // Promise.resolve 保留返回的期约
+    let re8 = re1.then(null, () => new Proimse(() => { }))
+    let re9 = re1.then(null, () => Promise.reject())
+    // Uncaught(in promise):undefined
+
+    console.asyncLog(re8) // Promise {<rejected>: ReferenceError: Proimse is not defined at http://127.0.0.1:5501/chapter11/11.2/3.%E6%9C%9F%E7%B…}
+    console.asyncLog(re9) // Promise {<rejected>: undefined}
+
+    let re10 = re1.then(null, () => { throw 'baz' })
+    // Uncaught(in promise)baz
+    console.asyncLog(re10) // Promise {<rejected>: 'baz'}
+
+    let ret11 = re1.then(null, () => Error('qux'))
+
+    console.asyncLog(ret11) // Promise {<fulfilled>: Error: qux
+  </script>
+</body>
+
+</html>

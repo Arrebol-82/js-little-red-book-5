@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Promise.resolve()</h1>
+  <p>期约并非一开始必须处于待定状态 , 然后通过执行器函数才能装换为落定状态。通过调用Promise.resolve() 静态方法 , 可以实例化一个兑现的期约。可以实例化一个兑现的期约 , 下面两个期约实例实际上是一样的</p>
+  <code>
+    <pre>
+          let p1 = new Promise((resolve, reject) => resolve())
+          let p2 = Promise.resolve()
+    </pre>
+  </code>
+  <p>这个兑现的期约的值对应着传给Promise.resolve()的第一个参数 (只接受一个参数 , 所以多余的参数会进行忽略) 。使用这个静态方法 , 实际上可以把任何值都转换为一个期约</p>
+  <code>
+    <pre>
+    console.asyncLog(Promise.resolve()) // Promise {<fulfilled>: undefined}
+    console.asyncLog(Promise.resolve(3)) // Promise {<fulfilled>: 3}
+
+    // 多余的参数会忽略
+    console.asyncLog(Promise.resolve(4, 5, 6)) // Promise {<fulfilled>: 4}
+    </pre>
+  </code>
+  <p>对这个静态方法面言，如果传入的参数本身是一个期约，那它的行为就类似于一个空包装。因此Promise.resolve()可以说是一个幂等方法</p>
+  <p>幂等方法就是 : <strong>调用1次 和 调用无数次 输出的结果是完全一样的</strong></p>
+  <p>空包装: <strong>如果传入的是原始值等的 , 那么 Promise 就会帮你包装成promise , 而如果是传入Promise的值 , 那么就会在进行包装 ,而是直接返回出来</strong></p>
+  <code>
+    <pre>
+    // 传入期约对象 
+    let P = Promise.resolve(7)
+
+    console.log(P === Promise.resolve(P)); // true 
+
+    console.log(P === Promise.resolve(Promise.resolve(P))); // true
+
+    // 这个幂等性会保留传入期约的状态
+
+    let retain = new Promise(() => { })
+    console.asyncLog(retain)                  // Promise {<pending>}
+    console.asyncLog(Promise.resolve(retain)) // Promise {<pending>}
+    console.asyncLog(retain === Promise.resolve(retain)) // true
+    </pre>
+  </code>
+  <p>前面说了 , 如果传入的是一个promise 就会直接返回 , 那自然和 P 是相等的 , 后面就会显示了会保留当前的状态</p>
+  <p>注意 , 这个方法能够包装任何非期约值 , 包括错误对象，并将其转换为兑现的期约。因此, 也可能导致不符合预期的行为</p>
+  <code>
+    <pre>
+  let add = Promise.resolve(new Error('foo'))
+  
+  console.asyncLog(add) // Promise {<fulfilled>: Error: foo at
+    http://127.0.0.1:5501/chapter11/11.2/2.%E6%9C%9F%E7%BA%A6%E5%9F%BA%E7%A1%80/4.Pro…}
+    </pre>
+  </code>
+  <p>可返回任何值 , 都会被包装成 Promise 对象</p>
+  <script>
+
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+    let p1 = new Promise((resolve, reject) => resolve())
+    let p2 = Promise.resolve()
+
+    console.asyncLog(Promise.resolve()) // Promise {<fulfilled>: undefined}
+    console.asyncLog(Promise.resolve(3)) // Promise {<fulfilled>: 3}
+
+    // 多余的参数会忽略
+    console.asyncLog(Promise.resolve(4, 5, 6)) // Promise {<fulfilled>: 4}
+
+    // 传入期约对象 
+    let P = Promise.resolve(7)
+
+    console.log(P === Promise.resolve(P));
+
+    console.log(P === Promise.resolve(Promise.resolve(P)));
+
+    // 这个幂等性会保留传入期约的状态
+
+    let retain = new Promise(() => { })
+    console.asyncLog(retain)                  // Promise {<pending>}
+    console.asyncLog(Promise.resolve(retain)) // Promise {<pending>}
+    console.asyncLog(retain === Promise.resolve(retain)) // true
+
+    let add = Promise.resolve(new Error('foo'))
+
+    console.asyncLog(add) // Promise {<fulfilled>: Error: foo at http://127.0.0.1:5501/chapter11/11.2/2.%E6%9C%9F%E7%BA%A6%E5%9F%BA%E7%A1%80/4.Pro…}
+
+  </script>
+</body>
+
+</html>

@@ -29,6 +29,7 @@
   <script>
 
     console.asyncLog = (...args) => setTimeout(console.log, 0, ...args);
+    // console.asyncLog = (...args) => setTimeout(() => { console.log(...args) }, 0);
 
 
     function double(value) {

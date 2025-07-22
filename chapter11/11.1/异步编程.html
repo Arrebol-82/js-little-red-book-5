@@ -18,6 +18,7 @@
         console.asyncLog = (...age) => setTimeout(console.log, 0, ...age)
     </pre>
   </code>
+  <strong>setTimeout(回调函数, 延迟时间, 参数1, 参数2, ...);</strong>
   <p>
     <strong>console.asyncLog = (...args) => setTimeout(console.log, 0, ...args);</strong> 这段代码就是 定义了一个箭头函数( 因为方便 )
     用剩余操作符收集参数 ,

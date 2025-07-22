@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>非重入期约的方法</h1>
+  <p>当期约进人落定状态时，与该状态相关的处理程序仅仅会被排期，不会立即执行 跟在添加这个处理程序的代码之后的同步代码一定会在处理程序之前先执行 , 即使期约一开始就是与附加处理程序关联的状态 , 执行顺序也是这样
+    这个特性由javascript运行时保证 , 被称为 '非重入' 特性
+  </p>
+  <strong>用大白话讲的话 , 就是 '先执行完同步代码 , 然后才会去执行异步代码' 专业点就是 : "同步代码优先执行，异步代码处理程序排队等待"</strong>
+  <code>
+    <pre>
+      // 创建兑现的期约
+      let p = Promise.resolve()
+      
+      // 为已兑现的期约添加兑现处理程序
+      // 直觉上 , 这个处理程序会立即执行 , 因为 p 已经兑现了
+      
+      p.then(() => console.asyncLog('onFulfilled handler'))
+      
+      // 同步输出 , 证明 then() 已经返回
+      console.log('then() returns');
+      
+      // then() returns
+      // onFulfilled handler
+    </pre>
+  </code>
+  <p>在这个例子中 , 在一兑现期约上调用then()会把onFulfilled处理程序推进消息队列 但这个处理程序在当前线程上的同步代码执行完成前不会执行 因此 , 跟在 then() 后面的同步代码一定先于
+    处理程序执行</p>
+  <p>先添加处理程序后解决期约也是一样的。如果添加处理程序后 , 同步代码才改变期约状态 , 那么处理程序仍然会基于该状态变化表现出非重入特性 , 下面的例子展示了即使先添加 onFulfilled处理程序 ,
+    再同步调用resolve() , 处理程序也不会进入同步线程执行
+  </p>
+  <strong>核心规则始终不变：无论处理程序是在期约 “解决” 之前还是之后添加，无论resolve是同步调用还是异步触发，处理程序（then/catch的回调）都属于
+    “异步任务”（微任务），必须等当前同步代码执行完毕后才会执行。</strong>
+  <code>
+      <pre>
+        let synchronousResolve
+
+        // 创建一个期约并将解决函数保存在一个局部变量中
+        let P = new Promise((resolve) => {
+          synchronousResolve = function () {
+            console.log('1: invoking resolve()');
+            resolve()
+            console.log('2: resolve() returns');
+          }
+        })
+
+        P.then(() => console.log('4: then() handler executes'))
+
+        synchronousResolve()
+        console.log('3: synchronousResolve()returns '); 
+
+        1: invoking resolve()
+        2: resolve() returns
+        3: synchronousResolve()returns
+        4: then() handler executes
+      </pre>
+    </code>
+  <p>这个then 是成功后调用, 而在promise 里面的第一个参数 就是成功 所以才会调用resolve 就会为了 调用 then
+    <strong>new Promise 是同步代码 而 then catch finally 这三就是异步代码</strong>
+  </p>
+  <p>在这个例子中，即使期约状态变化发生在添加处理程序之后，处理程序仍然会异步执行。</p>
+  <h2>注意: 非重入适用于onrulfilled 和onRejected 处理程序、catch()处理程序和finally()处理程序。</h2>
+  <script>
+
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    // 创建兑现的期约
+    let p = Promise.resolve()
+
+    // 为已兑现的期约添加兑现处理程序
+    // 直觉上 , 这个处理程序会立即执行 , 因为 p 已经兑现了
+
+    p.then(() => console.asyncLog('onFulfilled handler'))
+
+    // 同步输出 , 证明 then() 已经返回
+    console.log('then() returns');
+
+    // then() returns
+    // onFulfilled handler
+
+    let synchronousResolve
+
+    // 创建一个期约并将解决函数保存在一个局部变量中
+    let P = new Promise((resolve) => {
+      synchronousResolve = function () {
+        console.log('1: invoking resolve()');
+        resolve()
+        console.log('2: resolve() returns');
+      }
+    })
+
+    P.then(() => console.log('4: then() handler executes'))
+
+    synchronousResolve()
+    console.log('3: synchronousResolve()returns ');
+
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>同步/异步执行的二元性</h1>
+  <p>promise 的设计很大程度上会导致一种完全不同于JavaScript的计算模式 。下面的例子完美展示了这一点 , 其中包含了两种模式抛出错误的情形</p>
+  <code>
+    <pre>
+    try {
+      throw new Error('foo')
+    } catch (e) {
+      console.log(e);  // Error: foo at 6.同步 & 异步 执行的二元性.html: 15: 13
+    }
+
+    try {
+      Promise.reject(new Error('bar'))
+    } catch (e) {
+      console.log(e); // Uncaught (in promise) Error: bar at 6.同步 & 异步 执行的二元性.html: 21: 22
+    }
+    </pre>
+  </code>
+  <p>因为后面的 Promise.reject 他是异步行为 , 而异步行为他是在浏览器的线程执行的 , 所以也就捕获不到 , 想要捕获的话 , 就得在异步代码里面进行捕获</p>
+  <h3>在看看官方解释吧</h3>
+  <p>第一个 try/catch 抛出并捕获了错误，第二个try/catch
+    抛出错误却 <strong>没有</strong>
+    捕获到。乍一看这可能有点违反直觉，因为代码中确实是同步创建了一个拒绝的期约实例,而这个实例也抛出了包含拒绝理由的错误。这里的同步代码之所以没有捕获期约抛出的错误,是因为它没有通过 <strong>异步模式</strong>
+    捕获错误。从这里就可以看出期约真正的异步特性:它们是同步对象(在同步执行模式中使用)，但也是 <strong>异步</strong> 执行模式的媒介。
+  </p>
+  <p>
+    在前面的例子中，拒绝期约的错误并没有抛到执行同步代码的线程里，而是通过浏览器异步消息队列来处理的。
+    因此，try/catch块并不能捕获该错误。代码一旦开始以异步模式执行，则唯一与之交互的方式就是使用异步结构--更具体地说，就是期约的方法。
+  </p>
+  <script>
+    try {
+      throw new Error('foo')
+    } catch (e) {
+      console.log(e);  // Error: foo at 6.同步 & 异步 执行的二元性.html: 15: 13
+    }
+
+    try {
+      Promise.reject(new Error('bar'))
+    } catch (e) {
+      console.log(e); // Uncaught (in promise) Error: bar at 6.同步 & 异步 执行的二元性.html: 21: 22
+    }
+  </script>
+</body>
+
+</html>

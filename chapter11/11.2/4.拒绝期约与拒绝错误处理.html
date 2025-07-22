@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>拒绝期约与拒绝错误处理</h1>
+  <p>拒绝期约类似于throw()表达式，因为它们都代表一种程序状态，即需要中断或者特殊处理。在期约的执行器函数或处理程序中抛出错误会导致拒绝，对应的错误对象会成为拒绝的理由 ,
+    因此下面的期约都会以一个错误对象为由被拒绝 :
+  </p>
+  <code>
+    <pre>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = new Promise((resolve, reject) => reject(Error('foo')))
+    let p2 = new Promise((resolve, reject) => { throw Error('foo'); })
+    let p3 = Promise.resolve().then(() => { throw Error('foo'); })
+    let p4 = Promise.reject(Error('foo'))
+
+    console.asyncLog(p1) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p2) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p3) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p4) // Promise {<rejected>: Error: foo}
+
+    // 同时也会抛出4个未捕获的错误  
+    </pre>
+  </code>
+  <p>可以以任何理由拒绝期约，包括undetinea，但最好统一使用错误对象、这样做主要是因为创建错误对象可以让浏览器捕获对象的栈跟踪信息 , 而这些对调式是非常有用的 ,
+    例如 , 前面例子中抛出的4个错误的栈跟踪信息如下:
+  </p>
+  <code>
+    <pre>
+    /*  Uncaught(in promise) Error: foo
+        at 4.拒绝期约与拒绝错误处理.html: 43: 54
+        at new Promise(<anonymous>)
+        at 4.拒绝期约与拒绝错误处理.html:43:14 */
+
+
+    /*  Uncaught(in promise) Error: foo
+        at 4.拒绝期约与拒绝错误处理.html: 44: 55
+        at new Promise(<anonymous>)
+        at 4.拒绝期约与拒绝错误处理.html:44:15 */
+
+    /* Uncaught(in promise) Error: foo
+       at 4.拒绝期约与拒绝错误处理.html: 46: 29   */
+
+    /* Uncaught(in promise) Error: foo
+       at 4.拒绝期约与拒绝错误处理.html: 45: 51   */
+    </pre>
+  </code>
+  <p>所有错误都是异步抛出且未处理的、通过错误对象捕获的跟踪信息展示了错误发生的路径。注意错误的顺序: Promise.resolve().then()的错误左后才出现 ,
+    这是因为它需要再运行时消息队列中添加处理程序: 也就是说 , 在最终抛出未捕获错误之前他还会创建另一个期约</p>
+  <p class="retract">
+    这个例子同样揭示了异步错误有意思的副作用。正常情况下，在通过throw()关键字抛出错误时, javascript运行时的错误处理机制会停止执行抛出错误之后的任何指。
+  </p>
+  <code>
+    <pre>
+    throw Error('foo')
+    console.log('bar'); // 这一行不会执行
+
+    // Uncaught Error : foo
+    </pre>
+  </code>
+  <p>但是、在期约中抛出错误时，因为错误实际上是从消息队列中异步抛出的，所以并不会阻止运行时继续执行同步指令</p>
+  <code>
+    <pre>
+    throw Error('foo')
+    console.log('bar'); // 这一行不会执行 终止啦! 
+
+    // Uncaught Error : foo
+    </pre>
+  </code>
+  <p>但是、在期约中抛出错误时，因为错误实际上是从消息队列中异步抛出的，所以并不会阻止运行时继续执行同步指令</p>
+  <code>
+    <pre>
+    Promise.reject(Error('foo')) // Uncaught (in promise) Error: foo
+    console.log('bar');
+    </pre>
+  </code>
+  <p>如本章前面的 Promise.reject()示例所示，异步错误只能通过异步的onRejected 处理程序</p>
+  <code>
+    <pre>
+    // 正确
+    Promise.reject(Error('foo')).catch((e) => { })
+
+    // 不正确
+    try {
+      Promise.reject.Error('bar')
+    } catch (e) { }
+    <strong>异步代码的错误是不能用传统的 try / catch</strong>
+    </pre>
+  </code>
+  <p>这不包括捕获执行器函数中的错误，在解决或拒绝期约之前，仍然可以使用try/catch 在执行器函数中捕获错误:</p>
+  <code>
+    <pre>
+    let p = new Promise((resolve, reject) => {
+      try {
+        throw Error('foo');
+      } catch (e) { }
+      resolve('bar');
+    })
+    console.asyncLog(p); //Promise <fulfilled>: bar
+
+      <strong>这里是因为里面try / catch 里面并没有要抛出错误的Promise</strong>
+    </pre>
+  </code>
+  <p>then()和 catch()的onRejected 处理程序在语义上相当于 try/catch。出发点都是捕获错误之后将其隔离 , 同时不影响正常逻辑执行 , 为此, onRejected 处理程序
+    的任务应该是捕获异步错位之后返回一个兑现的期约 下面列子中对比同步错误处理与异步错误处理
+  </p>
+  <p><strong>大白话:</strong>这里不是单单的捕获错误 , 是捕获到了错误之后要给后面的代码返回一个值 , 这样就不会卡住整个程序了 , 这也就是为什么说捕获异步错位之后返回一个兑现的期约 ,
+    就是因为捕获到错误返回了一个正常值 ,提供给下面代码使用</p>
+  <code>
+      <pre>
+    console.asyncLog('========================== 捕获错误 ============================');
+    console.asyncLog('begin synchronous execution')
+    try {
+      throw Error('foo')
+    } catch (e) {
+      console.asyncLog('caught error', e);
+    }
+    console.asyncLog('continue synchronous execution')
+
+    // begin synchronous execution
+    // caught error Error: foo
+    // continue synchronous execution
+    console.asyncLog('=========================== 用Promise捕获 ===========================');
+
+
+    new Promise((resolve, reject) => {
+      console.asyncLog('begin synchronous execution')
+      reject(Error('bar'))
+    }).catch((e) => {
+      console.asyncLog('caught error', e);
+    }).then(() => {
+      console.asyncLog('continue synchronous execution')
+    })
+    // begin synchronous execution
+    // caught error Error: bar
+    // continue synchronous execution
+      </pre>
+    </code>
+  <p>这两段代码分别是同步的try 和 异步的Promise 都是捕获了错误之后再继续执行下面的代码</p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = new Promise((resolve, reject) => reject(Error('foo')))
+    let p2 = new Promise((resolve, reject) => { throw Error('foo'); })
+    let p3 = Promise.resolve().then(() => { throw Error('foo'); })
+    let p4 = Promise.reject(Error('foo'))
+
+    console.asyncLog(p1) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p2) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p3) // Promise {<rejected>: Error: foo}
+    console.asyncLog(p4) // Promise {<rejected>: Error: foo}
+
+    // 同时也会抛出4个未捕获的错误
+
+    /*  Uncaught(in promise) Error: foo
+        at 4.拒绝期约与拒绝错误处理.html:  63: 54
+        at new Promise(<anonymous>)
+        at 4.拒绝期约与拒绝错误处理.html: 63:14 */
+
+
+    /*  Uncaught(in promise) Error: foo
+        at 4.拒绝期约与拒绝错误处理.html: 64: 55
+        at new Promise(<anonymous>)
+        at 4.拒绝期约与拒绝错误处理.html:64:15 */
+
+    /* Uncaught(in promise) Error: foo
+       at 4.拒绝期约与拒绝错误处理.html: 66: 29   */
+
+    /* Uncaught(in promise) Error: foo
+       at 4.拒绝期约与拒绝错误处理.html: 65: 51   */
+
+
+    // throw Error('foo')
+    // console.log('bar'); // 这一行不会执行
+
+    // Uncaught Error : foo
+
+    console.asyncLog('==================****===============');
+    Promise.reject(Error('foo'))  // Uncaught (in promise) Error: foo
+    console.log('bar');
+
+    console.asyncLog('===================== reject ================');
+    // 正确
+    Promise.reject(Error('foo')).catch((e) => { })
+
+    // 不正确
+    try {
+      Promise.reject.Error('bar')
+    } catch (e) { }
+
+
+
+    let p = new Promise((resolve, reject) => {
+      try {
+        throw Error('foo');
+      } catch (e) { }
+      resolve('bar');
+    })
+    console.asyncLog(p); //Promise <fulfilled>: bar
+
+    console.asyncLog('========================== 捕获错误 ============================');
+    console.asyncLog('begin synchronous execution')
+    try {
+      throw Error('foo')
+    } catch (e) {
+      console.asyncLog('caught error', e);
+    }
+    console.asyncLog('continue synchronous execution')
+
+    // begin synchronous execution
+    // caught error Error: foo
+    // continue synchronous execution
+    console.asyncLog('=========================== 用Promise捕获 ===========================');
+
+
+    new Promise((resolve, reject) => {
+      console.asyncLog('begin synchronous execution')
+      reject(Error('bar'))
+    }).catch((e) => {
+      console.asyncLog('caught error', e);
+    }).then(() => {
+      console.asyncLog('continue synchronous execution')
+    })
+    // begin synchronous execution
+    // caught error Error: bar
+    // continue synchronous execution
+  </script>
+</body>
+
+</html>

@@ -51,7 +51,7 @@
     }
 
     const successCallback = (x) => console.log(`Success ${x}`);
-    const failuerCallback = (e) => console.log(`Failure ${e}`);
+    const failuerCallback = (e) => console.log(`  ${e}`);
 
     double(6, successCallback, failuerCallback)  // Success 12
     double('abc', successCallback, failuerCallback) // Failure Must provide number as first argument

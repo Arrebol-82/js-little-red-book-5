@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Promise/A+规范</h1>
+  <p>早期的期约机制在jQuery和 Dojo中是以 Deferred API的形式出现的。到了2010年，CommonJS项目实现的
+    Promises/A规范日益流行起来。Q和Bluebird等第三方JavaScript期约库也越来越得到社区认可，虽然这些库的实现多少都有些不同。为弥合既有实现之间的差异，2012年Promises/A+组织分叉(ok)了CommonJS的Promises/A建议，并以相同的名称制定了Promises/A+规范。这个规范最终成为了ECMAScript6规范实现的范本。
+    ECMAScript6增加了对Promises/A+规范的完善支持，即Promise类型。一经推出，Promise 就大受欢迎，成为了主导性的异步编程机制。所有现代浏览器都支持ES6期约，很多其他浏览器API(如Eetch()和
+    Battery Status API)也以期约为基础。</p>
+  <h2>Promise/A+规范 (民间规范)</h2>
+  <p>只要是一个对像加上一个then方法 , 那么他就符合规范</p>
+  <code>
+    <pre>
+    const arr = {}
+    arr.then = function () { }
+    </pre>
+  </code>
+  <h2>ES Promise (官方规范) </h2>
+  <p>通过构造函数创建promise , 这个promise 就是满足 promiseA+规范的 , 但是官方给我们添加了 , 很多方法 </p>
+  <code>
+    <pre>
+      const pro = new Promise()
+    </pre>
+  </code>
+  <script>
+    const arr = {}
+    arr.then = function () { }
+  </script>
+</body>
+
+</html>

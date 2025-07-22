@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>期约基础</h1>
+  <p>Promise 可以通过new操作符来实例化。创建新期约时需要传入执行器 (executor) 函数作为参数 下面的例子使用了一个空函数对象来对应付一下解释器</p>
+  <code>
+    <pre>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+    
+    let p = new Promise(() => { })
+    console.asyncLog(p) // Promise {<pending>}
+    </pre>
+  </code>
+  <h3>语法</h3>
+  <ul>
+    <li>在Promise中只接受一个参数 , 而这个参数里面还要是函数</li>
+    <li>执行器函数自己的参数：最多 2 个（resolve, reject）</li>
+  </ul>
+  <p>返回了一个Promise {<pending>} , Promise 实例是 Object 的实例，属于 Object 类型的一种特殊对象。</p>
+  <p>之前所以说应付解释器, 是因为如果不提供执行器函数 , 就会抛出SyntaxError</p>
+  <code>
+    <pre>
+      let a = new Promise() // TypeError: Promise resolver undefined is not a function at new Promise(<anonymous>)
+    </pre>
+  </code>
+  <p>如果Promise构造函数里面没有传参的话 , 就会抛出SyntaxError</p>
+  <script>
+
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p = new Promise(() => { })
+    console.asyncLog(p)  // Promise {<pending>}
+    // let a = new Promise() // TypeError: Promise resolver undefined is not a function at new Promise(<anonymous>)
+
+  </script>
+</body>
+
+</html>

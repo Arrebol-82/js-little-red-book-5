@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>Promise.reject()</h1>
+  <p>与Promise.resolve()类似，Promise.reject()会实例化一个拒绝的期约并抛出一个异步错误 (这个错误不能通过 try/catch 捕获，只能通过拒绝处理程序捕获)。
+    下面两个期约实例实际上是一样的
+  </p>
+  <code>
+    <pre>
+          let p1 = new Promise((resolve, reject) => reject())
+          let p2 = Promise.reject()
+    </pre>
+  </code>
+  <p>这个拒绝的期约的理由就是传给Promise.reject()的第一个参数。这个参数也会传给后续的拒绝处理程序:</p>
+  <code>
+    <pre>
+    let p = Promise.reject(3) // Promise {<rejected>: 3}
+    console.asyncLog(p)
+
+    p.then(undefined, (e) => console.asyncLog(e)) // 3
+    </pre>
+  </code>
+  <p>因为返回了失败 , 所以会执行then 第二个参数里面的代码</p>
+  <p>关键在于，Promise.reject()并没有照搬 promise.resolve()的幂等逻辑。如果给它传一个期约对象 , 则这个期约会成为它返回的拒绝期约的理由:</p>
+  <code>
+    <pre>
+    console.asyncLog(Promise.reject(Promise.resolve())) // Promise {<fulfilled>: undefined}
+    </pre>
+  </code>
+  <p>Promise.reject(参数) 做了两件事：</p>
+  <ul>
+    <li>把你传入的 “参数”（不管这个参数是普通值、错误对象，还是一个 Promise 对象）直接当成 “拒绝理由”（可以理解为 “错误信息”）；</li>
+    <li>新建一个 “拒绝状态的 Promise”，然后把这个 Promise 返回出去。</li>
+  </ul>
+  <p>它不会像 Promise.resolve 那样 “偷懒”—— 哪怕你传的参数本身就是个 Promise，Promise.reject 也不会复用那个 Promise，<strong>而是一定会新建一个新的、拒绝状态的
+      Promise，只是把你传的那个
+      Promise 当成了 “拒绝理由”。</strong></p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = new Promise((resolve, reject) => reject())
+    let p2 = Promise.reject()
+
+    let p = Promise.reject(3) // Promise {<rejected>: 3}
+    console.asyncLog(p)
+
+    p.then(undefined, (e) => console.asyncLog(e)) // 3
+
+    console.asyncLog(Promise.reject(Promise.resolve()))  // Promise {<fulfilled>: undefined}
+
+  </script>
+</body>
+
+</html>
