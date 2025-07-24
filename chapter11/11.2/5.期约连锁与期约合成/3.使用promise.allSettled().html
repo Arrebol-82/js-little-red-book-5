@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用Promise.allSettled()</h1>
+  <p>Promise.al1settled()静态方法可以等待一个期约集合中的所有期约落定，无论解决还是拒绝。这个方法适合需要处理多个异步操作的结果 , 但不要求所有的异步操作都成功的场景。
+    与Promise.all()类似 , 这个方法接受一个可迭代对象 , 返回一个新的期约
+  </p>
+  <code>
+    <pre>
+    let p1 = Promise.allSettled([
+      Promise.resolve(),
+      Promise.reject()
+    ]);
+
+    //可迭代对象中的元素会使用 Promise.resolve() 转换为期约 
+    let p2 = Promise.allSettled([3, 4])
+
+    //空的可迭代对象等价于调用 Promise.resolve()
+    let p3 = Promise.allSettled([])
+
+    // 无效语法 
+    let p4 = Promise.allSettled()
+    // TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)) at Promise.allSettled(<anonymous>)
+    </pre>
+  </code>
+  <p>跟Promise.all的语法是一样滴</p>
+  <p>合成期约会在所有包含期约都落定后解决 , 可能有兑现 , 也有拒绝</p>
+  <code>
+    <pre>
+    let p = Promise.allSettled([
+      Promise.resolve(),
+      new Promise((resolve, reject) => setTimeout(reject, 1000))
+    ])
+    console.asyncLog(p)
+
+    p.then(() => console.asyncLog('allSettled resoled!'))
+    // allSettled resoled!
+    </pre>
+  </code>
+  <p>并没有像Promise.all那样抛出错误 , 而是把他存储起来</p>
+  <p>在所有期约落定之后，合成期约的兑现值将是一个对象的数组，包含可迭代对象中每个期约的输出 每个对象都有一个status属性 , 值为 'fulfilled' 或
+    'rejected' 。根据前一个属性的值 , 还会有一个value 或 reason 属性
+  </p>
+  <code>
+    <pre>
+    let P = Promise.allSettled([
+      Promise.resolve(3),
+      Promise.reject(4),
+      Promise.resolve(5)
+    ]);
+
+    P.then((result) => console.asyncLog(result))
+
+    /*    [
+         { status: 'fulfilled', value: 3 },
+         { status: 'rejected', reason: 4 },
+         { status: 'fulfilled', value: 5 }
+       ] */
+    </pre>
+  </code>
+  <p>看谁成功 谁失败 一目了然 , 是吧 </p>
+  <p>这让开发者无须添加额外的错误处理程序，就能轻松处理每个期约的结果。使用每个结果对象的status属性就能确定如何处理每个期约的结果:</p>
+  <script>
+
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = Promise.allSettled([
+      Promise.resolve(),
+      Promise.reject()
+    ]);
+
+    //可迭代对象中的元素会使用 Promise.resolve() 转换为期约 
+    let p2 = Promise.allSettled([3, 4])
+
+    //空的可迭代对象等价于调用 Promise.resolve()
+    let p3 = Promise.allSettled([])
+
+    // 无效语法 
+    let p4 = Promise.allSettled()
+    // TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)) at Promise.allSettled(<anonymous>)
+
+    console.asyncLog('========================== 合成期约 ======================');
+    let p = Promise.allSettled([
+      Promise.resolve(),
+      new Promise((resolve, reject) => setTimeout(reject, 1000))
+    ])
+    console.asyncLog(p)
+
+    p.then(() => console.asyncLog('allSettled resoled!'))
+    // allSettled resoled!
+
+    console.asyncLog('====================== 结果 ===========================');
+    let P = Promise.allSettled([
+      Promise.resolve(3),
+      Promise.reject(4),
+      Promise.resolve(5)
+    ]);
+
+    P.then((result) => console.asyncLog(result))
+
+    /*    [
+         { status: 'fulfilled', value: 3 },
+         { status: 'rejected', reason: 4 },
+         { status: 'fulfilled', value: 5 }
+       ] */
+
+    Promise.allSettled([
+      Promise.resolve(3),
+      Promise.reject(4),
+      Promise.resolve(5)
+    ]).then((results) => {
+      results.map((result, i) => {
+        if (result.status === 'fulfilled') {
+          console.asyncLog(`API ${i} data: `, result.value);
+        } else {
+          console.asyncLog(`API ${i} error: `, result.reason)
+        }
+      })
+    })
+  </script>
+</body>
+
+</html>

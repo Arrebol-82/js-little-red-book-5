@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>串行期约合成</h1>
+  <p>到目前为止，我们讨论期约连锁一直围绕期约的串行执行 忽略了期约的另一个主要特性: 异步产生值并将其传给处理程序
+    基于后续使用之前期约的返回值来串联期约是期约的基本功能 , 这很像函数合成 , 即将对个函数合成一个函数</p>
+  <strong>其实本质还是链式调用 , 使用前一个异步的返回值进行下一步的计算</strong>
+  <code>
+    <pre>
+    function addTwo(x) { return x + 2 }
+    function addThree(x) { return x + 3 }
+    function addFive(x) { return x + 5 }
+    function addTen(x) {
+      return addFive(addThree(addTwo(x)))
+    }
+
+    console.log(addTen(5));
+    </pre>
+  </code>
+  <p>在这个例子中 , 有3个函数基于一个值合成为一个函数 , 类似的,期约也可以像这样合成起来 , 渐进地消费一个值 , 并返回一个结果</p>
+  <code>
+    <pre>
+    function addTen(x) {
+      return Promise.resolve(x)
+        .then(addFive)
+        .then(addThree)
+        .then(addTwo)
+    }
+    addTen(6).then(console.log)
+    // addTen(6).then((x) => console.log(x))
+    </pre>
+  </code>
+  <p>使用Array.prototype.reduce() 可以写成更简洁的形式</p>
+  <code>
+    <pre>
+    function addTen(x) {
+      return [addTwo, addThree, addFive]
+        .reduce((promise, fu) => promise.then(fu), Promise.resolve(x))
+    }
+
+    addTen(8).then(console.log)
+      <strong>这段代码其实还是使用异步来执行的 , 只不过是用数组来存储值而已是吧 , 相当于Promise.then(当前函数 )</strong>
+    </pre>
+  </code>
+  <p>这种模式可以提炼出一个通用函数 , 可以把任意多个函数作为处理程序合成一个连续传值的期约连锁这个通用的合成函数可以这样实现:</p>
+  <code>
+    <pre>
+    function compose(...fns) {
+      return (x) => fns.reduce((promise, fn) => promise.then(fn), Promise.resolve(x))
+    }
+
+    let addTeng = compose(addTwo, addThree, addFive);
+
+    addTeng(6).then(console.log)
+    /* 
+        // 调用 addTeng(6) 等价于执行：
+            (x = 6) => [addTwo, addThree, addFive].reduce(...)
+    
+          // 具体执行：
+          Promise.resolve(6)          // 初始值 x=6
+            .then(addTwo)             // 6 + 2 = 8
+            .then(addThree)           // 8 + 3 = 11
+            .then(addFive)            // 11 + 5 = 16
+            .then(console.log);       // 输出 16
+     */
+    </pre>
+  </code>
+  <p>这里的addTeng(6)他只是做一个执行者 , 执行compose事先生成好的异步代码</p>
+  <h2>本章后面的11.3节在讨论异步函数时还会涉及这个概念</h2>
+  <script>
+    function addTwo(x) { return x + 2 }
+    function addThree(x) { return x + 3 }
+    function addFive(x) { return x + 5 }
+
+
+    function addTen(x) {
+      return addFive(addThree(addTwo(x)))
+    }
+
+    console.log(addTen(5));
+
+    console.log('=================== 使用异步 ==================');
+
+    function addTen(x) {
+      return Promise.resolve(x)
+        .then(addFive)
+        .then(addThree)
+        .then(addTwo)
+    }
+    addTen(6).then(console.log)
+    // addTen(6).then((x) => console.log(x))
+
+    console.log('==================== 使用数组形式 ==================');
+    function addTen(x) {
+      return [addTwo, addThree, addFive]
+        .reduce((promise, fu) => promise.then(fu), Promise.resolve(x))
+    }
+
+    addTen(8).then(console.log)
+    console.log('====================== 合成函数 ==================');
+    function compose(...fns) {
+      return (x) => fns.reduce((promise, fn) => promise.then(fn), Promise.resolve(x))
+    }
+
+    let addTeng = compose(addTwo, addThree, addFive);
+
+    addTeng(6).then(console.log)
+    /*
+        // 调用 addTeng(6) 等价于执行：
+            (x = 6) => [addTwo, addThree, addFive].reduce(...)
+    
+          // 具体执行：
+          Promise.resolve(6)          // 初始值 x=6
+            .then(addTwo)             // 6 + 2 = 8
+            .then(addThree)           // 8 + 3 = 11
+            .then(addFive)            // 11 + 5 = 16
+            .then(console.log);       // 输出 16 */
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用Promise.all()</h1>
+  <p>Promise.all() 静态方法创建的期约会在一组期约全部解决之后再解决. 比如,从多个 API 同时获取数据 ，或者同时执行多个数据库查询，需要等待所有请求完成再统一处理结果 . 这个静态方法接收一个
+    可迭代对象 , 返回一个新期约
+  </p>
+  <strong>如果传入promise.resolve 他会返回成功的值是吧 , 还有就是传进来的顺序是怎么样的 , 那么打印出来的顺序就是怎么样的 , 如果有错的话 , 那么就会直接返回拒绝
+    promise.all会把里面传的参数转换成Promise对象</strong>
+  <code>
+    <pre>
+    let p1 = Promise.all([Promise.resolve(), Promise.resolve()]);
+
+    // 可迭代对象中的元素会通过Promise.resolve() 转换为期约
+    let p2 = Promise.all([3, 4])
+
+    // 空的可迭代对象等价于Promise.resolve()
+    let p3 = Promise.all([])
+
+    // 无效的语法
+    let p4 = Promise.all()
+    // TypeError: cannot read Symbol.iterator of undefined
+    </pre>
+  </code>
+  <p>如果不传参数就会报错 , 一定要给它传一个迭代对象 , 因为不传的话默认是undefined , 而undefined 不是迭代对象 , 自然会报错</p>
+  <p>合成的期约只会在每个包含的期约都兑现之后才解决</p>
+  <code>
+    <pre>
+    let p = Promise.all([
+      Promise.resolve(),
+      new Promise((resolve, reject) => setTimeout(resolve, 1000))
+    ])
+
+    console.asyncLog(p) // Promise {<pending>}
+
+    p.then(() => console.log('all() fulfilled'))
+    </pre>
+  </code>
+  <p>Promise.all会等到里面的期约全部执行完 也就是全部兑现 , 才会返回Promise.all的代码</p>
+  <p>如果至少有一个包含的期约待定 , 则合成的期约也会待定 如果有一个包含的期约拒绝 , 则合成的期约也会拒绝</p>
+  <code>
+    <pre>
+    // 永远待定 
+    let P = Promise.all([new Promise(() => { })])
+    console.asyncLog(P) // Promise {<pending>}
+
+    // 一次拒绝会导致最终期约拒绝 
+    let P2 = Promise.all([
+      Promise.resolve(),
+      Promise.reject(),
+      Promise.resolve()
+    ])
+    console.asyncLog(P2) // Promise {<rejected>: undefined}
+
+    // Uncaught(in promise) undefined
+    </pre>
+  </code>
+  <p>如果有期约拒绝，则第一个拒绝的期约会将自己的理由作为合成期约的拒绝理由。之后再拒绝的期约不会影响最终期约的拒绝理由。不过，这并不影响所有包含期约正常的拒绝操作。
+    合成的期约会静默处理所有包含期约的拒绝操作，如下所示:
+  </p>
+  <code>
+    <pre>
+    let Pro = Promise.all([
+      Promise.reject(3),
+      new Promise((resolve, reject) => setTimeout(reject, 1000))
+    ])
+
+    Pro.catch((reason) => console.asyncLog(reason)) // 3
+    // 没有未处理的错误
+    </pre>
+  </code>
+  <p>所以这段话的意思是 会把第一个拒绝的错误信息当成Proimse.all的错误信息 , <strong>后面的拒绝Promise 还是会发生 , 但是是看不的也不会打印在控制台</strong> , 这就是书上的静默处理 ,
+    要想真正的处理的话 , 还是要自己捕获
+  </p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = Promise.all([Promise.resolve(), Promise.resolve()]);
+
+    // 可迭代对象中的元素会通过Promise.resolve() 转换为期约
+    let p2 = Promise.all([3, 4])
+
+    // 空的可迭代对象等价于Promise.resolve()
+    let p3 = Promise.all([])
+
+    // 无效的语法
+    let p4 = Promise.all()
+    // TypeError: cannot read Symbol.iterator of undefined
+
+    let p = Promise.all([
+      Promise.resolve(),
+      new Promise((resolve, reject) => setTimeout(resolve, 1000))
+    ])
+
+    console.asyncLog(p) // Promise {<pending>}
+
+    p.then(() => console.log('all() fulfilled'))
+
+    // 永远待定 
+    let P = Promise.all([new Promise(() => { })])
+    console.asyncLog(P) // Promise {<pending>}
+
+    // 一次拒绝会导致最终期约拒绝 
+    let P2 = Promise.all([
+      Promise.resolve(),
+      Promise.reject(),
+      Promise.resolve()
+    ])
+    console.asyncLog(P2) // Promise {<rejected>: undefined}
+
+    // Uncaught(in promise) undefined
+
+    console.log('=============================== 拒绝 ==========================');
+    // 虽然只有第一个期约的拒绝理由会进入
+    // 拒绝处理程序 , 第二个期约的拒绝也
+    // 会被静默处理, 不会有错误被漏掉
+
+    let Pro = Promise.all([
+      Promise.reject(3),
+      new Promise((resolve, reject) => setTimeout(reject, 1000))
+    ])
+
+    Pro.catch((reason) => console.asyncLog(reason)) // 3
+    // 没有未处理的错误
+  </script>
+</body>
+
+</html>

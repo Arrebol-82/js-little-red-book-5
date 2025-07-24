@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>期约与微任务队列</h1>
+  <p>当期约落定之后 , 所有等待处理其结果的函数都会被添加一个 <strong>微任务队列</strong> 。 这个微任务队列用于存储需要再当前同步代码运行完成后执行的所有函数
+    这意味着添加到微任务队列的函数将在下一个同步代码运行之前被执行 </p>
+  <ul>
+    <li>
+      <h1>宏任务队列</h1>
+      <code>
+        <pre>
+            <strong> 1. Promise 回调</strong>
+            Promise.resolve().then(() => {});
+            Promise.reject().catch(() => {});
+            Promise.resolve().finally(() => {});
+
+            <strong> 2. async/await</strong>
+            async function example() {
+              await someAsync(); // await 后面的代码相当于 then
+              console.log('微任务');
+            }
+
+            <strong>  3. queueMicrotask API</strong>
+            queueMicrotask(() => {
+              console.log('微任务');
+            });
+
+            <strong>  4. MutationObserver（DOM 监听）</strong>
+            const observer = new MutationObserver(() => {
+              console.log('DOM 变化 - 微任务');
+            });
+            observer.observe(document.body, { childList: true });
+
+            <strong>  5. process.nextTick（Node.js 特有）</strong>
+            process.nextTick(() => {
+              console.log('Node.js 微任务');
+            });
+        </pre>
+      </code>
+    </li>
+    <li>
+      <h1>微任务队列</h1>
+      <code>
+        <pre>
+            <strong>  1. 定时器</strong>
+            setTimeout(() => {}, 0);
+            setInterval(() => {}, 1000);
+
+            <strong>  2. DOM 事件</strong>
+            button.addEventListener('click', () => {
+              console.log('点击事件 - 宏任务');
+            });
+
+            <strong>  3. I/O 操作</strong>
+            // 浏览器
+            fetch('https://api.example.com').then(() => {}); // 注意：fetch 本身是宏任务
+            // Node.js
+            fs.readFile('file.txt', (err, data) => {});
+
+            <strong> 4. UI 渲染</strong>
+            requestAnimationFrame(() => {
+              console.log('渲染回调 - 宏任务');
+            });
+
+            <strong> 5. 脚本加载</strong>
+            <script src="app.js"></script> // 整个脚本执行是宏任务
+
+            <strong>6. setImmediate（Node.js 特有）</strong>
+            setImmediate(() => {
+              console.log('Node.js 宏任务');
+            });
+        </pre>
+      </code>
+    </li>
+    <li>
+      <h1>事件循环规则：必须清空所有微任务后，才执行宏任务</h1>
+      <h2>先是同步 , 然后到微队列 没执行一次都要执行完所以任务 , 而宏队列 , 每执行一次 , 就只执行一个任务 </h2>
+    </li>
+  </ul>
+  <p>下面这个例子可以帮组理解期约与微任务队列的工作方式 , 数值 1 到 4 将按顺序输出</p>
+  <code>
+    <pre>
+    console.log('1');
+    setTimeout(console.log, 0, '4')
+    Promise.resolve('3').then(console.log)
+    console.log('2');
+    </pre>
+  </code>
+  <ul>
+    <li>console.log 在控制台打印“1”。</li>
+    <li>setrimeout()排队一个在0毫秒延迟后向控制台打印“4”的函数。这个函数将被添加到消息队列，并在当前同步代码块运行完成后立即执行。</li>
+    <li>Promise.resolve()创建一个解决的期约，其onResolved 处理程序将向控制台打印“”因为这个期约是立即解决的，所以这个onResolved 处理程序立即被添加到微任务队列</li>
+    <li>console.1og 在控制台打印“2”</li>
+    <li>当前同步代码块运行完成，JavaScript引擎检查微任务队列，查看其中有没有待执行的函数。结果发现了期约链上的.then()函数，因此它执行该函数并将“3”打印到控制台。</li>
+    <li>事件循环的这次循环完成，微任务队列已经清空，因此浏览器又执行消息队列，把“4”打印到控制台</li>
+  </ul>
+  <script>
+    console.log('1');
+    setTimeout(console.log, 0, '4')
+    Promise.resolve('3').then(console.log)
+    console.log('2');
+
+  </script>
+</body>
+
+</html>

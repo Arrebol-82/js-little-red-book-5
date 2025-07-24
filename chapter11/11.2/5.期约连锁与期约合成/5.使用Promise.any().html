@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>使用Promise.any()</h1>
+  <p>Promise.any()静态方法用于等待期约集合中第一个 <strong>兑现</strong> 的期约，实际上是这个期约解决后的一种短路操作 。 这个方法适合从多个数据源中选一个 , 或者希望在多个竞争性
+    任务中选择响应最快的那个 , 与Promise.all() 和 Promise.allSettle() 类似 , 这个静态方法也接受一个可迭代对象并返回一个新期约</p>
+  <code>
+      <pre>
+  let p1 = Promise.any([
+      Promise.resolve(),
+      Promise.reject(),
+    ]);
+
+    // 可迭代对象中的元素会使用  Promise.resolve() 转换为期约
+    let p2 = Promise.any([3, 4])
+
+    // 空数组是错误的 ,  因为数组里面一个promise 没有 ,更别说成功了
+    let p3 = Promise.any([])
+    // Uncaught (in promise) AggregateError: All promises were rejected
+
+    // 无效语法
+    let p4 = Promise.any()  
+    //  TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)) at Promise.any(<anonymous>)
+      </pre>
+  </code>
+  <p>Promise.any([]) 之所以会失败，本质就是设计逻辑决定的—— 它的核心需求是 “找到至少一个成功的 Promise”，而空数组里 “连 Promise 都没有，更不可能有成功的 Promise”，自然就满足了
+    “所有都失败” 的条件（空集合下的极端情况）。</p>
+  <p>返回的合成期约将在任意一个包含期约兑现时解决</p>
+  <code>
+    <pre>
+    let p = Promise.any([
+      new Promise((resolve, reject) => setTimeout(resolve, 1000, 'first')),
+      new Promise((resolve, reject) => setTimeout(resolve, 2000, 'second')),
+    ]);
+    console.asyncLog(p)
+
+    p.then((value) => console.asyncLog('any() resolved', value))
+    // any() resolved first
+
+    <strong>因为new Promise 延迟1秒 , 更快返回所以是 输出 first</strong>
+    </pre>
+  </code>
+  <p>如果所有包含期约都被拒绝 , 那么合成期也会被拒绝 拒绝的理由是包含所有期约拒绝理由的 AggregateError实例</p>
+  <code>
+    <pre>
+    let p = Promise.any([
+      new Promise((resolve, reject) => setTimeout(resolve, 1000, 'first')),
+      new Promise((resolve, reject) => setTimeout(resolve, 2000, 'second')),
+    ]);
+    console.asyncLog(p)
+
+    p.then((value) => console.asyncLog('any() resolved', value))
+    // any() resolved first
+
+    let P = Promise.any([
+      Promise.reject('error1'),
+      Promise.reject('error2')
+    ])
+
+    console.asyncLog(P);
+    // Uncaught(in promise) AggregateError: All promises were rejected  
+
+    <strong>你看 , 是不是跟上面的空数组输出的是一样的 , 这就表示了里面的Promise全是失败的</strong>
+    </pre>
+  </code>
+  <p>如果需要，可以捕获 AggregateError并处理拒绝理由:</p>
+  <code>
+    <pre>
+    Promise.any([
+      Promise.reject('error1'),
+      Promise.resolve('Fastest1'),
+      Promise.reject('error2')
+    ]).then((data) => {
+      console.asyncLog('Fastest data:', data, '1')
+    }).catch((error) => {
+      if (error instanceof AggregateError) {
+        console.asyncLog('All Promises rejected , Errors:', error.errors, '2')
+      } else {
+        console.asyncLog('Unknown Error:', error, '3')
+      }
+    })
+    
+    <strong>Fastest data: Fastest1 1</strong>
+    </pre>
+  </code>
+  <p>any 的特性是找最快执行的成功Proimse , 找到了自然会返回 , 这段代码 , 写的catch 是为了到时会里面的proimse全是拒绝而做准备的</p>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p1 = Promise.any([
+      Promise.resolve(),
+      Promise.reject(),
+    ]);
+
+    // 可迭代对象中的元素会使用  Promise.resolve() 转换为期约
+    let p2 = Promise.any([3, 4])
+
+    // 空数组是错误的 ,  因为数组里面一个promise 没有 ,更别说成功了
+    let p3 = Promise.any([])
+    // Uncaught (in promise) AggregateError: All promises were rejected
+
+    // 无效语法
+    let p4 = Promise.any()
+    //  TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)) at Promise.any(<anonymous>)
+
+    console.log('======================= 任意一个包含期约兑现时解决 =====================');
+
+    let p = Promise.any([
+      new Promise((resolve, reject) => setTimeout(resolve, 1000, 'first')),
+      new Promise((resolve, reject) => setTimeout(resolve, 2000, 'second')),
+    ]);
+    console.asyncLog(p)
+
+    p.then((value) => console.asyncLog('any() resolved', value))
+    // any() resolved first
+
+    let P = Promise.any([
+      Promise.reject('error1'),
+      Promise.reject('error2')
+    ])
+
+    console.asyncLog(P);
+    // Uncaught(in promise) AggregateError: All promises were rejected  
+
+    console.log('================ 可以捕获AggregateError ==============');
+    Promise.any([
+      Promise.reject('error1'),
+      Promise.resolve('Fastest1'),
+      Promise.reject('error2')
+    ]).then((data) => {
+      console.asyncLog('Fastest data:', data, '1')
+    }).catch((error) => {
+      if (error instanceof AggregateError) {
+        console.asyncLog('All Promises rejected , Errors:', error.errors, '2')
+      } else {
+        console.asyncLog('Unknown Error:', error, '3')
+      }
+    })
+
+  </script>
+</body>
+
+</html>

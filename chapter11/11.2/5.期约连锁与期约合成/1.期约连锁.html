@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>期约连锁</h1>
+  <p>把期约逐个串联起来是一种非常有用的编程模式。之所以可以这样做，是因为每个期约实例的方法 (then() , catch() 和 finally() ) 都会返回一个
+    <strong>新的</strong>期约实例 , 而这个新期约又有自己的实例方法 , 这样连缀方法调用就可以构成所谓的 "期约连锁"
+  </p>
+  <strong>then catch finally 调用后 , 都会生成一个<i>全新的Promise实例</i></strong>
+  <code>
+    <pre>
+    let p = new Promise((resolve, reject) => {
+      console.log('first');
+      resolve()
+    })
+
+    p.then(() => console.log('second'))
+      .then(() => console.log('third'))
+      .then(() => console.log('fourth'));
+
+    //  first
+    //  second
+    //  third
+    //  fourth 
+    </pre>
+  </code>
+  <p>这个实现最终执行了一连串 <strong>同步</strong>任务 , 正因为如此 , 这种方式执行的任务并非那么有用 , 毕竟分别使用4个同步函数也可以做到</p>
+  <code>
+    <pre>
+    (() => console.log('first'))();
+    (() => console.log('second'))();
+    (() => console.log('third'))();
+    (() => console.log('fourth'))()
+
+      // first
+      // second
+      // third
+      // fourth
+    </pre>
+  </code>
+  <p>要真正执行异步任务,可以改写前面的例子 , 让每个执行器函数都返回一个期约实例。这样就可以让每个后续期约等待之前的期约 , 也就是串行化异步任务
+    比如 , 可以像下面这样让每个期约在一定时间后解决
+  </p>
+  <code>
+    <pre>
+    let p1 = new Promise((resolve, reject) => {
+      console.log('p1 executor');
+      setTimeout(resolve, 1000)
+    })
+
+    p1.then(() => new Promise((resolve, reject) => {
+      console.log('p2 executor');
+      setTimeout(resolve, 1000)
+    }))
+      .then(() => new Promise((resolve, reject) => {
+        console.log('p3 executor');
+        setTimeout(resolve, 1000)
+      }))
+      .then(() => new Promise((resolve, reject) => {
+        console.log('p4 executor');
+        setTimeout(resolve, 1000)
+      }))
+      .then(() => console.log('别看了 , 没有了'))
+
+    // p1 executor    同步 所以立即打印
+    // p2 executor    延迟 1
+    // p3 executor    延迟 2
+    // p4 executor    延迟 3
+    // 别看了, 没有了  延迟 4
+    </pre>
+  </code>
+  <p>把生成期约的代码提取到一个工厂函数中 , 可以写成这样</p>
+  <code>
+    <pre>
+    function delayedResolve(str) {
+      return new Promise((resolve, reject) => {
+        console.log(str);
+        setTimeout(resolve, 1000)
+      })
+    }
+
+    setTimeout(() => { console.log(delayedResolve()) }, 2000)
+    delayedResolve('p1 executor')
+      .then(() => delayedResolve('p2 executor'))
+      .then(() => delayedResolve('p3 executor'))
+      .then(() => delayedResolve('p4 executor'))
+
+    // p1 executor    同步 所以立即打印
+    // p2 executor    延迟 1
+    // p3 executor    延迟 2
+    // p4 executor    延迟 3
+    </pre>
+  </code>
+  <p>每个后续的处理程序都会等待前一个期约解决，然后实例化一个新期约并返回它。这种结构可以简洁地将异步任务串行化，解决之前依赖回调的难题。
+    。假如这种情况下不使用期约，那么前面的代码可能要这样写:
+  </p>
+  <code>
+    <pre>
+    function delayedExecute(str, callback = null) {
+      setTimeout(() => {
+        console.log(str);
+        callback && callback()
+      }, 1000)
+    }
+
+    delayedExecute('p1 callback', () => {
+      delayedExecute('p2 callback', () => {
+        delayedExecute('p3 callback', () => {
+          delayedExecute('p4 callback')
+        })
+      })
+    })
+
+    //p1 callback(1 秒后)
+    //p2 callback(2 秒后)
+    //p3 callback(3 秒后)
+    //p4 callback(4 秒后)
+    </pre>
+  </code>
+  <p>对没错 这就是回调地狱 , <strong>按照书上说的就是:</strong> 机智的开发者会发现，这不正是期约所要解决的回调地狱问题吗?!</p>
+  <p>因为then() catch()和finally() 都返回期约 , 所以串联这些方法也很直观 下面的例子同时使用了3个实例方法</p>
+  <code>
+    <pre>
+    let P = new Promise((resolve, reject) => {
+      console.log('initial promise reject');
+      reject()
+    })
+
+    P.catch(() => console.log('reject handler'))
+      .then(() => console.log('resolve handler'))
+      .finally(() => console.log('finally handler'))
+
+    // initial promise reject
+    // reject handler
+    // resolve handler
+    // finally handler
+    </pre>
+  </code>
+  <script>
+    console.asyncLog = (...residue) => setTimeout(console.log, 0, ...residue)
+
+    let p = new Promise((resolve, reject) => {
+      console.log('first');
+      // resolve()
+    })
+
+    p.then(() => console.log('second'))
+      .then(() => console.log('third'))
+      .then(() => console.log('fourth'));
+
+    //  first
+    //  second
+    //  third
+    //  fourth 
+
+    console.log('======================== 同步代码 =====================');
+    (() => console.log('first'))();
+    (() => console.log('second'))();
+    (() => console.log('third'))();
+    (() => console.log('fourth'))()
+
+    console.log('============================== 实例 ==========================');
+
+    let p1 = new Promise((resolve, reject) => {
+      console.log('p1 executor');
+      setTimeout(resolve, 1000)
+    })
+
+    p1.then(() => new Promise((resolve, reject) => {
+      console.log('p2 executor');
+      setTimeout(resolve, 1000)
+    }))
+      .then(() => new Promise((resolve, reject) => {
+        console.log('p3 executor');
+        setTimeout(resolve, 1000)
+      }))
+      .then(() => new Promise((resolve, reject) => {
+        console.log('p4 executor');
+        setTimeout(resolve, 1000)
+      }))
+      .then(() => console.log('别看了 , 没有了'))
+
+    // p1 executor    同步 所以立即打印
+    // p2 executor    延迟 1
+    // p3 executor    延迟 2
+    // p4 executor    延迟 3
+    // 别看了, 没有了  延迟 4
+
+    console.log('======================== 工厂函数 =========================');
+    function delayedResolve(str) {
+      return new Promise((resolve, reject) => {
+        console.log(str);
+        setTimeout(resolve, 1000)
+      })
+    }
+
+    setTimeout(() => { console.log(delayedResolve()) }, 2000)
+    delayedResolve('p1 executor')
+      .then(() => delayedResolve('p2 executor'))
+      .then(() => delayedResolve('p3 executor'))
+      .then(() => delayedResolve('p4 executor'))
+
+    // p1 executor    同步 所以立即打印
+    // p2 executor    延迟 1
+    // p3 executor    延迟 2
+    // p4 executor    延迟 3
+
+    console.log('========================= function ==========================');
+    function delayedExecute(str, callback = null) {
+      setTimeout(() => {
+        console.log(str);
+        callback && callback()
+      }, 1000)
+    }
+
+    delayedExecute('p1 callback', () => {
+      delayedExecute('p2 callback', () => {
+        delayedExecute('p3 callback', () => {
+          delayedExecute('p4 callback')
+        })
+      })
+    })
+    console.log('========================== then catch finally =========================');
+
+    let P = new Promise((resolve, reject) => {
+      console.log('initial promise reject');
+      reject()
+    })
+
+    P.catch(() => console.log('reject handler'))
+      .then(() => console.log('resolve handler'))
+      .finally(() => console.log('finally handler'))
+
+    // initial promise reject
+    // reject handler
+    // resolve handler
+    // finally handler
+  </script>
+</body>
+
+</html>

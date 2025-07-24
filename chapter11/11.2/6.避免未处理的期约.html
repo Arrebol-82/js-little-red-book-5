@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>避免未处理的期约</h1>
+  <p>期约拒绝的行为并不直观。我们应该把下面关于期约拒绝的两个特性牢记于心。</p>
+  <ul>
+    <li class="circle"><strong>未处理的期约拒绝始终会在顶级抛出 'unhandled rejection'</strong></li>
+    <li class="circle"><strong>无论在代码的哪个部分明确或隐式地添加onRejected 处理程序 , 都能处理拒绝</strong></li>
+  </ul>
+  <p>我们从一个简单的被拒绝的期约开始</p>
+  <code>
+    <pre>
+    Promise.reject('foo')
+    //Uncaught (in promise) foo
+    </pre>
+  </code>
+  <p>这个错误从页面级被抛出来了 , 如果没在微任务队列执行前添加onRejected 处理程序,那只有一种方式通过编程检查这个期约报错 , 就是使用unhandledrejection 事件</p>
+  <code>
+    <pre>
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject('foo')
+    // NUHADLED
+    // Uncaught(in promise) foo
+    </pre>
+  </code>
+  <p>避免未处理拒绝的一种方式是通过then() 或 catch() 明确添加 onReject 处理程序:</p>
+  <code>
+    <pre>
+    console.log('========================= then / catch ==========================');
+
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject().catch(() => { })
+    Promise.reject().then(null, () => { })
+
+    //控制台没有输出
+
+    // 另一种方式是通过 Promise.allSettled() 隐式地添加  onRejected 处理程序
+
+    Promis.allSettled([Promise.reject()])
+
+    // 控制台没有输出
+    </pre>
+  </code>
+  <p>要检查对拒绝的延迟处理(在期约落定之后添加的onRejeeted处理程序)，使用rejeceion - handled 事件</p>
+  <code>
+    <pre>
+    Promise.reject('foo')
+    //Uncaught (in promise) foo
+
+    console.log('========================== unhandledrejection =====================');
+
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject('foo')
+    // NUHADLED
+    // Uncaught(in promise) foo
+
+    console.log('========================= then / catch ==========================');
+
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject().catch(() => { })
+    Promise.reject().then(null, () => { })
+
+    //控制台没有输出
+
+    // 另一种方式是通过 Promise.allSettled() 隐式地添加  onRejected 处理程序
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.allSettled([Promise.reject()])
+
+    // 控制台没有输出
+
+    window.addEventListener('rejectionhandled', () => console.log('HANDLED LATE'))
+
+    const p = Promise.reject();
+    setTimeout(() => p.catch(() => { }), 1000)
+
+    // (1000 毫秒后 ) HANDLED LATE
+    </pre>
+  </code>
+  <p>要尽可能在代码中避免未处理的拒绝。错误冒泡到顶级，让用户看到，是典型的代码 “坏味道” </p>
+  <script>
+    Promise.reject('foo')
+    //Uncaught (in promise) foo
+
+    console.log('========================== unhandledrejection =====================');
+
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject('foo')
+    // NUHADLED
+    // Uncaught(in promise) foo
+
+    console.log('========================= then / catch ==========================');
+
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.reject().catch(() => { })
+    Promise.reject().then(null, () => { })
+
+    //控制台没有输出
+
+    // 另一种方式是通过 Promise.allSettled() 隐式地添加  onRejected 处理程序
+    window.addEventListener('unhandledrejection', () => console.log('NUHADLED'))
+    Promise.allSettled([Promise.reject()])
+
+    // 控制台没有输出
+
+    window.addEventListener('rejectionhandled', () => console.log('HANDLED LATE'))
+
+    const p = Promise.reject();
+    setTimeout(() => p.catch(() => { }), 1000)
+
+    // (1000 毫秒后 ) HANDLED LATE
+
+  </script>
+</body>
+
+</html>
