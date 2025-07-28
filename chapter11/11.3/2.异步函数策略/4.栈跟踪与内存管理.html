@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>栈跟踪与内存管理</h1>
+  <p>期约与异步函数的功能有相当程度的重叠，但它们在内存中的表示则差别差别很大 , 看看下面的例子 , 它展示了拒绝期约的栈跟踪信息</p>
+  <code>
+    <pre>
+    function fooPromiseExecutor(resovle, reject) {
+      setTimeout(reject, 1000, 'bar')
+    }
+
+    function foo() {
+      new Promise(fooPromiseExecutor)
+    }
+
+    foo()
+    // Uncaught(in promise) bar  
+    ( 下面的都是书上的 )
+    // setTimeout
+    // setTimeout(async)
+    // fooPromiseExecutorfoo
+    // foo
+    </pre>
+  </code>
+  <p>根据对期约的不同理解程度，以上栈跟踪信息可能会让某些读者不解。栈跟踪信息应该相当直接地表现Javascript引擎当前栈内存中函数调用之间的嵌套关系。在超时处理程序执行时和拒绝期约时,
+    我们看到的错误信息包含嵌套函数的标识符，那是被调用以创建最初期约实例的函数。可是，我们知道这些函数已经返回了，因此栈跟踪信息中不应该看到它们。</p>
+  <ul>
+    <li><strong>同步栈信息</strong> ：显示的是 “当前正在执行、还没跑完的函数”，是实时的执行状态。</li>
+    <li><strong>异步栈信息</strong> ：显示的是 “曾经触发了这个异步操作、但已经执行完的函数”，是引擎记录的 “发起痕迹”。</li>
+  </ul>
+  <p>答案很简单，这是因为JavaScript引|擎会在创建期约时尽可能保留完整的调用栈。在抛出错误时,调用栈可以由运行时的错误处理逻辑获取，因而就会出现在栈跟踪信息中。当然，这意味着栈跟踪信息
+    会占用内存 , 从而带来一些计算和存储成本
+  </p>
+  <p>如果前面例子中使用的异步函数 , 那又会怎样呢? 比如:</p>
+  <code>
+    <pre>
+    function fooPromiseExecutor(resovle, reject) {
+      setTimeout(reject, 1000, 'bar')
+    }
+
+    async function foo() {
+      new Promise(fooPromiseExecutor)
+    }
+
+    foo()
+    // Uncaught(in promise) bar
+    // foo
+    // async function(async)
+    // foo
+    </pre>
+  </code>
+  <p>这样一改，栈跟踪信息就准确地反映了当前的调用栈。fooPromiseExecutor()已经返回 . 所以它不在错误信息中。此时foo()已经执行完了。JavaScript 运行时可以简单地在嵌套函数中
+    存储指向包含函数的指针，就跟对待同步函数调用栈一样。这个指针实际上存储在内存中，可用于在出错时生成栈跟踪信息。这样就不会像之前的例子那样带来额外的消耗，因此在重视性能的应用中是可以优先考虑的
+  </p>
+  <h2>注意一下:</h2>
+  <strong>现在发现了 async 的栈信息 , 比 Promise的栈信息要简洁 ,是 async 之所以输出的简洁是因为引擎对他进行了优化 , 使得它的输出更像同步代码 , 但是本质上还是
+    基于Promise的来输出的 , 毕竟 async / await 就是基于 Promise的语法糖进行创建的 所以是引擎进行了优化</strong>
+  <script>
+    /* function fooPromiseExecutor(resovle, reject) {
+      setTimeout(reject, 1000, 'bar')
+    }
+
+    function foo() {
+      new Promise(fooPromiseExecutor)
+    }
+
+    foo() */
+    // Uncaught(in promise) bar
+    // setTimeout
+    // setTimeout(async)
+    // fooPromiseExecutorfoo
+    // foo
+
+    function fooPromiseExecutor(resovle, reject) {
+      setTimeout(reject, 1000, 'bar')
+    }
+
+    async function foo() {
+      new Promise(fooPromiseExecutor)
+    }
+
+    foo()
+    // Uncaught(in promise) bar
+    // foo
+    // async function(async)
+    // foo
+
+
+  </script>
+</body>
+
+</html>

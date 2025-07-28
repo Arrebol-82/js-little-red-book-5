@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>安全地处理拒绝及并行</h1>
+  <p>在处理不可靠的期约时，async/await还是稍微有点儿严格。假设一个比较少见的情况、比如我们想派发一系列网络请求，从某个想象的API加载数据。
+    假设想象中的每个页面都是一个任意数据的数组 , 而连续的页面应该按顺序拼装起来。
+  </p>
+  <p>以下代码是简单的实现:</p>
+  <code>
+    <pre>
+    async function getApiPages(pageCount) {
+      const data = []
+      const pageUrls = Array.from(Array(pageCount).keys())
+        .map(i => `https://example.com/api?page=${i}`);
+
+      for (const url of pageUrls) {
+        const response = await fetch(url)
+        const pageDate = await response.json()
+        data.push(pageDate)
+      }
+      return data.flat()
+    }
+
+    getApiPages(3)
+    <strong>当然是请求不到的啊 , 毕竟也没有这个网址</strong>
+    </pre>
+  </code>
+  <p>这个实现按顺序返回页面，但有一些问题。</p>
+  <ul>
+    <li>网络请求是串行的，因此比较慢。</li>
+    <li>任何被拒绝的 fetch()都会抛出未处理的拒绝。</li>
+  </ul>
+  <p>要并行发送请求同时保存顺序 , 并处理任何拒绝 , 可以将代码重构为下面这样</p>
+  <code>
+    <pre>
+    async function getApiPages(pageCount) {
+      const data = {}
+      const pageUrls = Array.from(Array(pageCount).keys())
+        .map(i => `https://example.com/api?page=${i}`)
+
+      // 并行派发请求且将fetch()
+      // 返回的期约方法放到一个数组中
+      const pagePromises = pageUrls.map(async (url) => {
+        const response = await fetch(url)
+        return response.json()
+      })
+
+      // 为所有期约隐式添加拒绝处理程序      
+      Promise.allSettled(pagePromises)
+
+      // 记录数组及页面索引
+      for await (const [i, pageDate] of pagePromises.entries()) {
+        data[i] = pageDate
+      }
+      return data.flat()
+    }
+
+    <strong>用pagePromises 将错误和成功的Promise给放进数组 , 这样就不会直接报错 , Promise.allSettled直接收集了里面所有错误的 和 成功的, 然后使用 entries() 获取值 和 索引 , 最后把他添加进 data数组</strong>
+    </pre>
+  </code>
+  <p>
+    当然，这个实现还不够完善，因为静默地忽略了某些页面无法加载的情况。如果想为这些期约添加拒绝处理逻辑，也可以补充添加而不影响整体行为。这里使用Promise.al1settled()简单地消除了未处理的拒绝，如果想处理加载失败的页面，只要额外添加onRejected处理程序即可。
+  </p>
+  <script>
+    // async function getApiPages(pageCount) {
+    //   const data = []
+    //   const pageUrls = Array.from(Array(pageCount).keys())
+    //     .map(i => `https://example.com/api?page=${i}`);
+
+    //   for (const url of pageUrls) {
+    //     const response = await fetch(url)
+    //     const pageDate = await response.json()
+    //     data.push(pageDate)
+    //   }
+    //   return data.flat()
+    // }
+    // getApiPages(3)
+
+    async function getApiPages(pageCount) {
+      const data = {}
+      const pageUrls = Array.from(Array(pageCount).keys())
+        .map(i => `https://example.com/api?page=${i}`)
+
+      // 并行派发请求且将fetch()
+      // 返回的期约方法放到一个数组中
+      const pagePromises = pageUrls.map(async (url) => {
+        const response = await fetch(url)
+        return response.json()
+      })
+
+      // 为所有期约隐式添加拒绝处理程序      
+      Promise.allSettled(pagePromises)
+
+      // 记录数组及页面索引
+      for await (const [i, pageDate] of pagePromises.entries()) {
+        data[i] = pageDate
+      }
+      return data.flat()
+    }
+  </script>
+</body>
+
+</html>

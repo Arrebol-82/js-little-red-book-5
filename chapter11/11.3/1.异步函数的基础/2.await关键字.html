@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>await 关键字</h1>
+  <p>因为异步函数主要针对不会马上完成的任务 , 所以自然需要一种暂停和恢复执行的能力。 使用await 关键字可以暂停异步函数代码的执行 , 等待期约解决
+    来看下面本章开始就出现过的例子:
+  </p>
+  <code>
+    <pre>
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+
+    p.then((x) => { console.log(x) }) // 3 
+    </pre>
+  </code>
+  <p>使用 async / await 可以写成这样:</p>
+  <code>
+    <pre>
+    async function foo() {
+      let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+      console.log(await p);
+    }
+
+    foo() 
+    // 3
+    </pre>
+  </code>
+  <p>注意 , await 关键字会暂停执行异步函数后面的代码 , 让出javascript 运行时的执行线程 <strong>( 人话就是: await 会等待后面的代码返回执行完的值 , 才会往下继续执行 ,
+      但是不会影响同步代码 ) </strong> 这个行为与生成器函数中的 yield 关键字是一样的 await 关键字同样是尝试 <strong>"解包"</strong> 对象的值 , 然后将这个值传给表达式
+    再异步恢复异步函数的执行</p>
+  <p>await 关键字的用法与 javascript 的一元操作一样 它可以单独使用 , 也可以在表达式中使用 , 如下面的例子: </p>
+  <code>
+    <pre>
+    // 异步打印 "bar" 
+    async function bar() {
+      console.log(await Promise.resolve('bar'));
+    }
+
+    bar()
+    // bar
+
+    // 异步打印 'qux'
+
+    async function qux() {
+      return await Promise.resolve('qux')
+    }
+    qux().then(console.log)
+    // qux
+
+    // 1000 毫秒后异步打印 'baz'
+    async function baz() {
+      await new Promise((resolve, reject) => setTimeout(resolve, 1000))
+      // await setTimeout(() => { }, 1000)
+      console.log('baz');
+    }
+
+    baz()
+
+    // bar (1000 毫秒后)
+    </pre>
+  </code>
+  <p>在这里有个重点 <strong>Promise 只会等待Promise 和 then对象 , 其他的方法都是直接包装成 Promise.resolve</strong></p>
+  <p>await 关键字期待 ( 但实际上并不要求 ) 一个实现thenable接口的对象 , 但常规的值也可以 , 如果是实现thenable 接口的对象 , 则这个对象可以由 await 来 "解包" 如果不是
+    则这个值就被当作已经兑现的期约 , (跟async是一样的) 下面的代码演示了这些情况:
+  </p>
+  <code>
+    <pre>
+    //等待一个原始值
+
+    async function Foo() {
+      console.log(await 'Foo');
+    }
+
+    Foo()
+    // Foo
+
+    // 等待一个没有实现thenable接口的对象
+    async function Bar() {
+      console.log(await ['Bar']);
+    }
+
+    Bar()
+    // ['Bar']
+
+    // 等待一个实现了 thenable 接口的非期约的对象
+
+    async function Baz() {
+      const thenable = {
+        then(callback) { callback('Baz') }
+      }
+      console.log(await thenable)
+    }
+
+    Baz()
+    // Baz
+
+    // 等到一个期约
+    async function Qux() {
+      console.log(await Promise.resolve(8))
+    }
+    Qux()
+    </pre>
+  </code>
+  <p>等待抛出错误的同步操作会返回拒绝的期约</p>
+  <code>
+    <pre>
+    async function refuse() {
+      console.log(1);
+      await (() => { throw 3; })()
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+
+    refuse().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+    </pre>
+  </code>
+  <p>如前面的例子所示 ,单独的 Promise.reject() 不会被异步函数捕获 , 而会抛出未捕获错误 不过 , 对拒绝的期约使用 await 则会释放 ( unwrap ) 错误值 (将拒绝期约返回)</p>
+  <p><strong>大白话就是:</strong>单独的 Promise.reject() 只会在控制台抛出 Uncaught (in promise) 而如果是 <strong>await</strong>
+    Promise.reject(3) 的话就会提取拒绝原因
+    , 然后直接抛出异常 , 可以使用try / catch
+    和 .catch 来处理 , 而且下面的代码不会在执行 ,</p>
+  <code>
+    <pre>
+    async function release() {
+      console.log(1);
+      await Promise.reject(3)
+      console.log(4); // 这段代码不会执行
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+    release().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+
+    <strong>当然也可以使用 .catch兜底 , 使用try / catch 也是可以的 这样就不会影响后续代码执行了</strong>
+    async function release() {
+      console.log(1);
+      await Promise.reject(3).catch(console.log) // 输出3
+      console.log(4); 
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+    release().catch(console.log) // 不会输出
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+    // 4
+    </pre>
+  </code>
+  <script>
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+
+    p.then((x) => { console.log(x) }) // 3 
+
+    async function foo() {
+      let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+      console.log(await p);
+    }
+
+    foo()
+    // 3
+
+    // 异步打印 "bar" 
+    async function bar() {
+      console.log(await Promise.resolve('bar'));
+    }
+
+    bar()
+    // bar
+
+    // 异步打印 'qux'
+
+    async function qux() {
+      return await Promise.resolve('qux')
+    }
+    qux().then(console.log)
+    // qux
+
+    // 1000 毫秒后异步打印 'baz'
+    async function baz() {
+      await new Promise((resolve, reject) => setTimeout(resolve, 1000))
+      // await setTimeout(() => { }, 1000)
+      console.log('baz');
+    }
+
+    baz()
+
+    // bar (1000 毫秒后)
+
+    //等待一个原始值
+
+    async function Foo() {
+      console.log(await 'Foo');
+    }
+
+    Foo()
+    // Foo
+
+    // 等待一个没有实现thenable接口的对象
+    async function Bar() {
+      console.log(await ['Bar']);
+    }
+
+    Bar()
+    // ['Bar']
+
+    // 等待一个实现了 thenable 接口的非期约的对象
+
+    async function Baz() {
+      const thenable = {
+        then(callback) { callback('Baz') }
+      }
+      console.log(await thenable)
+    }
+
+    Baz()
+    // Baz
+
+    // 等到一个期约
+    async function Qux() {
+      console.log(await Promise.resolve(8))
+    }
+    Qux()
+
+    // 等待抛出错误的同步操作会返回拒绝的期约
+
+    async function refuse() {
+      console.log(1);
+      await (() => { throw 3; })()
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+
+    refuse().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+
+    async function release() {
+      console.log(1);
+      await Promise.reject(3)
+      console.log(4); // 这段代码不会执行
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+    release().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+  </script>
+</body>
+
+</html>

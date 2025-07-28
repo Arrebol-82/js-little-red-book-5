@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>异步函数</h1>
+  <p>异步函数 , 也称为 "async / await" (语法关键字) , 是期约范式在 ECMAscript 函数中的应用 , 这个特性从行为和语法上都增强了 javascript
+    让以同步方式写的代码能够异步执行 , 下面来看一个最简单的例子 , 这个期约在超时之后会解决一个值:
+  </p>
+  <p class="retract">let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))</p>
+  <p>这个期约在1000毫秒之后解决为数值3。如果程序中的其他代码要在这个值可用时访问它, 则需要写一个兑现处理程序</p>
+  <code>
+    <pre>
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+    
+    p.then((x) => console.log(x)) // 延迟 3 秒
+    </pre>
+  </code>
+  <p>这其实是很不方便 , 因为其他代码都必须塞到期约处理程序中 不过可以把处理程序定义一个函数: </p>
+  <code>
+    <pre>
+    function handler(x) { console.log(x) }
+    
+    let P = new Promise((resolve, reject) => setTimeout(resolve, 1000, 5))
+    
+    P.then(handler) // 5
+    </pre>
+  </code>
+  <p>这个改进其实也不大。这是因为任何需要访问这个期约所产生值的代码，都需要以处理程序的形式来接收这个值。也就是说, 代码照样还是要放到处理程序里。
+    而使用异步 (async) 函数来等待 (await) 值 , 也就是异步函数可以优雅地解决这个问题
+  </p>
+  <script>
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3))
+
+    p.then((x) => console.log(x)) //  延迟 3 秒
+
+    function handler(x) { console.log(x) }
+
+    let P = new Promise((resolve, reject) => setTimeout(resolve, 1000, 5))
+
+    P.then(handler) // 5
+  </script>
+</body>
+
+</html>

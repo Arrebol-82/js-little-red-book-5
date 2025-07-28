@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>async关键字</h1>
+  <p>把 async 关键字放在函数前面可以声明异步函数。 这个关键字可以用在函数声明 , 函数表达式 , 箭头函数 和 方法上</p>
+  <strong>总结一下: async 和 await 只能用于函数声明 , 啥函数都可以 , 但是只能在函数</strong>
+  <code>
+    <pre>
+      <strong>函数声明</strong>
+    async function foo() { }
+
+    <strong>函数表达式</strong>
+    let bar = async function () { }
+
+    <strong>箭头函数</strong>
+    let baz = async () => { }
+
+    <strong>方法上</strong>
+    class Qux {
+      async qux() { }
+    }   
+    </pre>
+  </code>
+  <p>使用 async 关键字可以让函数具有异步特征 , 但总体上其代码仍然是同步求值的 , 而在参数或闭包方面 (跟Promise 一样), 异步函数仍然具有普通 javascript 函数的正常行为 ,
+    正如下面的例子所示</p>
+  <code>
+      <pre>
+    async function fOO() {
+      console.log(1)
+    }
+
+    fOO()
+    console.log(2);
+
+    // 1
+    // 2
+      </pre>
+    </code>
+  <p>不过 , 异步函数如果使用return 关键字返回了值 (如果没有 return 则会返回 undefined ) 这个值会被 Promise.resolve() 包装成一个期约对像; 异步函数始终返回期约对象
+    ,在函数外部调用这个函数可以得到它返回的期约
+  </p>
+  <strong>正常返回就是成功 , 有报错就是拒绝</strong>
+  <code>
+    <pre>
+    async function bar() {
+      console.log(1);
+      return 3
+    }
+
+    // 给返回的期约添加一个兑现处理程序
+
+    bar().then(console.log())
+
+    console.log(3);
+    // 1
+    // 2
+    // 3
+    </pre>
+  </code>
+  <p>当然,直接返回一个期约对象也是一样的( 像刚刚那里只是函数引擎帮你包装了 ):</p>
+  <code>
+      <pre>
+    async function qux() {
+      console.log(1);
+      return Promise.resolve(3)
+    }
+
+    // 给返回的期约添加一个兑现处理程序
+
+    qux().then(console.log())
+
+    console.log(3);
+    // 1
+    // 2
+    // 3
+
+    <strong>引擎还能少干点</strong>
+      </pre>
+    </code>
+  <p>异步函数的返回值最好是 ( 但实际上并不要求 ) 一个实现thenable接口的对象 ， 但常规的值也可以。如果返回的是实现Thenable 接口的对象 , 则这个对象可以由提供给
+    then() 的处理程序 "解包"。 如果不是 , 则返回值就被当作已经兑现的期约 下面的代码演示了这些情况:
+  </p>
+  <p>这里的thenable接口的对象指的是实现了 then方法的 , 只要实现了这个方法 ,那么后面 .then() 的时候就会进到对象里面去执行里面的代码 , <strong>简单来说: 有then方法的话 ,
+      .then的时候会执行then方法里面的代码
+      如果 , 没有的话就不会进去执行了 ,而是直接返回
+    </strong></p>
+  <code>
+      <pre>
+    async function original() {
+      return 'original'
+    }
+
+    original().then(console.log);
+    // original
+
+    // 返回一个没有实现 thenable 接口的对象
+    async function realize() {
+      return ['bar']
+    }
+
+    realize().then(console.log)
+    // ['bar']
+
+    // 返回一个实现了 thenable接口的非期约的对象
+    async function prot() {
+      const thenable = {
+        then(callback) { callback('bar') }
+      }
+      console.log(thenable);
+
+      return thenable
+    }
+
+    prot().then(console.log)
+
+    // 返回一个期约
+    async function Bar() {
+      return Promise.resolve('Bar')
+    }
+
+    Bar().then(console.log)// Bar
+      </pre>
+    </code>
+  <p>then(callback) { callback('bar') } 这里的代码 其实可以想成 then(resolve) { resolve('bar') } 执行流程是跟 </p>
+  <code>
+    <pre>
+    function javaScript(foo) {
+      foo('编码')
+    }
+    javaScript(function (data) {
+      Promise.resolve(data);
+    })
+    </pre>
+  </code>
+  <p>是一样的</p>
+  <p>与在期约处理程序中一样，在异步函数中抛出错误会返回拒绝的期约:</p>
+  <code>
+    <pre>
+    async function refuse() {
+      console.log(1);
+      throw 3;
+    }
+
+    // 给返回的期约添加一个拒绝的处理程序
+    refuse().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+    </pre>
+  </code>
+  <p>不过 , 拒绝期约的错误不会被异步函数捕获</p>
+  <code>
+    <pre>
+    async function capture() {
+      console.log(1);
+      Promise.reject(3);
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+    capture().catch((x) => console.log(x * 2))
+    console.log(2);
+
+    // 1
+    // 2
+    // Uncaught (in promise) 3
+    </pre>
+  </code>
+  <script>
+    async function foo() { }
+
+    let bar = async function () { }
+
+    let baz = async () => { }
+
+    class Qux {
+      async qux() { }
+    }
+    async function fOO() {
+      console.log(1)
+    }
+
+    fOO()
+    console.log(2);
+
+    async function obj() {
+      console.log(1);
+      return 3
+    }
+
+    // 给返回的期约添加一个兑现处理程序
+
+    obj().then(console.log())
+
+    console.log(3);
+    // 1
+    // 2
+    // 3
+
+
+    async function qux() {
+      console.log(1);
+      return Promise.resolve(3)
+    }
+
+    // 给返回的期约添加一个兑现处理程序
+
+    qux().then(console.log())
+
+    console.log(3);
+    // 1
+    // 2
+    // 3
+
+    // 返回一个原始值
+    async function original() {
+      return 'original'
+    }
+
+    original().then(console.log);
+    // original
+
+    // 返回一个没有实现 thenable 接口的对象
+    async function realize() {
+      return ['bar']
+    }
+
+    realize().then(console.log)
+    // ['bar']
+
+    // 返回一个实现了 thenable接口的非期约的对象
+    async function prot() {
+      const thenable = {
+        then(callback) { callback('bar') }
+      }
+      console.log(thenable);
+
+      return thenable
+    }
+
+    prot().then(console.log)
+
+    function javaScript(foo) {
+      foo('编码')
+    }
+    javaScript(function (data) {
+      Promise.resolve(data);
+    })
+
+    // 返回一个期约
+    async function Bar() {
+      return Promise.resolve('Bar')
+    }
+
+    Bar().then(console.log)// Bar
+
+
+    console.log('======================== 拒绝期约 =====================');
+
+    // 与在期约处理程序中一样，在异步函数中抛出错误会返回拒绝的期约:
+    async function refuse() {
+      console.log(1);
+      throw 3;
+    }
+
+    // 给返回的期约添加一个拒绝的处理程序
+    refuse().catch(console.log)
+    console.log(2);
+
+    // 1
+    // 2
+    // 3
+
+    // 不过 , 拒绝期约的错误不会被异步函数捕获
+
+    console.log('======================= 拒绝的期约不会被捕获 ==================');
+
+
+    async function capture() {
+      console.log(1);
+      Promise.reject(3);
+    }
+
+    // 给返回的期约添加一个拒绝处理程序
+    capture().catch((x) => console.log(x * 2))
+    console.log(2);
+
+    // 1
+    // 2
+    // Uncaught (in promise) 3
+  </script>
+</body>
+
+</html>

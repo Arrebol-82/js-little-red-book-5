@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>await的限制</h1>
+  <p>await关键字可以在异步函数或模块的顶级上下文使用 (scritp有 type = 'module' 即可在最外层使用), 如果需要在非异步函数中使用await , 可以使用立即调用的异步函数 ,下面两段代码实际是相同的</p>
+  <code>
+    <pre>
+    async function foo() {
+      console.log(await Promise.resolve(3));
+    }
+
+    foo();
+    // 3
+
+    // 立即调用的
+
+    (async function () {
+      console.log(await Promise.resolve(6));
+    })()
+    // 3
+    </pre>
+  </code>
+  <p>此外 , 异步函数的行为不会扩展到嵌套函数 , 因此 , await关键字也只能直接出现在异步函数的定义中 。 在同步函数内部使用await 会抛出 SyntaxError
+    下面的展示了一些会出错的例子 :
+  </p>
+  <code>
+    <pre>
+    // 不允许: await 出现在了箭头函数中 而箭头函数没有加 async
+    function Foo() {
+      const syncFn = () => {
+        return await Promise.resolve('foo')
+        // Uncaught SyntaxError: await is only valid in async functions and the top level bodies of modules
+      }
+      console.log(syncFn());
+    }
+
+    // 不允许: await 出现在了同步函数声明中 同样的syncFn 没有加async
+    function bar() {
+      function syncFn() {
+        return await Promise.resolve('bar')
+      }
+      console.log(syncFn());
+    }
+
+    //不允许: await 出现在了同步函数表达式中 同样的
+    function baz() {
+      const syncFn = function () {
+        return await Promise.resolve('baz')
+      }
+      console.log(syncFn());
+    }
+
+    // 不允许: IIFE 使用同步函数表达式或者箭头函数  也是同样的
+    function qux() {
+      (function () {
+        console.log(await Promise.resolve('qux'))
+      })();
+      (() => console.log(await Promise.resolve('qux')))()
+    }
+    </pre>
+  </code>
+  <p>都是没加 async 或者不在async 直接作用域下</p>
+  <p>for - await - of 循环提供了一种在javascript 中方便 , 简捷地迭代异步数据流的方式 。 与传统的for - of 循环类似 , 只不过不是迭代同步数组或者其他可迭代对象 ,
+    而是在迭代下一项之前先等待异步操作完成 for - await - of 循环语法如下</p>
+  <strong>异步代码使用 for await of 同步代码使用 for of</strong>
+  <code>
+    <pre>
+    for await (let variable of iterable) {
+      // 要执行的代码
+    }
+    </pre>
+  </code>
+  <p>在这个语法中 , 可迭代对象可以是任何异步可迭代对象 , 比如期约 , 异步函数或者拥有 Symbol , asyncIterator 方法的对象</p>
+  <p>异步函数是另一种可以在 for - await - of 循环中使用的可迭代对象 我们来看一个通过 for-await-of 迭代异步函数的例子 , 假设有一个异步函数返回解决为随机数值的期约 , 我们
+    可以使用for await of 等待这些期约并迭代得到的随机数
+  </p>
+  <code>
+    <pre>
+    async function getRandomNumber(i) {
+      return new Promise(resovle => {
+        console.log(i)
+        setTimeout(resovle, 1000, Math.random())
+      })
+    }
+
+    async function printRandomNumbers() {
+      for await (const x of Array.from(Array.from(Array(5).keys()).map(getRandomNumber))) {
+        console.log(x);
+      }
+      console.log("loop has exited")
+    }
+
+    printRandomNumbers()
+
+        // 0
+        // 1
+        // 2
+        // 3
+        // 4
+        // 随机数
+        // 随机数
+        // 随机数
+        // 随机数
+        // 随机数
+        // loop has exited
+    </pre>
+  </code>
+  <p>其实就是 [0,1,2,3,4].map(getRandomNumber) 然后就是 getRandomNumber(0) , getRandomNumber(1) ... 这个样子 , 所以这里重要的好像就是map ,
+    最后在把处理好的数组返回来 , 让for await of 去调用返回来的数组 , 完事</p>
+  <div>
+    <strong>反应了Map的特性</strong>
+    <ul>
+      <li><strong>map 的作用是</strong> “批量触发函数调用”，不管里面有没有异步操作，它会一次性把所有函数都调用完（同步执行调用动作）。</li>
+      <li><strong>异步操作</strong>（这里的 setTimeout）一旦被触发，就脱离 map 的控制，自己在后台计时，所以多个异步操作可以并行执行。</li>
+    </ul>
+  </div>
+  <p>在这个例子中 , 我们定义了异步函数 getRandomNumber() , 它返回一个期约, 在 1000毫秒后解决为一个随机数 , 而printRandomNumbers() 函数使用 for-await-of 循环迭代由
+    getRandomNumber () 返回的期约 , 并将得到的随机数输出到控制台</p>
+  <p>如果我们在前面的代码中删除 async 关键字 , 并使用常规的 for-of 循环 那就会看到下面的输出</p>
+  <code>
+    <pre>
+      // 立即输出
+      // 0
+      // 1
+      // 2
+      // 3
+      // 4
+
+      // Promise <pending>
+      // ... 
+      // loop has exited
+    </pre>
+  </code>
+  <p>for - await - of 循环既可以处理常规可迭代对象 , 也可以处理 <strong>异步可迭代对象</strong></p>
+  <code>
+    <pre>
+    const myArray = [1, 2, 3];
+    (async () => {
+      for await (const item of myArray) {
+        console.log(item)
+      }
+    })()
+
+    // 1
+    // 2
+    // 3
+    </pre>
+  </code>
+  <p>这里如果是在 type = "module" 的环境下运行 就是正确 如果不是的话 , 记得await要在async的环境下使用</p>
+  <p>下面我们重构上面的代码，让 for-await-of 消费由异步迭代器生成的值:</p>
+  <code>
+    <pre>
+    async function* asyncIterator(array) {
+      for (const item of array) {
+        yield item
+      }
+    }
+
+    const array = [4, 5, 6]
+
+    for await (const item of asyncIterator(array)) {
+      console.log(item);
+    }
+
+    // 4
+    // 5
+    // 6
+    </pre>
+  </code>
+  <p>所这里的的 先是给asyncIterator 传了一个数组进去给迭代器 , 然后再用迭代器去调用 , 第一次遇到yield暂停并返回4 , 然后将4传给外面的item最终执行log打印 , 依次类推</p>
+  <p>为观察 for - await - of 循环按顺序消费异步生成的值 , 可以让异步生成器延迟生成值</p>
+  <code>
+    <pre>
+
+    </pre>
+  </code>
+  <script type="module">
+    // async function foo() {
+    //   console.log(await Promise.resolve(3));
+    // }
+
+    // foo();
+    // // 3
+
+    // // 立即调用的
+
+    // (async function () {
+    //   console.log(await Promise.resolve(6));
+    // })()
+    // // 6
+
+    // // 不允许: await 出现在了箭头函数中 而箭头函数没有加 async
+    // function Foo() {
+    //   const syncFn = () => {
+    //     return await Promise.resolve('foo')
+    //     // Uncaught SyntaxError: await is only valid in async functions and the top level bodies of modules
+    //   }
+    //   console.log(syncFn());
+    // }
+
+    // // 不允许: await 出现在了同步函数声明中 同样的syncFn 没有加async
+    // function bar() {
+    //   function syncFn() {
+    //     return await Promise.resolve('bar')
+    //   }
+    //   console.log(syncFn());
+    // }
+
+    // //不允许: await 出现在了同步函数表达式中 同样的
+    // function baz() {
+    //   const syncFn = function () {
+    //     return await Promise.resolve('baz')
+    //   }
+    //   console.log(syncFn());
+    // }
+
+    // // 不允许: IIFE 使用同步函数表达式或者箭头函数  也是同样的
+    // function qux() {
+    //   (function () {
+    //     console.log(await Promise.resolve('qux'))
+    //   })();
+    //   (() => console.log(await Promise.resolve('qux')))()
+    // }
+
+
+    // for await (let variable of iterable) {
+    //   // 要执行的代码
+    // }
+
+    async function getRandomNumber(i) {
+      return new Promise(resovle => {
+        console.log(i)
+        setTimeout(resovle, 1000, Math.random())
+      })
+    }
+
+    async function printRandomNumbers() {
+      for await (const x of Array.from(Array.from(Array(5).keys()).map(getRandomNumber))) {
+        console.log(x);
+      }
+      console.log("loop has exited")
+    }
+
+    // printRandomNumbers()
+
+    // 0
+    // 1
+    // 2
+    // 3
+    // 4
+    // 随机数
+    // 随机数
+    // 随机数
+    // 随机数
+    // 随机数
+    // loop has exited
+    const myArray = [1, 2, 3];
+    (async () => {
+      for await (const item of myArray) {
+        console.log(item)
+      }
+    })()
+
+    // 1
+    // 2
+    // 3
+
+    async function* asyncIterator(array) {
+      for (const item of array) {
+        yield item
+      }
+    }
+
+    const array = [4, 5, 6]
+
+    for await (const item of asyncIterator(array)) {
+      console.log(item);
+    }
+
+    // 4
+    // 5
+    // 6
+
+    console.log('=================== 观察顺序 ===================');
+
+    async function* Iterable(array) {
+      for (const item of array) {
+        // 延迟 1000 毫秒
+        await new Promise(resovle => setTimeout(resovle, 1000))
+        yield item
+      }
+    }
+
+    const MyArray = [1, 2, 3]
+
+    for await (const item of Iterable(MyArray)) {
+      console.log(item);
+    }
+
+    // 1000毫秒后输出:
+    // 1
+
+    // 2000毫秒后输出:
+    // 2
+
+    // 3000毫秒后输出:
+    // 3
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>串行执行期约</h1>
+  <p>在11.2我们讨论如何串行执行期约并把值传给后续的期约 , 使用 async / await , 期约连锁会变得很简单</p>
+  <code>
+  <pre>
+    function addTwo(x) { return x + 2 } // 11
+    function addThree(x) { return x + 3 } // 14
+    function addFive(x) { return x + 5 } // 15
+
+    async function addTen(x) {
+      for (const fn of [addTwo, addThree, addFive]) {
+        x = await fn(x)
+      }
+      return x
+    }
+
+    addTen(9).then(console.log)  // 19 
+  </pre>
+</code>
+  <p>这里,await直接传递了每个函数的返回值,结果通过选代产生。当然,这个例子并没有使用期约 ,
+    如果要使用期约，则可以把所有函数都改成异步函数。这样它们就都返回期约了:</p>
+  <code>
+      <pre>
+    async function addTwo(x) { return x + 2 } // 11 
+    async function addThree(x) { return x + 3 } // 14
+    async function addFive(x) { return x + 5 } // 19
+
+    async function addTen(x) {
+      for (const fn of [addTwo, addThree, addFive]) {
+        x = await fn(x)
+      }
+      return x
+    }
+
+    addTen(9).then(console.log)  // 19
+      </pre>
+    </code>
+  <p>可以改写成异步函数</p>
+  <script>
+    function addTwo(x) { return x + 2 } // 11
+    function addThree(x) { return x + 3 } // 14
+    function addFive(x) { return x + 5 } // 19
+
+    async function addTen(x) {
+      for (const fn of [addTwo, addThree, addFive]) {
+        x = await fn(x)
+      }
+      return x
+    }
+
+    addTen(9).then(console.log)  // 19 
+
+    //  可以把所有函数都改成异步函数
+    async function addTwo(x) { return x + 2 } // 11 
+    async function addThree(x) { return x + 3 } // 14
+    async function addFive(x) { return x + 5 } // 19
+
+    async function addTen(x) {
+      for (const fn of [addTwo, addThree, addFive]) {
+        x = await fn(x)
+      }
+      return x
+    }
+
+    addTen(9).then(console.log)  // 19
+
+  </script>
+</body>
+
+</html>

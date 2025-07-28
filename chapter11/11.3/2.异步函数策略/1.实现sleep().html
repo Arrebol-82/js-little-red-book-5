@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>实现sleep()</h1>
+  <p>很多人在刚开始学习JavaScript时，想找到一个类似Java中Thread.sleep()之类的函数，(java我都忘完了) 以便程序中加入非阻塞的暂停 。有了异步函数之后 ,
+    一个简单的箭头函数就可以实现 sleep()
+  </p>
+  <code>
+    <pre>
+    async function sleep(delay) {
+      return new Promise((resovle) => setTimeout(resovle, delay))
+    }
+
+    async function foo() {
+      const t0 = Date.now()
+      console.log(t0);
+
+      await sleep(1500)
+      console.log(Date.now() - t0)
+      console.log(Date.now());
+
+    }
+    foo()
+
+    // 解决于 1500
+    </pre>
+  </code>
+  <p><strong>这段吗就是一开的时间戳 经历了 1.5 秒后 在用1.5秒后的时间戳减去刚刚的时间戳 所以输出的值是接近于 1500的</strong></p>
+  <script>
+    async function sleep(delay) {
+      return new Promise((resovle) => setTimeout(resovle, delay))
+    }
+
+    async function foo() {
+      const t0 = Date.now()
+      await sleep(1500)
+      console.log(Date.now() - t0)
+    }
+    foo()
+    // 解决于 1500
+  </script>
+</body>
+
+</html>
