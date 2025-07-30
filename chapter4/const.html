@@ -12,14 +12,14 @@
     const aaa = {}
     aaa.name = ''
     console.log(aaa);
-    // aaa = {} //报错
+    // {name: ''}
 
 
     Object.freeze()
     // 表示全都不可以修改
-    const bbb = Object.freeze({})
+    const bbb = Object.freeze({}) // 冻结对象
     bbb.name = ''
-    console.log(bbb.name);
+    console.log(bbb.name);  //undefined
 
   </script>
 </body>

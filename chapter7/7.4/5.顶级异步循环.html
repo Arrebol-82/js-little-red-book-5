@@ -65,13 +65,13 @@
       </pre>
     </code>
   <ul>
-    <li><strong>本质:</strong> 顶级作用域不允许直接运行异步语法<br>
+    <li><strong>本质:</strong> 顶级作用域不允许直接运行异步语法 ( 除了 type = 'module' 的script)<br>
       一定要在async环境下运行</li>
     <li><strong>手段:</strong>用 async 函数包裹，两种典型写法<br>
       异步立即执行函数 :: 命名异步函数 </li>
     <li><strong>书中意图:</strong>用最简洁的例子讲清 “必须包裹” <br>
       要想使用for-await-of 就要使用async环境</li>
-    <li><strong>我的写法:</strong>是属于在用于团队开发 要长期使用的</li>
+    <li><strong>我的写法:</strong>是属于在用于团队开发 要长期使用的 ( 至少豆包是这么说的 )</li>
   </ul>
   <script>
     class Emitter {
