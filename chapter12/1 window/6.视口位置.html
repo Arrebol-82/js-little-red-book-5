@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>视口位置</h1>
+  <p>浏览器窗口尺寸通常无法完整显示整个页面，为此用户可以通过滚动在有限的视口中查看文档。度量文档相对于视口滚动距离的属性有两对，它们返回相等的值:
+    window.pageXoffset/window.scro11x 和 window.pageYoffset/window.scrollY. <strong>(它们就是 “同一个功能的新旧两个名字”，作用 100%
+      相同，只是新名字（scrollX/scrollY）更直白好记（“scroll” 直接点出 “滚动”，“X/Y”
+      对应方向），旧名字（pageXOffset/pageYOffset）稍微绕一点（“page” 指文档，“Offset” 指偏移）。)</strong>
+  </p>
+  <p>可以使用 scroll()、serollTo()和scrollBy()方法滚动页面。这3个方法都接收表示相对视口距离的x和y坐标，这两个参数在前两个方法中表示要滚动到的坐标，在最后一个方法中表示滚动的距离。</p>
+  <p><strong>scroll() === serollTo() 等价</strong>他们表示绝对位置 , 跟moveTo()是一样的会定位到输入的位置</p>
+  <p><strong>scrollBy()</strong>他们表示相对位置 , 跟moveBy()一样是根据当前位置做移动</p>
+  <code>
+    <pre>
+    // 相对于当前视口向下滚动 100 像素
+    window.scrollBy(0, 1000)
+
+    // 相对于当前视口向右滚动 40 像素
+    window.scrollBy(40, 0)
+
+    // 滚动到页面左上角
+    window.scrollTo(0, 0)
+
+    // 滚动到距离屏幕左边及顶边各 100 像素的位置
+    window.scrollTo(100, 100)
+    </pre>
+  </code>
+  <p>如果直接这么写大概率是不生效的 , 因为 <strong>页面渲染与布局信息(页面信息)他们是存在时间差的 , 也就表明了虽然页面渲染好了 , 但是页面的信息还没计算好 , 所就会导致上面的代码可能执行不了
+      这时候加延迟后代码就好了
+    </strong></p>
+  <p>这几个方法也都接收一个 scro11Tooptions字典,除了提供偏移值，还可以通过 behavior 属性诉浏览器是否平滑滚动。</p>
+  <code>
+    <pre>
+      window.scrollTo({
+        left: 0,
+        top: 150,
+        // 正常滚动
+        // behavior: "auto",
+
+        // 正常滚动
+        // behavior: "instant",
+
+        // 平滑滚定
+        behavior: "smooth"
+      })
+    </pre>
+  </code>
+  <script>
+    setTimeout(() => {
+      // 相对于当前视口向下滚动 100 像素
+
+      // window.scrollBy(0, 1000);
+
+      // 相对于当前视口向右滚动 40 像素
+      // window.scrollBy(40, 0)
+
+      // 滚动到页面左上角
+      // window.scrollTo(0, 0)
+
+      // 滚动到距离屏幕左边及顶边各 100 像素的位置
+      window.scrollTo({
+        left: 0,
+        top: 150,
+        // 正常滚动
+        // behavior: "auto",
+
+        // 正常滚动
+        // behavior: "instant",
+
+        // 平滑滚定
+        behavior: "smooth"
+      })
+
+    }, 100);
+  </script>
+</body>
+
+</html>

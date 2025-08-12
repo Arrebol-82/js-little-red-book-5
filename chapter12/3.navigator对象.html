@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>navigator对象</h1>
+  <p>navigator 是由 Netscape Navigator2最早引入浏览器的 , 现在已经成为客户端标识浏览器的标准。只要浏览器启用javascript , navigator 对象就一定存在 , 但是与其他 BOM
+    对象一样 , 每个浏览器都支持自己的一组属性
+  </p>
+  <p class="retract">下表列出了这些接口定义的属性和方法</p>
+  <code>
+    <pre>
+      <strong>________________________________________________________________________________________________________________________</strong>
+                      属性/方法                                                   说     明
+      <strong>________________________________________________________________________________________________________________________</strong>
+                activeVrDisplays                               返回数组，包含ispresenting属性为true 的 vRDisplay 实例
+
+                appCodeName                                    即使在非Mozilla浏览器中也会返回“Moz11la"
+
+                appName                                        浏览器全名
+
+                appVersion                                     浏览器版本。通常与实际的浏览器版本不一致
+
+                battery                                        返回暴露 Battery SiatusAPl的 BatteryManager 对象
+
+                buildrd                                        浏览器的构建编号
+
+                connection                                     返回暴露 Network Information API的 NetworkInformation 对象
+
+                cookieEnabled                                  返回布尔值，表示是否启用了cookie
+
+                credentiais                                    返回暴露 Credentials Management APl 的 CredentialsContainer 对象
+
+                deviceMemory                                   返回单位为GB的设备内存容量
+
+                doNotTrack                                     返回用户的“不跟踪”(do-not-track)设置
+
+                <strong>geolocation</strong>                   <strong>返回暴露 Geolocation API的 Geolocation 对象 获取用于地理位置</strong>
+
+                getvRDisplays()                                返回数组，包含可用的每个 vRDisplay 实例
+
+                getUserMedia ()                                返回与可用媒体设备硬件关联的流
+
+                hardwareConcurrency                            返回设备的处理器核心数量
+
+                javaEnabled                                    返回布尔值，表示浏览器是否启用了Java
+
+                <strong>language</strong>                      <strong>返回浏览器的主语言</strong>
+
+                languages                                      返回浏览器的偏好的语言数组
+
+                locks                                          返回暴露 Web Locks API的 LockManager 对象
+
+                mediaCapabilities                              返回暴露 Media Capabilities API的 Mediacapabilities 对象
+
+                mediaDevices                                   返回可用的媒体设备
+
+                maxTouchPoints                                 返回设备触摸屏支持的最大触点数
+
+                mimeTypes                                      返回浏览器中注册的 MIME类型数组
+
+                <strong>onLine</strong>                        <strong>返回布尔值，表示浏览器是否联网</strong>
+
+                oscpu                                          返回浏览器运行设备的操作系统和(或)CPU
+
+                permissions                                    返回暴露Permissions API的 Permissions 对象
+
+                platform                                       返回浏览器运行的系统平台
+
+                plugins                                        返回浏览器安装的插件数组。
+
+                product                                        返回产品名称(通常是"Gecko")
+
+                productSub                                     返回产品的额外信息(通常是Gecko的版本)
+
+                registerProtocolHandler()                      将一个网站注册为特定协议的处理程序
+
+                requestMediaKeySystemAccess( )                 返回一个期约，解析为MediaKeySystemAccess 对象
+
+                sendBeacon ( )                                 异步传输一些小数据
+
+                serviceworker                                  返回用来与Serviceworker 实例交互的Serviceworkercontainer
+
+                share ()                                       返回当前平台的原生共享机制
+
+                storage                                        返回暴露 Storage APl的storageManager 对象
+
+                <strong>userhgent</strong>                     <strong>返回浏览器的用户代理字符串 (判断浏览器 / 设备信息)</strong>
+
+                vendor                                         返回浏览器的厂商名称
+
+                vendorSub                                      返回浏览器厂商的更多信息 
+
+                vihrate ()                                     触发设备振动
+
+                webdriver                                      返回浏览器当前是否被自动化程序控制
+    </pre>
+  </code>
+  <p>navigator 对象的属性通常用于确定浏览器的类型。</p>
+  <section>
+    <h1>注册处理程序</h1>
+    <p>navigator上的registerProtocolHandler()方法可以把一个网站注册为处理某种特定类型信息。
+      在线RSS阅读器和电子邮件客户端可以借助这个方法将 Web应用程序注册为像桌面软件一样的默认应用程序</p>
+    <p class="retract">要使用registerprotocolHandler()方法，必须传人3个参数:要处理的协议(如"mailto” 或 "ftp") , 处理该协议的URL，以及应用名称。比如，要把一个
+      Web应用程序注册为默认邮件客户端处理该协议的URL，以及应用名称。比如，要把一个 Web应用程序注册为默认邮件客户端可以这样做:</p>
+    <code>
+        <pre>
+          navigator.registerProtocolHandler(
+            'mailto',
+             'http://www.example.com?cmd=%s',
+              'Some Mail Client')
+        </pre>
+      </code>
+    <p>这个例子为"mai1to"协议注册了一个处理程序，这样邮件地址就可以通过指定的 Web应用程序打开。注意，第二个参数是负责处理请求的URL，$s表示原始的请求。</p>
+    <p><strong>让网页能接管特定的链接协议（比如 mailto），点击这类链接时跳转到指定网页处理，而不是系统软件”。</strong></p>
+  </section>
+  <script>
+    console.log(navigator);
+    console.log(navigator.userAgent);
+    console.log(navigator.appCodeName);
+    console.log(navigator.appName);
+    console.log(navigator.deviceMemory);
+    console.log(navigator.hardwareConcurrency);
+    console.log(navigator.onLine);
+    console.log(navigator.platform);
+    console.log(navigator.plugins);
+    console.log(navigator.vendor);
+    console.log(navigator.vendorSub);
+
+    navigator.registerProtocolHandler('mailto', 'http://www.example.com?cmd=%s', 'Some Mail Client')
+  </script>
+</body>
+
+</html>

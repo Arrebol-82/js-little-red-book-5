@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>globalthis属性</h1>
+  <h3>简单来说就是可以不用再手动判断这是哪个环境了 .globalthis会自动帮你判断 (不管在哪跑 JS，用它访问全局对象就对了～ 这个设计特别贴心，记起来也简单～)</h3>
+  <p>取决于在什么环境下运行JavaScript，全局对象也有几种不同的形式:</p>
+  <ul>
+    <li>在网页脚本中，全局对象是window、self或frames。
+      <ul>
+        <li class="circle"><strong>self：</strong>self 和 window 功能一模一样，只是在 iframe 这类 “嵌套窗口” 里，用 self
+          更明确：“我指的是我自己这个窗口，不是外面的大窗口”。</li>
+        <li class="circle"><strong>frames：</strong>frames 就是一张清单，上面写着每个小盒子的名字和位置，你通过这张清单能找到每个小盒子，还能跟它们 “说话”（调用里面的功能）。
+        </li>
+        <li>在iframe里面使用 self 就不会指向全局的window , 而是iframe 里面的window , 而 frames 是用于收集里面所以的iframe的window</li>
+      </ul>
+    </li>
+    <li>Web Worker中，全局对象是 self (web Worker 跟浏览器处理异步的线程是一样的 , 只不过是一个是处理异步 , 一个是处理逻辑运算)</li>
+    <li>在Node.js中，全局对象是 global</li>
+    <li>在脚本的顶级，this通常引用全局对象，但在严格模式下或在有箭头函数的情况下，问题会复杂一些。(通常是会报错)</li>
+  </ul>
+  <p>为消除这些差异，ECMAScript定义了一个globalrhis 属性，以期达成两个目标</p>
+  <ul>
+    <li>将跨环境访问全局this的方式统一为globalThis，即在网页中globalThis === window , 在Web Worker中globalThis === self ,
+      在node.js中 globalThis === global </li>
+    <li>允许脚本修改和控制g1oba1rhis 的特性和行为,因为 globalThis 是对全局对象的间接引用其本身是可写、可配置的。
+      <strong>(globalThis是不可以重新赋值 , 就是全局对象自己绑定的 , 不能人为去修改 , 但是可以像对象一样 , 给它添加属性和方法 , 不仅可以使用globalThis访问 , 还可以用
+        全局对象访问)</strong>
+    </li>
+  </ul>
+  <p>在非测览器引擎中，go1oba1This属性直接引用全局对象，而在浏览器引擎中、它通过代理间接引用全局对象 <strong>(因为window要处理大量的复杂逻辑 , 比如 window.top ,
+      那么当使用globalthis.top 不能是添加属性 , 要确保是能正确访问,就是这样因为太过复杂了所以才会使用代理 (Proxy) 引用全局对象, 而像是环境中都是一个简单全局对象 , 所以可以直接引用)</strong>
+  </p>
+  <p>在需要访问全局对象且有可能在不一样的Javascript环境中共享的时候，应该使用globalrhis , 果脚本只在一个环境下运行，应该用不到 globalrhis。</p>
+  <script>
+    console.log(globalThis === window)
+    console.log(globalThis === self)
+
+    globalThis.name = 'zjs'
+
+    console.log(window.name);
+
+  </script>
+</body>
+
+</html>

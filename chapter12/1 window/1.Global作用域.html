@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>Global作用域</h1>
+  <p>因为window 对象被复用为ECMAscript的Global对象 , 所以通过var声明的所有全局变量和函数都会变成window对象的属性和方法</p>
+  <code>
+    <pre>
+    var age = 29
+    var sayAge = () => alert(this.age)
+    alert(window.sayAge)
+    sayAge()
+    window.sayAge()
+
+    // () => alert(this.age)
+    // 29
+    // 29
+    // 29
+    </pre>
+  </code>
+  <p>这里，变量age 和函数 sayAge()被定义在全局作用域中，它们自动成为 window 对象的成员。因此 , 变量 age 可以通过 window.age 来访问，而数 sayAge()也可以通过
+    window.sayAge()来访问 。 因为sayAge()存在于全局作用域，this.age 映射到 window.age，所以可以显示正确的结果。</p>
+  <p class="retract">如果在这里使用1et或const替代var，则不会把变量添加给全局对象</p>
+  <code>
+      <pre>
+    let age = 29
+    const sayAge = () => alert(this.age)
+    alert(window.sayAge)
+    sayAge()
+    window.sayAge()
+
+    // undefined
+    // undefined
+    // TypeError: window.sayAge is not a function
+      </pre>
+    </code>
+  <p>另外,访问未声明的变量会抛出错误,但是可以在window 对象上查询是否存在可能未声明的变量
+    比如:</p>
+  <code>
+      <pre>
+    var newValue = oldValue
+    //  ReferenceError: oldValue is not defined
+
+   <strong> 这里不会抛出错误 , 是因为这里是属性查询</strong>
+    // newValue 会被设置为undefined 
+    var newValue = window.oldValue;
+      </pre>
+    </code>
+  <p>记住，JavaScript中有很多对象暴露在全局作用域中，比如1ocation和navigator(本章后面都会讨论)，因而它们也是 window 对象的属性。</p>
+  <script>
+    // var age = 29
+    // var sayAge = () => alert(this.age)
+    // alert(window.sayAge)
+    // sayAge()
+    // window.sayAge()
+
+    // let age = 29
+    // const sayAge = () => alert(this.age)
+    // alert(window.sayAge)
+    // sayAge()
+    // window.sayAge()
+
+    // undefined
+    // undefined
+    //  TypeError: window.sayAge is not a function
+
+
+    var newValue = oldValue
+    //  ReferenceError: oldValue is not defined
+
+
+    var newValue = window.oldValue;
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>nodeName与nodeValue</h1>
+  <p id="someNode">nodeName 与 nodeValue 保存着有关节点的信息 , 这两个属性的值完全取决于节点类型 。在使用这两个属性前 , 最好先检测节点类型 ,
+    如下所示:
+  </p>
+  <code>
+    <pre>
+    const someNode = document.getElementById('someNode')
+    const textNode = someNode.firstChild;
+    let value = ''
+    if (someNode.nodeType === 1) {
+      value = someNode.nodeName
+      console.log(value) // 会显示元素的标签名
+      console.log(someNode.textContent) // 会显示元素的文本
+      console.log(textNode.nodeValue) // 会显示元素的标文本
+
+      // p
+    }
+    </pre>
+  </code>
+  <strong>firstChild 返回当前节点的 第一个子节点（任何类型），包括文本、注释、元素等。</strong>
+  <p>这个例子先检查了节点是不是元素 , 如果是则将其nodeName 的值赋给一个变量。对元素而言nodeName 始终等于元素的标签名 , 而nodeValue 则始终为 nu11。</p>
+  <p>其实可以使用 TextContent 因为方便 , 后面会讲的</p>
+  <script>
+    const someNode = document.getElementById('someNode')
+    const textNode = someNode.firstChild;
+    let value = ''
+    if (someNode.nodeType === 1) {
+      value = someNode.nodeName
+      console.log(value) // 会显示元素的标签名
+      console.log(someNode.textContent) // 会显示元素的文本
+      console.log(textNode.nodeValue) // 会显示元素的标文本
+
+      // p
+    }
+
+  </script>
+</body>
+
+</html>

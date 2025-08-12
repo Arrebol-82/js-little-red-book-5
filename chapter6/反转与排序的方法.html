@@ -47,7 +47,34 @@
   <p>localeCompare  方法是根据指定的语言环境或默认的语言环境进行字符串比较。</p>
   <code>
     <pre>
+ // 字符串升序
+    // localeCompare根据当前的语言环境进行对比
+    values.sort((a, b) => a.localeCompare(b))
+    console.log(values);
 
+    // 字符串降序
+    values.sort((a, b) => b.localeCompare(a))
+    console.log(values);
+
+    // 数值属性升序
+    values.sort((a, b) => a.foo - b.foo)
+    console.log(values);
+
+    // 字符串属性升序
+    values.sort((a, b) => a.foo.localeCompare(b.foo))
+    console.log(values);
+
+    // 字符串属性升序,空值排在最后面
+    values.sort((a, b) => {
+      if (a.foo === '') {
+        return 1
+      }
+      if (b.foo === '') {
+        return -1
+      }
+      return a.foo.localeCompare(b.foo)
+    })
+    console.log(values);
     </pre>
   </code>
   <script>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>窗口大小</h1>
+  <p>在不同浏览器中确定浏览器窗口大小没有想象中那么容易。所有现代浏览器都支持4个属: innerwidth, innerHeight , outerwidth 和 outerHeight, outerwiath 和
+    outerHeight 返回浏览器窗口自身的大小 (不管是在最外层 window上使用，还是在窗格<frame>中使用)。innerwidth和innerHeight返回浏览器窗口中页面视口的大小(不包含浏览器边框和工具栏)。此外
+      <strong>简单理解 (那就是 inner 显示的是页面内容区域里面的信息 , 而outer显示的是整个浏览器的大小)</strong>
+  </p>
+  <p>document.documentElement.clientwidth 和 document.documentElement.clientHeight 返回页面视口的宽度和高度。 <strong>他是不包含滚动条 ,
+      而且还要在标准的 DOCTYPE 下使用</strong></p>
+  <p>在移动设备上，window.innerwidth和window.innerHeight
+    返回视口的大小，也就是屏幕上页面可视区域的大小。在放大或缩小页面时，这些值也会相应变化。document.documentElement用于度量布局视口的大小，即渲染页面的实际大小。
+    布局视口是相对于可见视口的概念，可见视口只能显示布局视口是相对于可见视口的概念，可见视口只能显示整个页面的一小部分。在放大或缩小页面时，这些值也会相应变化。
+  </p>
+  <p class="retract">因为桌面浏览器的差异，所以需要先确定用户是不是在使用移动设备，然后再决定使用哪个属性</p>
+  <p>可以使用resizeTo()和 resizeBy()方法调整窗口大小。这两个方法都接收两个参数: resizeTo() 接收新的宽度和高度值 , 而resizeBy() 接收宽度和高度各缩放多少像素 <strong>( 是缩放大小
+      )</strong></p>
+  <code>
+      <pre>
+        缩放到100x100
+
+    window.resizeTo(100, 100)
+
+    缩放到200x50
+
+    window.resizeBy(100, 50)
+    
+    缩放到300x300
+    window.resizeTo(300, 300)        
+      </pre>
+  </code>
+  <p>与移动窗口(moveBy)的方法一样,缩放窗口的方法可能会被浏览器禁用,而且在某些浏览器中默认是禁用的同样，缩放窗口的方法只能应用到最上层的window 对象</p>
+  <script>
+
+    window.resizeTo(100, 100)
+
+    window.resizeBy(100, 50)
+
+    window.resizeTo(300, 300)
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>定时器</h1>
+  <p>
+    javascript在浏览器中是单线程执行的，但允许使用定时器指定在某个时间之后或每隔一段时间就执行相应的代码。setrimeout()用于指定在一定时间后执行某些代码，而setInterva1()用于指定每隔一段时间执行某些代码。
+    <strong>(一个是延迟器 , 一个倒计时器)</strong>
+  </p>
+  <p class="retract">setTimeout()方法通常接收两个参数;要执行的代码和在执行回调函数前等待的时间(毫秒)。第一个参数可以是包含javascript代码的字符串 (类似于传给eval()的字符串)
+    或者一个函数 , 比如:
+  </p>
+  <code>
+    <pre>
+    // 在一秒后显示
+    setTimeout(() => console.log('Hello world!'), 1000)
+    </pre>
+  </code>
+  <p>第二个参数是要等待的毫秒数，而不是要执行代码的确切时间。JavaScript是单线程的，所以每次只能执行一段代码。为了调度不同代码的执行，JavaScript维护了一个任务队列，其中的任务会按照添
+    加到队列的先后顺序执行。<strong>(浏览器处理异步的任务队列)</strong>setrimeout()的第二个参数只是告诉JavaScript
+    引擎在指定的毫秒数过后把任务添加到这个队列。如果队列是空的，则会立即执行该代码。如果队列不是空的，则代码必须等待前面的任务执行完才能执行。
+  </p>
+  <p class="retract">
+    调用setrimeout()时，会返回一个表示该超时排期的数值ID。这个超时ID是被排期执行代码的唯一标识符,可用于取消该任务。要取消等待中的排期任务,可以调用clearrimeout()方法并传人超时ID，如下面的例子所示:
+  </p>
+  <code>
+    <pre>
+    //设置超时任务
+    let timeoutid = setTimeout(() => alert('Hello world!'), 1000)
+    
+    // 取消超时任务
+    clearTimeout(timeoutid)
+    </pre>
+  </code>
+  <p>只要是在指定时间到达之前调用clearrimeout()，就可以取消超时任务。在任务执行后再调用clearTimeout()没有效果。 <strong>(这里还未执行到 alert ,
+      就被取消了所以并不会输出 alert)</strong></p>
+  <h4>注意</h4>
+  <p>所以超时执行的代码(函数)都会在全局作用域中的一个匿名函数中运行，因此函数中的 this 值在非严格模式下始终指向 window，而在严格模式下是 undefined。如果给 setrimeout()提供了一个箭头函数，那么
+    this 会引用定义它时所在的词法作用域。</p>
+  <strong>复习一下this , 普通函数,不改变this指向的话 , 谁调用this , this就指向谁(直接调用的话 , 那就是全局在调用this) 箭头函数的this找外层作用域的this</strong>
+  <p>setInterval()与 setrimeout()的使用方法类似，只不过指定的任务会每隔指定时间就执行一次 , 直到取消循环定时或者页面卸载。setInterva1()同样可以接收两个参数: 要执行的代码(字符串或函数
+    )，以及把下一次执行定时代码的任务添加到队列要等待的时间(毫秒)。</p>
+  <code>
+    <pre>
+      setInterval(()=> alert("Hello world!")，10000)
+      <strong>每隔10秒就执行一次</strong>
+    </pre>
+  </code>
+  <p>
+    <strong>注意</strong>这里的关键是第二个参数，也就是间隔时间，它指的是向队列添加新任务之前等待的时间。比如，调用setInterval()的时间为01:00:00，间隔时间为3000毫秒。这意味着01:00:03时，浏览器会把任务添加到执行队列。浏览器不关心这个任务什么时候执行或者执行要花多长时间。
+    因此，到了01:00:06，它会再向队列中添加一个任务。由此可见执行时间短、非阻塞的回调函数比较适合 setInterval() <strong>不管你上一次的任务执行完了没有 , 到时间了就会继续添加任务</strong>
+  </p>
+  <P>setInterva1()方法也会返回一个循环定时D，可以用于在未来某个时间点取消循环定时。要取消循环定时，可以调用c1earInterval()并传入定时ID。相对于 setrimeout()而言,取消定时的能
+    力对 setinterva1()更加重要。毕竟，如果一直不管它，那么定时任务会一直执行到页面卸载。下面是一个常见的例子:
+  </P>
+  <code>
+    <pre>
+    let num = 0, intervalid = null
+    let max = 10
+    let incrementNumber = function () {
+      num++
+
+      // 如果达到最大值 , 则取消所有未执行的任务
+      if (num == max) {
+        clearInterval(intervalid)
+        alert('Dome')
+      }
+    }
+
+    intervalid = setInterval(incrementNumber, 500)
+    </pre>
+  </code>
+  <p>在这个例子中，变量num 会每半秒递增一次，直至达到最大限制值，此时循环定时会被取消。这个模式也可以使用setTimeout()来实现 , 比如</p>
+  <code>
+    <pre>
+    let Num = 0
+    let Max = 10
+    let IncrementNumber = function () {
+      Num++
+
+      // 如果还没达到最大值 , 再设置一个超时任务
+      if (Num < Max) {
+        setTimeout(IncrementNumber, 500)
+      } else {
+        alert('Done')
+      }
+    }
+
+    setTimeout(IncrementNumber, 500)
+
+    <strong>这里的setTimeout是更耗时间的 , 因为启动需要时间</strong>
+    </pre>
+  </code>
+  <p>注意在使用 setrimeout()时，不一定要记录超时
+    ID，因为它会在条件满足时自动停止，否则会自动设置另一个超时任务。这个模式是设置循环任务的推荐做法。setInterva1()在实践中很少会生产环境下使用，因为一个任务结束和下一个任务开始之间的时间间隔是无法保证的，有些循环定时任务可能会被跳过。
+    而像前面这个例子中一样使用setrimeout()则能确保不会出现这种情况。一般来说最好不要使用 setInterval()。
+  </p>
+  <script>
+
+    // 在一秒后显示
+    // setTimeout(() => console.log('Hello world!', this), 1000)
+
+    // //设置超时任务
+    // let timeoutid = setTimeout(() => alert('Hello world!'), 1000)
+
+    // // 取消超时任务
+    // clearTimeout(timeoutid)
+
+    function a() {
+      setTimeout(() => console.log('Hello!', this), 1000)
+    }
+
+    let obj = {
+      b: function () {
+        console.log(this);
+      },
+      a: 1
+    }
+    console.log(obj.b())
+
+    // setInterval(() => alert("Hello world!"), 10000)
+
+    let num = 0, intervalid = null
+    let max = 10
+    let incrementNumber = function () {
+      num++
+
+      // 如果达到最大值 , 则取消所有未执行的任务
+      if (num == max) {
+        clearInterval(intervalid)
+        alert('Dome')
+      }
+    }
+
+    intervalid = setInterval(incrementNumber, 500)
+
+    let Num = 0
+    let Max = 10
+    let IncrementNumber = function () {
+      Num++
+
+      // 如果还没达到最大值 , 再设置一个超时任务
+      if (Num < Max) {
+        setTimeout(IncrementNumber, 500)
+      } else {
+        alert('Done')
+      }
+    }
+
+    setTimeout(IncrementNumber, 500)
+  </script>
+</body>
+
+</html>

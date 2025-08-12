@@ -1,4 +1,4 @@
-* {
+body {
     font-size: 20px;
 }
 
@@ -34,4 +34,10 @@ li {
 
 .retract {
     text-indent: 2em;
+}
+
+.image_center {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }

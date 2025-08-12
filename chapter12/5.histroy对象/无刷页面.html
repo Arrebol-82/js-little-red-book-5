@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>无刷页面示例（不用AJAX）</title>
+  <style>
+    /* 隐藏所有页面内容，只显示当前激活的 */
+    .page {
+      display: none;
+      padding: 20px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    nav {
+      margin: 20px 0;
+    }
+
+    button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 导航按钮 -->
+  <nav>
+    <button onclick="goToPage('home')">首页</button>
+    <button onclick="goToPage('about')">关于页</button>
+    <button onclick="goToPage('contact')">联系页</button>
+  </nav>
+
+  <!-- 所有页面内容（提前写好，默认隐藏） -->
+  <div id="home" class="page active">
+    <h1>首页</h1>
+    <p>这是首页的内容，预先写在页面里</p>
+  </div>
+
+  <div id="about" class="page">
+    <h1>关于页</h1>
+    <p>这是关于页的内容，同样预先写好</p>
+  </div>
+
+  <div id="contact" class="page">
+    <h1>联系页</h1>
+    <p>这是联系页的内容，不需要AJAX请求</p>
+  </div>
+
+  <script>
+    // 切换页面的核心函数
+    function goToPage(pageId) {
+      // 1. 隐藏所有页面
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      // 2. 显示目标页面
+      document.getElementById(pageId).classList.add('active');
+
+      // 3. 用pushState修改URL，不刷新页面
+      // 第一个参数：存储页面ID（方便后退时恢复）
+      // 第二个参数：标题（忽略）
+      // 第三个参数：新URL（地址栏显示）
+      history.pushState({ page: pageId }, '', `/${pageId}.html`);
+    }
+
+    // 监听浏览器前进/后退按钮
+    window.addEventListener('popstate', (event) => {
+      // 用户点击后退时，从state中获取之前的页面ID
+      const pageId = event.state?.page || 'home'; // 默认回首页
+      // 切换到对应的页面（复用上面的函数）
+      goToPage(pageId);
+    });
+  </script>
+</body>
+
+</html>

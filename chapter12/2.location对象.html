@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You won't be able to get back here</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>location对象</h1>
+  <p>location是最有用的BOM对象之一 , 提供了当前窗口中加载的文档信息 , 以及通常的导航功能，这个对象独特的地方在于，它既是window的属性，也是document的属性。也就是说
+    window.1ocation 和ocument.location 指向同一个对象。location对象不仅保存着当前加载文档的信息 , 也保存着把URL解析为离散盘片段后能通过属性访问的信息
+    这些解析后的属性在下表中有详细说明 (location) 对象的内容如果下 <strong>还有就是专门用于导航栏URL的</strong>
+  </p>
+  <p>假设浏览器当前加载的 URL是 http://foouser:barpassword@www.wiley.com:80/WileyCDA/?q=javascript#contents，1ocation 对象的内容如下表所示。
+  </p>
+  <code>
+    <pre>
+      <strong>—————————————————————————————————————————————————————————————————————————————</strong>
+              属    性                          值                                             说               明
+      ———————————————————————————————————————————————————————————————————————————————
+          location.hash                    '#contents'                                  URL 散列值 (井号后面跟零个或多个字符) , 如果没有则为空字符串
+
+          location.host                    '#contentswww.wiley.com:80'                           服务器名及端口号
+
+          location.hostname                'www.wiley.com'                              服务器名
+
+          location.href                    http://foouser:barpassword@www.wiley.com:80  当前加载页面的完整URL。location的toString()
+                                           /WileyCDA/?q=javascript#contents             方法返回这个值
+
+          location.pathname                '/WileyCDA/'                                 URL中的路径和 (或) 文件名
+
+          location.port                    '80'                                         请求的端口。如果 URL 中没有端口 , 则返回空字符串
+
+          location.protocol                'http:'                                      页面使用的协议。通常是 'http:' 或 'https:'
+
+          location.search                  '?q=javascript'                              URL的查询字符串。这个字符串以问号开头
+
+          location.username                'foouser'                                    域名前指定的用户名
+
+          location.password                'barpassword'                                域名前指定的密码
+
+          location.origin                  'http://www.wiley.com'                       URL的源地址 , 只读
+    </pre>
+  </code>
+  <p><strong>注意</strong>在处理location对象时 , URL API 和 URLSearchParams API非常有用 , 详情请参阅 18 章</p>
+  <section>
+    <h1>操作地址</h1>
+    <p>可以通过修改 location对象修改浏览器的地址。首先，最常见的是使用assign()方法并传入一个URL , 如下所示:</p>
+    <p> location.assign('http://www.wiley.com') </p>
+    <p>这行代码会立即启动导航到新URL的操作，同时在浏览器历史记录中增加一条记录。如果 <strong>给1ocation.href或 window.location 设置一个URL,也会以同一个URL值调用 assign()
+        方法</strong> , 比如 ,
+      下面两行代码都会执行与显式调用assign()一样的操作:
+    </p>
+    <code>
+      <pre>
+        window.location = 'http://www.wiley.com'
+
+        location.href = 'http://www.wiley.com'
+      </pre>
+    </code>
+    <p>在这3中修改浏览器地址的方法中 ,设置location.href 是最常见的</p>
+    <p class="retract">修改location 对象的属性也会修改当前加载的页面。hash、search、hostname、pathname 和
+      port属性被设置为新值之后都会修改当前URL，如下面的例子所示:</p>
+
+    <code>
+      <pre>
+    // 假设当前URL为 http://www.wiley.com/wileyCDA/
+
+    // 把URL修改为http://www.wiley.com/wileyCDA/#section1
+    location.hash = '#section1'
+
+    // 把URL修改为http://www.wiley.com/wileyCDA/?q=javascript
+    location.search = '?q=javascript'
+
+    // 把URL 修改为http://www.example.com/wileyCDA/
+    locatio.hostname = 'www.example.com'
+
+    // 把URL修改为http://www.example.com/mydir/
+    location.pathname = 'mydir'
+
+    // 把URL修改为http://www.example.com:8080/wileyCDA/
+    locatio.port = '8080'
+      </pre>
+    </code>
+    <p> <strong>注意</strong> 除了hash 之外，只要修改1ocation 的一个属性，就会导致页面重新加载新 URL。 <strong>因为hash就相当于是 a 标签的定位 ,
+        都是用于在页面中进行定位的</strong></p>
+    <p class="retract">在以前面提到的方式修改 URL之后，浏览器历史记录中会增加相应的记录。当用户单击“后退”按钮时 , 会导航到前面一个页面 。 如果不希望增加历史记录 , 可以使用replace() 方法
+      。这个方法接收一个URL参数 ,
+      但重新加载后不会增加历史记录。调用replace() 之后 , 用户不能回到前一页。比如下面的例子:
+    </p>
+    <code>
+      <pre>
+    document.getElementById('NonavigateBtn').addEventListener('click', function () {
+      // 使用 assign() 确保添加历史记录
+      location.replace('http://www.wiley.com/')
+    })
+      </pre>
+    </code>
+    <button id="navigateBtn">点击导航到 Wiley(可回退)</button><br>
+    <button id="NonavigateBtn" style="margin: 40px 0;">点击导航到 Wiley(不可回退)</button><br>
+    <button id="reloadBtn">点击重新加载</button>
+    <p>浏览器加载这个页面1秒之后会重定向到www.wiley.com。此时,“后退”按钮是禁用状态，即不能返回这个示例页面，除非手动输人完整的 URL。</p>
+    <p class="retract">最后一个修改地址的方法是reload()，它能重新加载当前显示的页面。调用reload()而不传参数，页面会以最有效的方式重新加载。
+      也就是说，如果页面自上次请求以来没有修改过，浏览器可能会从缓存中加载页面。如果想强制从服务器重新加载，可以像下面这样给ze1oad()传个true:</p>
+    <code>
+      <pre>
+    location.reload() // 重新加载 , 可能会从缓存加载
+
+    location.reload(true) // 重新加载 , 从服务器加载
+      </pre>
+    </code>
+    <p>脚本中位于reload()调用之后的代码可能执行也可能不执行，这取决于网络延迟和系统资源等因素。为此，最好把reload()作为最后一行代码。</p>
+  </section>
+  <script>
+    // location.assign('http://www.wiley.com')
+    // window.location = 'http://www.wiley.com'
+    // location.href = 'http://www.wiley.com/'
+    // location.href = 'http://www.wiley.com/wileyCDA/'
+    document.getElementById('navigateBtn').addEventListener('click', function () {
+      // 使用 assign() 确保添加历史记录
+      location.assign('http://www.wiley.com/wileyCDA/');
+    })
+    document.getElementById('NonavigateBtn').addEventListener('click', function () {
+      // 使用 assign() 确保添加历史记录
+      location.replace('http://www.wiley.com/')
+    })
+
+    // 假设当前URL为 http://www.wiley.com/wileyCDA/
+
+    // // 把URL修改为http://www.wiley.com/wileyCDA/#section1
+    // location.hash = '#section1'
+
+    // // 把URL修改为http://www.wiley.com/wileyCDA/?q=javascript
+    // location.search = '?q=javascript'
+
+    // // 把URL 修改为http://www.example.com/wileyCDA/
+    // locatio.hostname = 'www.example.com'
+
+    // // 把URL修改为http://www.example.com/mydir/
+    // location.pathname = 'mydir'
+
+    // // 把URL修改为http://www.example.com:8080/wileyCDA/
+    // locatio.port = '8080'
+
+    // setTimeout(() => location.replace('http://www.wiley.com/'), 1000)
+
+    document.getElementById('reloadBtn').addEventListener('click', function () {
+      location.reload() // 重新加载 , 可能会从缓存加载
+      // location.reload(true) // 重新加载 , 从服务器加载
+    });
+  </script>
+</body>
+
+</html>

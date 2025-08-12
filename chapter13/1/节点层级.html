@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>节点层级</h1>
+  <p>任何HTML 或 XML 文档都可以用 DOM 表示为一个由节点构成的层级结构</p>
+  <code>
+    <pre>
+      &lt;html&gt;
+        &lt;head&gt;
+            &lt;title&gt; Sample Page &lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;p&gt; Hello World!&lt;/p&gt;
+        &lt;/body&gt;
+      &lt;/html&gt;
+    </pre>
+  </code>
+  <p>如果将以上标记表示为层级结构</p>
+  <img src="./d465fa524dab260a80f13935fecf139.jpg" alt="" width="1200px">
+  <p>其中，document节点表示文档的根节点。在这里，根节点的唯一子节点是<htm1>元素，我们称之为 <strong>文档元素(documentelement)。</strong>
+      文档元素是文档最外层的元素，所有其他元素都存在于这个元素之内。每个文档只能有一个文档元素。在HTML页面中，文档元素始终是&lt;html&gt;元素。在XML文档中则没有这样预定义的元素，任何元素都可能成为文档元素。</p>
+  <p class="retract">HTML中的每段标记都可以表示为这个树形结构中的一个节点。元素节点表示HTML元素，属性节点表示属性，文档类型节点表示文档类型，注释节点表示注释。
+    DOM中总共有12种节点类型 , 这些类型都继承一种基本类型
+  </p>
+</body>
+
+</html>
