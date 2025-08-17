@@ -73,7 +73,8 @@
     最后还有一个所有节点都共享的关系。ownerDocument属性是一个指向代表整个文档的文档节点的指针。所有节点都被创建它们(或自己所在)的文档所拥有，因为一个节点不可能同时存在于两个或者多个文档中
     。这个属性为迅速访问文档节点提供便利 , 因为无须在文档结构中逐层上溯了
   </p>
-  <p>页面里所有的节点（元素、文本、注释等），不管嵌套多深，都是这个 Document 的 “孩子” 或 “后代”， <strong>从创建那一刻起就只属于这个 Document。</strong></p>
+  <p>页面里所有的节点（元素、文本、注释等），不管嵌套多深，都是这个 Document 的 “孩子” 或 “后代”， <strong>从创建那一刻起就只属于这个 Document。</strong> <br>
+    而 ownerDocument 就是这些节点身上的一个 “快捷方式” 可以直接获得当前页面 Document。</p>
   <p><strong>注意</strong> 虽然所有节点类型都继承了 Node，但并非所有节点都有子节点。本章后面会计论不同节点类型的差异。</p>
   <script>
     const someNode = document.getElementById('someNode')
