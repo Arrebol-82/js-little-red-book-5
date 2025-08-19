@@ -1,0 +1,84 @@
+<!-- 第一条注释 -->
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../../index.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>文档子节点</h1>
+  <p>虽然 DOM 规范规定 Document 节点的子节点可以是 DocumentType、Element、ProcessingInstruction 或 Comment , 但也提供了两个访问子节点的快捷方式 。
+    第一个是 documentelement 属性 , 始终指向 HTML 页面中的 &lt;html> 元素 。 虽然document.childNodes 中始终有 &lt;html> 元素 ,
+    但是使用 documentElement 属性可以更快更直接地访问该元素 , 假如有以下简单的页面
+  </p>
+  <code>
+    <pre>
+      &lt;html>
+          &lt;body>
+
+          &lt;/body>
+      &lt;/html>
+    </pre>
+  </code>
+  <p>浏览器解析完这个页面之后 , 文档只有一个子节点 , 既&lt; html > 元素 。 这个元素既可以通过 documentElement 属性获取 ,
+    也可以通过 childNodes 列表访问 , 如下所示:</p>
+  <code>
+      <pre>
+    console.log(document.childNodes) // NodeList(2) [&lt;!DOCTYPE html>, html]
+    console.log(html === document.childNodes[2])  // true
+    console.log(html === document.firstChild)  // false   
+      </pre>
+    </code>
+  <strong>这里很重要 , 在文档里面如果 &lt;!DOCTYPE html> 在 &lt;html> 前面的话那么document 的第一个子节点就是 &lt;!DOCTYPE html></strong>
+  <p>这个例子表明 documentElement、和childNodes[1]都指向同一个值，即 html 元素</p>
+  <p>作为 HTMLDocument 的实例，document 对象还有一个 body 属性 ，直接指向 &lt;body> 元素 。因为这个元素是开发者使用最多的元素 , 所以javascript 代码中经常可以看到
+    document.body 比如:
+  </p>
+  <p class="retract">let body = document.body // body</p>
+  <p>所有主流浏览器都支持 document.documentElement和document.body</p>
+  <p>Document 类型另一种可能的子节点是Documentrype。&lt;!doctype>标签是文档中独立的部分 , 其信息可以通过 doctype 属性(在浏览器中是 document.doctype)来访问，比如:</p>
+  <p> let doctype = document.doctype // 取得对 &lt;!DOCTYPE html>的引用</p>
+  <p>另外，严格来讲出现在 &lt;htm1>元素外面的 <strong>注释也是文档的子节点</strong> ，它们的类型是 Comment , 不过 , <strong>由于浏览器实现不同 , 这些注释不一定能被识别
+      ,</strong> 或者表现可能不一致
+    。比如以下 HTML 页面: </p>
+  <code>
+      <pre>
+        <!-- 第一条注释 -->
+        &lt;html>
+            &lt;body>
+        
+            &lt;/body>
+        &lt;/html>
+        <!-- 第二条注释 -->
+      </pre>
+    </code>
+  <p>这个页面看起来有 3个子节点: 注释 , &lt;html>元素 , 注释 。 逻辑上讲，document.chilaodes应该包含3项，对应代码中的每个节点。但实际上，浏览器有可能以不同方式对待 &lt;htm1>
+    元素外部的注释，比如忽略一个或两个注释。 <strong>这里Eage浏览器 , 在 HTML 后的注释都不会显示</strong>
+  </p>
+  <p>一般来说，appendchild()、removechild()和replacechild()方法不会用在 document 对象上 。 这是因为文档类型(如果存在)是只读的，而且只能有一个E1ement类型的子节点(即
+    &lt;htm1>, 已经存着了 )</p>
+  <script>
+    'usr strting'
+    let html = document.documentElement
+    console.log(html);
+
+    console.log(document.childNodes) // NodeList(2) [<!DOCTYPE html>, html]
+    console.log(html === document.childNodes[2])  // true
+    console.log(html === document.firstChild)  // false
+
+    let body = document.body  // body
+    console.log(body);
+
+    let doctype = document.doctype // 取得对 <!DOCTYPE html> 的引用
+    console.log(doctype);
+
+  </script>
+</body>
+
+</html>
+<!-- 第二条注释 -->

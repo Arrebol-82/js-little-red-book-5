@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>Element 类型</h1>
+  <p>除了 Document 类型,Element 类型就是 Web开发中最常用的类型了。
+    Elemene 表示 XML或 HTML 元素 , 对外暴露出访问元素标签名 , 子节点和属性的能力 。 Element 类型的节点具有以下特征:
+  </p>
+  <ul>
+    <li class="retract">nodeType等于 1 (对应就是 HTML 和 XML )</li>
+    <li class="retract">nodeName 值为元素的标签名 (元素节点)</li>
+    <li class="retract">nodeValue 值为null</li>
+    <li class="retract">parentNode 值为Document 或 Element 对象</li>
+    <li class="retract">子节点可以是 Element , Text , Comment , ProcessingInstruction , CDATASection , EntityReference类型</li>
+    <li>核心是 “给解析器发指令”（比如告诉用什么规则解析文档） : “包裹不需要解析的文本”（避免特殊字符被误解析） : 核心就是 “字符实体”（用一个符号代替另一个字符），HTML 里天天用的&lt;（<）< /li>
+  </ul>
+  <p>可以通过nodeName或tagName 属性来获取元素的标签名。这两个属性返回同样的值 (添加后一个属性明显是为了不让人误会) 。比如有下面的元素</p>
+  <div id="myDiv"></div>
+  <p class="retract">&lt;div id="myDiv">&lt;/div></p>
+  <p>可以像这样取得这个元素的标签名:</p>
+  <code>
+    <pre>
+    let div = document.getElementById('myDiv')
+    console.log(div.tagName) // DIV
+    console.log(div.nodeName) // DIV
+    console.log(div.tagName == div.nodeName) // true
+    </pre>
+  </code>
+  <p>例子中的元素标签名为 div，ID为"myDiv"。注意，div.tagName 实际上返回的是"DIV"而不是 "div"。 在 HTML中，元素标签名始终以全大写表示; 在 XML (包括 XHTML) 中 ,
+    标签名始终与源代码中大小写一样 。 如果不确定脚本是在HTML 还是 XML 文档中运行 , 最好将标签名转换为小写形式
+  </p>
+  <script>
+    let div = document.getElementById('myDiv')
+    console.log(div.tagName)
+    console.log(div.nodeName)
+    console.log(div.tagName == div.nodeName)
+  </script>
+</body>
+
+</html>

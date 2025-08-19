@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>文档写入</h1>
+  <p>document 对象有一个古老的能力 , 既向网页输出流中写入内容 , 这个能力对应 4 个方法 : write() , writeln() , open() 和 close()。
+    write() 和 writeln() 方法都接收一个字符串参数 , 可以将这个字符串写入网页中 。 write() 简单地写入文本 , 而 writeln() 还会在字符串末尾追加一个换行符 ( \n )
+    这个两个方法可以用来在页面加载期间向页面中动态添加内容 , 如下所示:
+  </p>
+  <code>
+    <pre>
+        &lt;p>The current date and time is:&lt;/p>
+
+        &lt;script>
+
+           document.write('&lt;strong>' + (new Date()).toString() + '&lt;/strong>')
+
+        &lt;/script>
+    </pre>
+  </code>
+  <p>The current date and time is: <strong>时间最下面</strong></p>
+  <p>这个例子会在页面加载过程中输出当前日期和时间。日期放在了 &lt;strong>元素中，如同它们之前就包含在 HTML 页面中一样。<strong>这意味着会创建一个DOM 元素，以后也可以访问。</strong>
+    通过 write () 和 writeln() 输出的任何 HTML 都会以这种方式来处理
+  </p>
+  <p>write() 和 writeln() 方法经常用于动态包含外部资源 , 如Javascript文件 。在包含 Javascript 文件时 ,记住不能像下面的例子中这样直接包含字符串"&lt;/script>
+    ”,因为这个字符串会被解释为脚本城的结尾，导致后面的代码不能执行:</p>
+  <code>
+    <pre>
+          &lt;body>
+            &lt;script>
+              document.write('&lt;script type=\"text/javascript\" src=\file.js\">"+ &lt;/script>')
+            &lt;/script>
+          &lt;/body>      
+    </pre>
+  </code>
+  <p>虽然这样写看起来没错 , 但输出之后的 "&lt;/script>"会匹配最外层的 &lt;script>标签 , 导致页面中显示出"); 为避免出现这个问题 , 需要对前面的例子稍加修改:
+    <strong>(这个问题第二章就已经提到了)</strong>
+  </p>
+  <code>
+      <pre>
+          &lt;body>
+            &lt;script>
+              document.write('&lt;script type=\"text/javascript\" src=\file.js\">"+ &lt;/script>')
+            &lt;\/script>
+          &lt;/body>  
+      </pre>
+    </code>
+  <p>这里的字符串'&lt;\/script>'不会再匹配1最外层的 &lt;script> 标签 , 因此不会在页面中输出额外内容 </p>
+  <p>其那面的例子展示了在页面渲染期间通过 document.write() 向文档中输出内容 。如果是在页面加载完之后再调用 doucment.write() , 则输出的内容会重写整个页面 , 如下面的例子所示:</p>
+  <p>This is some content that you won't get to see because it will be overwritten.</p>
+  <code>
+    <pre>
+      window.onload = function () {
+        document.write('Hello World!')
+      }
+      <strong>因为会阻止文档显示 , 所以暂时注释掉了</strong>
+    </pre>
+  </code>
+  <p>这个例子使用了 window.onload 事件处理程序，将调用 document.write()的函数推迟到页面加载完毕后执行。执行之后，字符串"He11o world!"会重写整个页面内容。</p>
+  <p>open()和 close()方法分别用于打开和关闭网页输出流。在调用write()和writeln()时,这两个方法都不是必需的</p>
+  <script>
+    document.write('<strong>' + (new Date()).toString() + '</strong>')
+    // window.onload = function () {
+    //   document.write('Hello World!')
+    // }
+
+  </script>
+</body>
+
+</html>

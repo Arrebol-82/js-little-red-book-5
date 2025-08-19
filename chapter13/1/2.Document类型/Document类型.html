@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+<!-- 注释 -->
+
+<body>
+  <h1>Document类型是
+  </h1>
+  <p>Document类型是 javascript 中表示文档节点的类型 , 在浏览器中 , 文档对象 document 是 HTMLDocument 的实例 ( HTMLDocument继承 Document ) ,
+    表示整个HTML页面。document 是windo付象的属性，因此是一个全局对象。Document类型的节点有以下特征:</p>
+  <ul>
+    <li>nodeType 等于 9 <strong>(强制规定)</strong></li>
+    <li>nodeName 值为 "#document" (因为他就是documetn)</li>
+    <li>nodeValue 值为 null <strong>(它里面没有值)</strong></li>
+    <li>parentNode 值为null </li>
+    <li>ownerDocument 值为 null <strong>但 document 自己就是文档，不存在 “它属于哪个文档” 的问题，所以 ownerDocument 为 null。</strong></li>
+    <li>子节点可以是Documentrype(最多一个)、Element(最多一个)、ProcessingInstruction 或 Comment 类型</li>
+  </ul>
+  <p><strong>DocumentType（文档类型声明节点）</strong> &lt;!DOCTYPE html> 告诉浏览器 '当前文档遵循什么类型的规范' </p>
+  <p><strong>Element (元素节点 , 且只能是 '根元素' )</strong> 也就是 HTML 在页面里面只能有一个 </p>
+  <p> ProcessingInstruction（处理指令节点） 在HTML中: 几乎用不到 ! 因为HTML5 已经简化了这些规则 </p>
+  <p><strong>Comment（注释节点）</strong><!-- 注释 --></p>
+  <p>Document类型可以表示HTML 页面或其他XML 文档 , 但常用的还是通过 HTMLDocument 的实例取得 document 对象 。document 对象可用于获取关于页面的信息以及操纵其外观和底层结构</p>
+</body>
+
+</html>

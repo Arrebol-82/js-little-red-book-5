@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>文档信息</h1>
+  <p>document作为HTMLDocument 的实例,还有一些标准 Document 对象上所没有的属性。这些属性提供浏览器所加载网页的信息，其中第一个属性是title,包含 &lt;title>元素中的文本 ,
+    通常显示在浏览器窗口或标签页的标题栏。 通过这个属性可以读写页面的标题 , 修改后的标题也会反映在浏览器标题栏上。不过，修改title属性并不会改变 &lt;title>元素。下面是一个例子:
+    <strong>使用document.title 修改的话 , 页面是会同步更改 , 但是 Doucment里面的 &lt;title> 不会进行更改</strong>
+  </p>
+
+  <code>
+    <pre>
+    //  读取文档标题
+    let originalTitle = document.title
+
+    // 修改文档标题
+    document.title = 'New page title'
+    </pre>
+  </code>
+  <p>接下来要介绍的3个属性是URL、domain和referrer。URL 包含当前页面的完整URL(地址栏中的 URL ) , domain 包含页面的域名，而referrer 包含链接到当前页面的那个页面的 URL。
+    如果当前页面没有来源，则referrer属性包含空字符串。所有这些信息都可以在请求的 HTTP头部信息中获取，只是在JavaScript中通过这几个属性暴露出来而已，如下面的例子所示:
+  </p>
+  <ul>
+    <li>URL 是完整的资源地址，包含 domain（域名）</li>
+    <li>domain 是 URL 中的核心标识部分，用于定位服务器</li>
+    <li>referrer 是另一个 URL（来源页面的地址），用于记录用户的跳转路径。</li>
+  </ul>
+  <code>
+    <pre>
+    // 取得完整的 URL
+    let url = document.URL
+    console.log(url);
+    // http://127.0.0.1:5501/chapter13/1/2.Document%E7%B1%BB%E5%9E%8B/2.%E6%96%87%E6%A1%A3%E4%BF%A1%E6%81%AF.html
+
+
+    // 取得域名
+    let domain = document.domain
+    console.log(domain);
+    // 127.0.0.1
+
+    // 取得来源
+    let referrer = document.referrer
+    console.log(referrer);
+    // 
+    </pre>
+  </code>
+  <p>在这些属性中 , 只有domain 属性是可以设置的 。 出于安全考虑 , 给domain 属性设置的值是有限制的 。如果 URL 包含域名如 p2p.wiley.com
+    则可以将 domain 设置为 'wiley.com' (URL 包含 'www' 时也一样 , 比如www.wiley.com)。 不能给这个属性设置URL 中不包含的值 , 比如:</p>
+  <code>
+      <pre>
+    // 页面来自 p2p.wiley.com
+
+    document.domain = 'wiley.com';   //成功
+
+    document.domain = 'w3.org' // 出错!
+    <strong>因为当前页面并没有这个w3 的域名 , 可以缩写 , 但是不能写没有的</strong>
+      </pre>
+    </code>
+  <p>当页面中包含来自某个不同子域的窗格(&lt;frame>)或内嵌窗格(&lt;iframe>)时, 设置document.domain是有用的 。因为跨源通信存在安全隐患、所以不同子域的页面间无法通过javascript通信 。
+    此时,在每个页面上把 document.domain 设置为相同的值,这些页面就可以访问对方的的javascript 对象了 。比如 , 一个加载自 www.wiley.com的页面中包含一个内嵌窗格 , 其中的页面加载自
+    p2p.wi1ey.com 。这两个页面的 document.domain 包含不同的字符串，内部和外部页面相互之间不能访问对方的 javascript 对象 。如果每个页面都把document.domain 设置为
+    wiley.com , 那这两个页面之间就可以通信了
+  </p>
+  <p>浏览器对 domain 属性还有一个限制，即这个属性一旦放松就不能再收紧。比如 , 把document.domain 设置为 ' wiley.com ' 之后 , 就不能再将其设置回 ' p2p.wi1ey.com ' , 否则
+    会导致错误 , 比如
+  </p>
+  <code>
+    <pre>
+    document.domain = 'wiley.com'; //放松 成功
+
+    document.domain = 'p2p.wi1ey.com' //收紧 出错!
+    </pre>
+  </code>
+  <script>
+    //  读取文档标题
+    let originalTitle = document.title
+
+    // 修改文档标题
+    document.title = 'New page title'
+    console.log(originalTitle);
+
+    // 取得完整的 URL
+    let url = document.URL
+    console.log(url);
+    // http://127.0.0.1:5501/chapter13/1/2.Document%E7%B1%BB%E5%9E%8B/2.%E6%96%87%E6%A1%A3%E4%BF%A1%E6%81%AF.html
+
+
+    // 取得域名
+    let domain = document.domain
+    console.log(domain);
+    // 127.0.0.1
+
+    // 取得来源
+    let referrer = document.referrer
+    console.log(referrer);
+    // 
+
+    // 页面来自 p2p.wiley.com
+
+    document.domain = 'wiley.com';   //放松 成功
+
+    document.domain = 'w3.org' // 出错!
+
+    document.domain = 'p2p.wi1ey.com' //收紧 出错!
+
+
+  </script>
+</body>
+
+</html>
