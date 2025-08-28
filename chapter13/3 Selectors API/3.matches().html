@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body class="ZZZ">
+  <h1>matches()</h1>
+  <p>matches()方法(在规范草案中称为matchesselector())接收一个 CSS选择符参数,如果元素匹配则该选择符返回 true，否则返回 false。例如:</p>
+  <strong>他是用于检测元素自身是否符合 “CSS 选择符描述的规则” , 不是检测子节点的</strong>
+  <code>
+    <pre>
+    if (document.body.matches('body.ZZZ')) {
+      console.log('返回');
+    }
+    </pre>
+  </code>
+  <p>使用这个方法可以方便地检测某个元素会不会被queryselector() 和 queryselectorA11() 方法返回</p>
+  <script>
+    if (document.body.matches('body.ZZZ')) {
+      console.log('返回');
+    }
+  </script>
+</body>
+
+</html>

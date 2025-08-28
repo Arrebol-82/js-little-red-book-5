@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>querySelector()</h1>
+  <p>querySelector()方法接收CSS选择符参数，返回匹配该模式的第一个后代元素，如果没有匹配项则返回nu11。下面是一些例子;</p>
+  <code>
+    <pre>
+      // 取得 &lt;body> 元素
+      let body = document.querySelector('body')
+
+      // 取得 ID 为 'myDiv'的元素
+      let myDiv = document.querySelector('#myDiv')
+
+      // 取得类名为"selected"的第一个元素
+      let selected = document.querySelector('.selected')
+
+      // 取得类名为"button"的图片
+      let img = document.querySelector('img.button')
+    </pre>
+  </code>
+  <div id="myDiv"></div>
+  <div class="selected"></div>
+  <img src="" alt="" class="button">
+  <p>在Document 上使用 queryselector()方法时，会从文档元素开始搜索;在 Element 上使用 queryselector()方法时 , 则只会从当前元素的后代中查询。 </p>
+  <p>用于查询模式的CSS选择符可繁可简,依需求而定 。如果选择符有语法错误或碰到不支持的选择符则querySelector() 方法会抛出错误 (BUG-虫子)</p>
+  <script>
+    let body = document.querySelector('body')
+
+    let myDiv = document.querySelector('#myDiv')
+
+    let selected = document.querySelector('.selected')
+
+    let img = document.querySelector('img.button')
+  </script>
+</body>
+
+</html>

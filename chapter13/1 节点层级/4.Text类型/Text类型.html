@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>Text 类型</h1>
+  <p>Text节点由ext 类型表示，包含按字面解释的纯文本 , 也可能包含转义后的HTML字符 , 但不含 HTML 代码 。Text类型的节点具有以下特征</p>
+  <ul>
+    <li class="circle">nodeType 等于3</li>
+    <li class="circle">nodeName 值为 "#text"</li>
+    <li class="circle">nodeValue 值为节点中包含的文本</li>
+    <li class="circle">parentNode 值为Element 对象</li>
+    <li class="circle">不支持子节点</li>
+  </ul>
+  <p>Text 节点中包含的文本可以通过nodeValue 属性访问, 也可以通过data属性访问 , 这两个属性包含相同的值 。
+    修改nodeValue 或 data 的值 , 也会在另一个属性反映出来 。文本节点暴露了以下操作文本的方法:</p>
+  <ul>
+    <li class="circle">appendDate(text) , 向节点末尾添加文本 <i>text</i></li>
+    <li class="circle">deleteDate(offset , count) , 从位置<i>offset</i>开始删除 <i>count</i>个字符</li>
+    <li class="circle">insertDate(offset , text) , 从位置<i>offset</i>开始插入 <i>text</i></li>
+    <li class="circle">replaceDate(offset ,count , text), 用text替换从位置offset 到 offset + count 的文本;</li>
+    <li class="circle">spliceText(offset) , 在位置offset将当前文本节点拆分为两个文本节点</li>
+    <li class="circle">substringData(offset , count) , 提取从位置offset 到 offset + count 的文本</li>
+  </ul>
+  <p>除了这些方法,还可以通过length属性获取文本节点中包含的字符串数量 。 这个值等于nodeValue.length 和 data.length</p>
+  <p>默认情况下 , 包含文本内容的每个元素最多只能有一个文本节点。例如:</p>
+  <code>
+    <pre>
+          <!-- 没有内容 , 因此没有文本节点 -->
+        &lt;div>&lt;/div>
+        
+          <!-- 有空格 , 因此有一个文本节点 -->
+        &lt;div> &lt;/div>
+        
+          <!-- 有内容 , 因此有一个文本节点 -->
+        &lt;div>Hello World!&lt;/div>
+    </pre>
+  </code>
+  <div id="vessel">
+    <div></div>
+    <div> </div>
+    <div>Hello World!</div>
+  </div>
+  <p>示例中的第一个&lt;div>元素中不包含内容，因此不会产生文本节点。只要开始标签和结束标签之间有内容，就会创建一个文本节点，
+    因此第二个&lt;div>元素会有一个文本节点的子节点，虽然它只包含空格。这个文本节点的nodeValue就是一个空格。
+    第三个&lt;div>元素也有一个文本节点的子节点，其nodevalue 的值为"Hello world!"。下列代码可以用来访问这个文本节点</p>
+  <p>let textNode = div.firstChild // 或 div.childNodes[1] <strong>这里是childNodes[1] 是因为vscode的缩进,导致了有文本节点 ,
+      但是考虑到日常开发还是先用1吧 (除开那种要压缩代码文件的 , 就是可以压缩代码空格的工具)</strong></p>
+  <code>
+      <pre>
+    const div = document.getElementById('vessel')
+    console.log(div.childNodes)
+    let textNode = div.childNodes[0]   // 或 div.childNodes[0]
+    console.log(textNode);
+
+    textNode.nodeValue = 'Some other message'  // 或 div.childNodes[0]
+
+    <strong>因为childNodes[1]是div 给nodevalue是没有用的 , 所以这里还是用回了 childNodes[0]</strong>
+      </pre>
+    </code>
+  <p>只要节点在当前的文档树中，这样的修改就会马上反映出来。修改文本节点还有一点要注意，
+    就是HTML或XML代码(取决于文档类型)会被转换成实体编码，即小于号、大于号或引号会被转义，如下所示: <strong>转义会让标签不被解析，而不转义才会让标签被解析。</strong></p>
+  <code>
+      <pre>
+    textNode.nodeValue = "Some &lt;strong>other&lt;/strong> message" // 或 div.childNodes[0]
+
+    Some &lt;strong>other&lt;/strong> message
+      </pre>
+    </code>
+  <p>这实际上是在将 HTML字符串插人 DOM 文档前进行编码的有效方式。</p>
+  <script>
+    const div = document.getElementById('vessel')
+    console.log(div.childNodes)
+    let textNode = div.childNodes[0]   // 或 div.childNodes[0]
+    console.log(textNode);
+
+    textNode.nodeValue = 'Some other message'  // 或 div.childNodes[0]
+    textNode.nodeValue = "Some <strong>other</strong> message"  // 或 div.childNodes[0]
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>querySelectorAll()</h1>
+  <p>querySelectorAll() 方法跟 queryselector()一样，也接收一个用于查询的参数, 但它会返回所有匹配的节点 , 而不止一个。这个方法返回的是一个NodeList的静态实例</p>
+  <p>再强调一次、queryse1ectorA11()返回的NodeList 实例一个属性和方法都不缺，但它是一个静态的 "快照" , 而非"实时"的查询。就这样的底层实现避免了使用NodeList 对象可能造成的性能问题</p>
+  <p>以有效CSS选择符调用 queryselectorA11()都会返回 NodeList,无论匹配多少个元素都可以。如果没有匹配项，则返回空的NodeList实例。 </p>
+  <p>与queryselector()一样,querySelectorAll()也可以在 Document、DocumentFragment 和 Element 类型上使用。下面是几个例子:</p>
+  <code>
+    <pre>
+      // 取得 ID 为"myDiv"的 &lt;div>元素中的所有 &lt;em>元素
+    let ems = document.getElementById('myDiv').querySelectorAll('em')
+
+     // 取得所有类名中包含"selected"的元素
+    let selecteds = document.querySelectorAll('.selected')
+
+     // 取得所有是 &lt;p>元素子元素的 &lt;strong>元素
+    let strongs = document.querySelectorAll('p strong')
+    </pre>
+  </code>
+  <p>返回的NodeList 对象可以通过 for-of循环、item()方法或中括号语法取得个别元素。比如:</p>
+  <code>
+    <pre>
+    // 以下3个循环的效果一样
+
+    for (let strong of strongElements) {
+      strong.className = 'important'
+    }
+    for (let i = 0; i < strongElements.length; i++) {
+      strongElements.item(i).className = 'two'
+    }
+    for (let i = 0; i < strongElements.length; ++i) {
+      strongElements[i].className = 'three'
+    }
+    </pre>
+  </code>
+  <p>与 queryselector()方法一样,如果选择符有语法错误或碰到不支持的选择符,则 queryselectorA11()方法会抛出错误。 <strong>比如
+      document.querySelector('.nonexistent') 会返回 null，而 document.querySelector('div#') 会直接报错 —— 和 querySelectorAll() 的
+      “语法优先判断” 逻辑完全统一</strong></p>
+  <div id="myDiv">
+    <em>1</em>
+  </div>
+
+  <div class="selected"></div>
+  <div class="selected"></div>
+  <div class="selected"></div>
+
+  <p>
+    <strong>1</strong>
+    <strong>2</strong>
+    <strong>3</strong>
+  </p>
+  <script>
+    let ems = document.getElementById('myDiv').querySelectorAll('em')
+
+    let selecteds = document.querySelectorAll('.selected')
+
+    let strongs = document.querySelectorAll('p strong')
+
+    let strongElements = document.querySelectorAll('p strong')
+
+    // 以下3个循环的效果一样
+
+    for (let strong of strongElements) {
+      strong.className = 'important'
+    }
+    for (let i = 0; i < strongElements.length; i++) {
+      strongElements.item(i).className = 'two'
+    }
+    for (let i = 0; i < strongElements.length; ++i) {
+      strongElements[i].className = 'three'
+    }
+  </script>
+</body>
+
+</html>

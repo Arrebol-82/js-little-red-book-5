@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>元素遍历</h1>
+  <p>ElementTraversal API为DOM元素定义了5个属性:</p>
+  <ul>
+    <li class="circle">childElementCount , 返回子元素数量(不包含文本节点和注释) 只有Element节点</li>
+    <li class="circle">firstElementChild, 指向第一个Element类型的子元素(Element 版 firstElementChild)</li>
+    <li class="circle">lastElementChild, 指向最后一个Element类型的子元素(Element 版 lastElementChild)</li>
+    <li class="circle">previousElementSibling, 指向前一个 Element 类型的同胞元素 ( Element 版 previousSibling)</li>
+    <li class="circle">nextElementSibling, 指向后一个Element类型的同胞元素 (Element 版nextsibling)</li>
+  </ul>
+  <p>在支持的浏览器中，所有DOM元素都会有这些属性，为遍历DOM元素提供便利。这样开发者就不同担心空白文本节点的问题了</p>
+  <p class="retract">举个例子，过去要以跨浏览器方式遍历特定元素的所有子元素，代码大致是这样写的:</p>
+  <div id="parent">
+    <p></p>
+    <i></i>
+  </div>
+  <code>
+    <pre>
+    let parentElement = document.getElementById('parent')
+    let currentChildNode = parentElement.firstChild
+
+    // 没有子元素 , firstchild返回null , 跳过循环
+    while (currentChildNode) {
+      if (currentChildNode.nodeType === 1) {
+        console.log(1);
+      }
+      if (currentChildNode === parentElement.lastChild) {
+        break
+      }
+      currentChildNode = currentChildNode.nextSibling
+      console.log(2)
+    }
+    </pre>
+  </code>
+  <p>使用ElementTraversal的属性之后，以上代码可以简化如下:</p>
+  <code>
+    <pre>
+    while (currentChildElement) {
+      // 这就是元素节点 , 做相应处理
+      console.log(8)
+      if (currentChildElement === parentElement.lastElementChild) {
+        break
+      }
+      currentChildElement = currentChildElement.nextElementSibling
+    }
+    </pre>
+  </code>
+  <script>
+    let parentElement = document.getElementById('parent')
+    let currentChildNode = parentElement.firstChild
+    let currentChildElement = parentElement.firstElementChild
+
+    // 没有子元素 , firstchild返回null , 跳过循环
+    while (currentChildNode) {
+      if (currentChildNode.nodeType === 1) {
+        console.log(1);
+      }
+      if (currentChildNode === parentElement.lastChild) {
+        break
+      }
+      currentChildNode = currentChildNode.nextSibling
+      console.log(2)
+    }
+
+    while (currentChildElement) {
+      // 这就是元素节点 , 做相应处理
+      console.log(8)
+      if (currentChildElement === parentElement.lastElementChild) {
+        break
+      }
+      currentChildElement = currentChildElement.nextElementSibling
+    }
+  </script>
+</body>
+
+</html>

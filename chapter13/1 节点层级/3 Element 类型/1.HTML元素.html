@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>HTML 元素</h1>
+  <p>所有 HTML元素都通过 HTMLElement 类型表示, 包括其直接实例和间接实例。<strong>HTMLElement 是 “HTML 标签元素的专属类型” ( 区别开XML 中的元素 )，是 Element 的子类，所有
+      HTML 标签对应的节点都属于它的体系。另外, HTMLElement <strong>直接继承 Element 并增加了一些属性</strong> 。 每个属性都对应下列属性之一 , 它们是所有HTML元素上都有的标准属性:
+    </strong>
+  </p>
+  <ul>
+    <li>id, 元素在文档中唯一的标识符</li>
+    <li>title, 包含元素的额外信息 , 通常以提示条形式展示</li>
+    <li>lang, 元素内容的语言代码 (很少用)</li>
+    <li>dir, 语言的书写方向 ( 'ltr'表示从左到右 , 'rtl'表示从右到左 , 同样很少用)</li>
+    <li>className, 相当于class 属性 , 用于指定元素的css类 (因为class是ECMAscript关键字 , 所以不能直接使用这个名字)</li>
+  </ul>
+  <p>所有这些都可以用来获取对应的属性值，也可以用来修改相应的值。比如有下面的HTML元素</p>
+  <div id="myDiv" class="bd" title="Body Text" lang="en" dir="ltr">这是示例代码</div>
+  <p>&lt;div id="myDiv" class="bd" title="Body Text" lang="en" dir="ltr">这是示例代码</div>
+  </p>
+  <p>这个元素中的所有属性都可以使用下列JavaScript代码读取:</p>
+  <code>
+    <pre>
+    let div = document.getElementById('myDiv')
+    console.log(div.id)         // myDiv
+    console.log(div.className)  //  bd
+    console.log(div.title)      // Body Text
+    console.log(div.lang)       // en
+    console.log(div.dir)        // ltr     
+    </pre>
+  </code>
+  <p>而且，可以使用下列代码修改元素的属性:</p>
+  <code>
+    <pre>
+    div.id = 'someOtherId'
+    div.className = 'ft'
+    div.title = 'Some other text'
+    div.lang = 'fr'
+    div.dir = 'rtl'
+    </pre>
+  </code>
+  <p>并非所有这些属性的修改都会对页面产生影响 , 比如 , 把id 或 lang 改成其他值对用户是不可见的 <strong>意思就是这些值改了,但是并不会页面 ,
+      用户不会感知到属性被改了,但如果是触动到了css属性,那页面样式还是会变得</strong> ( 假设没有基于这两个属性应用CSS样式 ) , 而修改title属性只会在鼠标移到这个元素上时才会反映出来
+    。修改dir会导致页面文本立即向左或向右对齐 。 修改 className 会立即反映到新类名的css样式 (如果定义了不同的样式)</p>
+  <script>
+    let div = document.getElementById('myDiv')
+    console.log(div.id)    // myDiv
+    console.log(div.className)  //  bd
+    console.log(div.title)   // Body Text
+    console.log(div.lang) //  en
+    console.log(div.dir) //  ltr
+
+    div.id = 'someOtherId'
+    div.className = 'ft'
+    div.title = 'Some other text'
+    div.lang = 'fr'
+    div.dir = 'rtl'
+
+    console.log(div.id)    // myDiv
+    console.log(div.className)  //  bd
+    console.log(div.title)   // Body Text
+    console.log(div.lang) //  en
+    console.log(div.dir) //  ltr
+  </script>
+</body>
+
+</html>

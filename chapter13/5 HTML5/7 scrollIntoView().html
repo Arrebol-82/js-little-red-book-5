@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+  <style>
+    .blank {
+      width: 5000px;
+      height: 1000px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>scrollIntoView()</h1>
+  <p>DOM 规范中没有涉及如动页面中的某个区域。为填补这方面的缺失，不同浏览器实现了不同的控制滚动的方式。在所有这些专有方法中，HTMLS选择了标准化scro11Intoview()方法。</p>
+  <p>seroi11ntoview()方法存在于所有HTML元素上，可以滚动浏览器窗口或容器元素以便包含元素进入视口 。这个方法的参数如下:</p>
+  <ul>
+    <li><strong>alignToTop 是一个布尔值</strong></li>
+    <li class="retract circle">true: 窗口滚动后元素的顶部与视口顶部对齐</li>
+    <li class="retract circle">false: 窗口滚动后元素的底部与视口底部对齐</li>
+    <li><strong>scro11IntoViewOptions 是一个选项对象</strong></li>
+    <li class="retract circle">behavior: 定义过渡动画，可取的值为"smooth"和"auto"，默认为"auto"。</li>
+    <li class="retract circle">block: 定义垂直方向的对齐，可取的值为“start"、"center"、"end"和"nearest"，默认为 'start'</li>
+    <li class="retract circle">inline: 定义水平方向的对齐，可取的值为"start"、"center"、"end"和"nearest"，默认为"nearest"。</li>
+    <li><strong>不传参数等同于 alignToTop 为 true</strong></li>
+  </ul>
+  <p>来看几个例子:</p>
+  <code>
+    <pre>
+    function alignToTop() {
+      document.forms[0].scrollIntoView(true)
+    }
+
+
+    function scrollIntoViewOptions() {
+      document.forms[0].scrollIntoView({ behavior: 'smooth', block: "center", inline: "start" })
+    }
+    </pre>
+  </code>
+  <p>这个方法可以用来在页面上发生某个事件时吸引用户的注意力。此外，把焦点设置到一个元素上也
+    会导致浏览器将元素滚动到可见位置。</p>
+  <button onclick="alignToTop()">默认滚动</button>
+  <button onclick="scrollIntoViewOptions()">平滑滚动</button>
+  <div class="blank"></div>
+  <form id="myForm" style="margin-left: 1000px" ;>
+    <input type=" text" placeholder="表单内容">
+  </form>
+  <div class=" blank">
+  </div>
+  <script>
+    console.log(document.forms[0])
+
+    // 确保元素可见
+    // document.forms[0].scrollIntoView()
+
+    // // 同上 
+    // document.forms[0].scrollIntoView(true)
+    // document.forms[0].scrollIntoView({ block: "start" })
+
+    // 尝试将元素平滑地滚入视口
+    // document.forms[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+    function alignToTop() {
+      document.forms[0].scrollIntoView(true)
+    }
+
+
+    function scrollIntoViewOptions() {
+      document.forms[0].scrollIntoView({ behavior: 'smooth', block: "center", inline: "start" })
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>使用NodeList</h1>
+  <p>理解 NodeList <strong>(包含所有节点类型)</strong> 对象和相关的 NamedNodeMap <strong>(全是Attr实例 一个节点所有属性)</strong> 、HTMLCollection
+    <strong>(只包含Element节点)</strong>
+    ，是理解 DOM
+    编程的关键。 这3个集合类型都是“实时的” , 意味着文档结构的变化会实时地在它们身上反映出来 , 因此它们的值始终代表最新的状态。实际上，NodeList就是基于DOM文档的实时查询。
+    例如，下面的代码会导致无穷循环:
+  </p>
+  <code>
+    <pre>
+    let divs = document.getElementsByTagName('div')
+
+    for (let i = 0; i < divs.length; i++) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+    </pre>
+  </code>
+  <!-- <div></div> -->
+  <p>第一行取得了包含文档中所有
+    &lt;div>元素的 HTMLcollection。因为这个集合是“实时的”，所以任何时候只要向页面中添加一个新&lt;div>
+    元素，再查询这个集合就会多一项。因为浏览器不希望保存每次创建的集合，所以就会在每次访问时更新集合。这样就会出现前面使用循环的例子中所演示的问题 , 每次循环开始，都会求值i &lt;
+    divs.1ength。这意味着要执行获取所有&lt;div>元素的查询。因为循环体中会创建并向文档添加一个新&lt;div>元素，所以每次循环 divs.length
+    的值也会递增。因为两个值都会递增，所以i将永远不会等于divs.length。</p>
+  <p class="retract">使用迭代器并不会解决这个问题,因为迭代对应的是一个永远增长的实时集合。以下代码仍然会导
+    致无穷循环:</p>
+  <code>
+      <pre>
+    for (let div of document.getElementsByTagName('div')) {
+      let newDiv = document.createElement('div')
+      document.body.appendChild(newDiv)
+    }
+      </pre>
+    </code>
+  <p>任何时候要迭代Nodelist , 最好再初始化一个变量保存查询时的长度 , 然后用循环变量与这个变量进行比较 , 如下所示:</p>
+  <code>
+    <pre>
+    let Divs = document.getElementsByTagName('div')
+
+    for ( <strong>let i = 0, len = Divs.length; i < len; ++i</strong> ) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+    </pre>
+  </code>
+  <p>这个例子又初始化了一个 <strong>保存集合长度的变量1en。因为1en 保存着循环开始时集合的长度</strong> ,
+    而这个值不会随集合增大动态增长，所以就可以避免前面例子中出现的无穷循环。本章还会使用这种技术来演示迭代NodeList 对象的首选方式</p>
+  <p>另外 , 如果不想再初始化一个变量 , 也可以像下面这样反向迭代集合:</p>
+  <code>
+    <pre>
+    let DivS = document.getElementsByTagName('div')
+
+    for ( <strong>let i = divs.length - 1; i >= 0; --i</strong> ) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+    </pre>
+  </code>
+  <p>一般来说，最好限制操作 NodeList的次数。因为每次查询都会搜索整个文档，所以最好把查询到的 NodeList 缓存起来。</p>
+  <script>
+    let divs = document.getElementsByTagName('div')
+
+    for (let i = 0; i < divs.length; i++) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+
+    for (let div of document.getElementsByTagName('div')) {
+      let newDiv = document.createElement('div')
+      document.body.appendChild(newDiv)
+    }
+
+    let Divs = document.getElementsByTagName('div')
+
+    for (let i = 0, len = Divs.length; i < len; ++i) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+
+    let DivS = document.getElementsByTagName('div')
+
+    for (let i = divs.length - 1; i >= 0; --i) {
+      let div = document.createElement('div')
+      document.body.appendChild(div)
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>插入标记</h1>
+  <p>HTML5虽然将innerHrM和outerHTML纳入了标准，但还有两个属性没有人选。这两个剩下的
+    属性是innerText 和 outerText</p>
+  <section>
+    <h2>innerText 属性</h2>
+    <p>innerrext属性对应元素中包含的所有文本内容，无论文本在子树中哪个层级。在用于读取值时innerrext 会按照深度优先的顺序将子树中所有文本节点的值拼接起来。<strong>
+        (包含所有层级子元素的文本”+“按深度优先顺序拼接)</strong> 。在用于写人值时,innerHTML会移除元素的所有后代并插入一个包含该值的文本节点。来看下面的HTML代码: </p>
+    <div id="content">
+      <p>This is a<strong>paragraph</strong> with a list following it.</p>
+      <ul>
+        <li>item 1</li>
+        <li>item 2</li>
+        <li>item 3</li>
+      </ul>
+    </div>
+    <code>
+      <pre>
+            &lt;div id="content">
+              &lt;p>This is a&lt;strong>paragraph&lt;/strong> with a list following it.&lt;/p>
+              &lt;ul>
+                &lt;li>item 1&lt;/li>
+                &lt;li>item 2&lt;/li>
+                &lt;li>item 3&lt;/li>
+              &lt;/ul>
+            &lt;/div>
+      </pre>
+    </code>
+    <p>对这个例子中的 &lt;div>而言, innerText 属性会返回以下字符串:</p>
+    <code>
+      <pre>
+        This is a paragraph with a list following it.
+        item 1
+        item 2
+        item 3
+      </pre>
+    </code>
+    <p>注意不同浏览器对待空格的方式不同,因此格式化之后的字符串可能包含也可能不包含原始HTML代码中的缩进</p>
+    <p>下面再看一个使用innerText 设置&lt;div>元素内容的例子:</p>
+    <code>
+      <pre>
+    const div = document.getElementById('content')
+    div.innerText = 'Hello world'
+      </pre>
+    </code>
+    <p>执行这行代码后，HTML页面中的这个&lt;div>元素实际上会变成这个样子:</p>
+    <p class="retract"> &lt;div id="content">Hello worldl&lt;/div> </p>
+    <p>设置innerText 会移除元素之前所有的后代节点，完全改变DOM子树。此外，设置innerText也会编码出现在字符串中的HTML语法字符(小于号、大于号、引号及和号)。下面是一个例子:</p>
+    <p class="retract">div.innerText = "Hello & welcome, &lt;b>\"reader\" !&lt;/b>";</p>
+    <p>执行以上代码后的结果如下;</p>
+    <p class="retract">&lt;div id="content">"Hello & welcome, &lt;b>\"reader\" !&lt;/b>"</p>
+    <p>因为设置innerText只能在容器元素中生成一个文本节点 ,
+      所以为了保证一定是文本节点，就必须进行HTML编码。innerText属性可以用于去除HTML标签。通过将innerrext设置为等于innerrext，可以去除所有 HTML标签而只剩文本，如下所示:</p>
+    <p>div.innerText = div.innerText</p>
+    <p>执行以上代码后 , 容器元素的内容只会包含原型的文本内容</p>
+    <p><strong>注意</strong> 与innerText 会跳过行内样式和脚本块不同，textContent
+      返回的文本中会包含行内样式和脚本代码。innerrext目前已经得到所有浏览器支持，应该作为取得和设置文本内容的首选方法使用。 <strong>优先使用innerText</strong></p>
+  </section>
+  <section>
+    <h2>outerText 属性</h2>
+    <p>outerrext与innerrext是类似的，只不过作用范围包含调用它的节点。要读取文本值时outerrext与innerText 实际上会返回同样的内容。但在写人文本值时，outerrext
+      就大不相同了写人文本值时，outerrext不只会移除所有后代节点，而是会替换整个元素。比如:</p>
+    <div id="outer">1</div>
+    <p> div.outerText = 'Hello world!'</p>
+    <p>这行代码的执行效果就相当于执行以下两行代码</p>
+    <code>
+      <pre>
+    const oute = document.getElementById('outer')
+    oute.outerText = 'Hello world!'
+
+    let text = document.createTextNode('Hello world!!!')
+    console.log(oute.parentNode)  // null 
+    outer.parentNode.replaceChild(text, outer) // Uncaught ReferenceError: outer is not defined
+      </pre>
+    </code>
+    <p>本质上，这相当于用新的文本节点替代outerrext所在的元素。此时，原来的元素会与文档脱离关系，因此就无法访问了。</p>
+    <strong>因为outerText 把 div 替换成了文本节点 , 这样一来就会从DOM树就会把 div 给删除掉 , 这样一来就导致了 , 在访问的时候因为已经被移除了 , 所以就访问不到父节点了</strong>
+  </section>
+  <script>
+    const div = document.getElementById('content')
+    // div.innerText = 'Hello world'
+    div.innerText = "Hello & welcome, <b>\"reader\" !</b>";
+    div.innerText = div.innerText
+
+    const oute = document.getElementById('outer')
+    oute.outerText = 'Hello world!'
+
+    let text = document.createTextNode('Hello world!!!')
+    console.log(oute.parentNode)  // null 
+    outer.parentNode.replaceChild(text, outer) // Uncaught ReferenceError: outer is not defined
+  </script>
+</body>
+
+</html>

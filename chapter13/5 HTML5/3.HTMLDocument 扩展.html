@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>1. HTMLDocument 扩展</h1>
+  <p>HTML5扩展了 HTMLDocument 类型 , 增加了更多功能。 与其他HTML5定义的 DOM 扩展一样 , 这些变化同样基于所有浏览器事实上都已经支持的专有扩展。
+    这些变化同样基于所有浏览器事实上都已经支持的专有扩展。 为此，即使这些扩展的标准化相对较晚, 很多浏览器也早就实现了相应的功能。
+  </p>
+  <section>
+    <h2>readyState 属性</h2>
+    <p>document.readyState 属性有两个可能的值:</p>
+    <ul>
+      <li class="circle">loading, 表示文档正在加载</li>
+      <li class="circle">comlete, 表示文档加载完成</li>
+    </ul>
+    <p>实际开发中，最好是把 document.readstate当成一个指示器，以判断文档是否加载完毕。在这个属性得到广泛支持以前 , 通常要依赖onload 事件处理程序设置一个标记 , 表示文档加载完了 。
+      这个属性的基本用法如下:</p>
+    <code>
+      <pre>
+    if (document.readyState == 'complete') {
+      // 执行操作
+    }
+
+    console.log(document.readyState) // loading  此时的 JS 文档还没加载完 
+
+    setTimeout(() => { console.log(document.readyState) }, 1000)  // complete
+
+    window.onload = () => {
+      console.log(document.readyState) // complete
+    }
+
+      </pre>
+    </code>
+    <strong>简单一句话总结就是当整个 Document文档里面的同步资源加载完整 , docuemnt.readyState 就会显示 complete (除了异步代码之外)</strong>
+  </section>
+  <section>
+    <h2>2. compatMode 属性</h2>
+    <p>自从IE6提供了以标准或混杂模式谊染页面的能力之后，检测页面染模式成为一个必要的需求 。为了满是这一需求，正为 document 添加了 compatmode 属性，这个属性唯一的任务是指示浏览器当前属于处于什么渲染模式。
+      如下面的例子所示,标准模式下document.compatnode的值是" CSS1Compat " , 而在混杂模式下 , document.compatMode 的值是 'BackCompat'
+      <strong>现如今的话就是对应着 &lt;!DOCTYPE html> 有的话就是标准模式 , 没有的话就是混杂模式
+        混杂模式很多东西都是不标准了 , 不统一的 </strong>
+    </p>
+    <code>
+      <pre>
+    console.log(document.compatMode)
+    if (document.compatMode == 'CSS1Compat') {
+      console.log('Standards mode')
+    } else {
+      console.log('Quirks mode')
+    } 
+    // Standards mode
+      </pre>
+    </code>
+    <p>HTML5最终也把compatMode 属性的实现标准化了。除非需要考虑特别老的测览器，否则不太可能需要武属性。</p>
+  </section>
+  <section>
+    <h1>head属性</h1>
+    <p>作为对 document.body(指向文档的&lt;body>元素)的补充，HTML5增加了 document.head 属性，指向文档的&lt;head>元素。可以像下面这样直接取得 &lt;head>元素:
+    </p>
+    <p class="retract">let head = document.head</p>
+  </section>
+  <script>
+    if (document.readyState == 'complete') {
+      // 执行操作
+    }
+
+    console.log(document.readyState) // loading  此时的 JS 文档还没加载完 
+
+    setTimeout(() => { console.log(document.readyState) }, 1000)  // complete
+
+    window.onload = () => {
+      console.log(document.readyState) // complete
+    }
+
+    console.log(document.compatMode)
+    if (document.compatMode == 'CSS1Compat') {
+      console.log('Standards mode')
+    } else {
+      console.log('Quirks mode')
+    }
+
+    let head = document.head
+    console.log(head)
+  </script>
+</body>
+
+</html>

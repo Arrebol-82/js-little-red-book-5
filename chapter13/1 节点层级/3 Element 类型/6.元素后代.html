@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>元素后代</h1>
+  <p>元素可以拥有任意多个子元素和后代元素 , 因为元素本身也可以是其他元素的子元素 。 childNodes属性包含元素所有的子节点 , 这些子节点可能是其他元素 , 文本节点 , 注释或处理指令
+    。不同浏览器在识别这些节点时的表现有明显不同。比如下面的代码</p>
+  <ul id="myList">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ul>
+  <code>
+    <pre>
+      &lt;ul>
+        &lt;li>Item 1&lt;/li>
+        &lt;li>Item 2&lt;/li>
+        &lt;li>Item 3&lt;/li>
+      &lt;/ul>
+    </pre>
+  </code>
+  <p>在解析以上代码时 , &lt;ul> 元素会包含7个子元素 , 其中3个是 &lt; li> 元素 , 还有4个Text 节点 (表示&lt;里>元素周围的空格) 。如果把元素之间的空格删掉 ,
+    变成下面这样 , 则所有浏览器都会返回同样数量的子节点</p>
+  <code>
+      <pre>
+        &lt;ul>&lt;li>Item 1&lt;/li>&lt;li>Item 2&lt;/li>&lt;li>Item 3&lt;/li>&lt;/ul>
+      </pre>
+    </code>
+  <p>所有浏览器解析上面的代码后，&lt;u1>元素都会包含3个子节点 <strong>(指的是3个小li)</strong> 。考虑到这种情况，通常在执行某个操作之后需要先检测一下节点的nodeType , 如下所示:</p>
+  <code>
+    <pre>
+    for (let i = 0; i < element.childNodes.length; ++i) {
+      if (element.childNodes[i].nodeType == 1) {
+        // 执行某个操作
+      }
+    }
+
+    <strong>没错就是之前写的那个</strong>
+    </pre>
+  </code>
+  <p>以上代码会遍历某个元素的子节点，并且只在noderype等于1(即Element节点)时执行某个
+    操作。</p>
+  <p>要取得某个元素的子节点和其他后代节点，可以使用元素的getElementsByTagName()方法 。 在元素上调用这个方法与在文档上调用是一样的 <strong>(一个是document :
+      一个是指定的元素)</strong> ,只不过搜索范围限制在当前元素之内 ,
+    既只会返回当前元素的后代 。对于本节前面&lt;ul>的例子 , 可以像下面这样获取得其所的&lt;li> 元素
+  </p>
+  <code>
+    <pre>
+    let ul = document.getElementById('myList')
+    let items = ul.getElementsByTagName('li')
+    console.log(items); // HTMLCollection(3) [li, li, li]
+    </pre>
+  </code>
+  <p>这里例子中的 &lt;ul>元素只有一级子节点，如果它包含更多层级,则所有层级中的<1i>元素都会返回</p>
+  <script>
+    // for (let i = 0; i < element.childNodes.length; ++i) {
+    //   if (element.childNodes[i].nodeType == 1) {
+    //     // 执行某个操作
+    //   }
+    // }
+
+    let ul = document.getElementById('myList')
+    let items = ul.getElementsByTagName('li')
+    console.log(items);  // HTMLCollection(3) [li, li, li]
+
+  </script>
+</body>
+
+</html>

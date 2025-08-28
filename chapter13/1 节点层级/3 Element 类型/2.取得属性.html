@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>取得元素</h1>
+  <p>每个元素都有零个或多个属性，通常用于为元素或其内容附加更多信息。与属性相关的 DOM 方法主要有3个: getAttribute() , setAttribute() 和 removeAttribute()
+    这些方法主要用于操纵属性 , 包括在HTMLElement 类型上定义的属性 。 下面看一个例子:
+  </p>
+  <code>
+    <pre>
+    &lt;div id="myDiv">&lt;/div>
+
+    let div = document.getElementById('myDiv')
+    console.log(div.getAttribute('id'))
+    console.log(div.getAttribute('class'))
+    console.log(div.getAttribute('title'))
+    console.log(div.getAttribute('lang'))
+    console.log(div.getAttribute('dir'))
+    </pre>
+  </code>
+  <div id="myDiv" style="font-size: small;" onclick="aaa"></div>
+  <p>注意传给 getAttribute()的属性名与它们实际的属性名是一样的 , 因此这里要传"class"而非"className"(className 是作为对象属性时才那么拼写的)。
+    如果给定的属性不存在,则 getAttribute() 返回 nul1。
+  </p>
+  <p>getattribute()方法也能取得不是HTML语言正式属性的自定义属性的值。 <strong>就是自己命名的元素</strong> 比如下面的元素</p>
+  <p class="retract">&lt;div id='MyDiv' my_special_attribute='Hello'>&lt;/div></p>
+  <div id='MyDiv' my_special_attribute='Hello'></div>
+  <p>这个元素有一个自定义属性 my_special_attribute , 值为 "Hello" 。可以像其他属性一样使用 getAttribute() 取得这个属性的值</p>
+  <p class="retract">console.log(Div.getAttribute('my_special_attribute'))</p>
+  <p>注意，属性名不区分大小写，因此"ID"和"id"被认为是同一个属性。 另外 , 根据 HTML 5 规范的要求 , 自定义属性名应该前缀data-以方便验证</p>
+  <P>元素的所有属性也可以通过相应DOM元素对象的属性来取得。当然 , 这包括 HTMLElement 上定义的直接映射对应属性的5个属性 , 还有所有公认 (非自定义) 的属性 <strong>( 如 id href scr 等等
+      )</strong>也会被添加为DOM对象的属性比如下面的例子:
+  </P>
+  <p class="retract">&lt;div id='myDiv' align='left' my_special_attribute='Hello> &lt;/div></p>
+  <p>因为 id 和 align <strong>现代开发不要使用 (用于控制文本对齐方式)</strong> 在 HTML中是 &lt;div> 元素公认的属性 , 所以DOM
+    对象上也会有这两个属性。但my_special_attribute 是自定义属性，因此不会成为DOM 对象的属性</p>
+  <p>通过 DOM 对象访问的属性中有两个返回的值跟使用getattribute()取得的值不一样。首先是style属性，这个属性用于为元素设定CSS样式。在使用getAttribute()访问style 属性时，返回的是CSS字符串。
+    而在通过DOM对象的属性访问时，style属性返回的是一个(CSSStyleDeclaration) 对象 , DOM对象的style 属性用于以编程方式读写元素样式 , 因此不会直接映射为元素中style 属性的字符串值
+  </p>
+  <p class="retract">第二个属性其实是一类，即事件处理程序(或者事件属性)，比如onc1ick。在元素上使用事件属性时(比如onc1ick)，属性的值是一段JavaScript代码。如果使用
+    getAttribute()访问事件属性 , 则返回的是字符串形式的源代码。而通过DOM对象的属性访问事件属性时返回的则是一个JavaScrip函数 ( 未指定该属性则返回nu11 )
+    。这是因为onclick及其他事件属性是可以接受函数作为值的。 <strong>他们的值是一个函数名</strong></p>
+  <p>考虑到以上差异,开发者在进行DOM编程时通常会放弃使用getattribute()而只使用对象属性 。 getAttribute()主要用于取得自定义属性的值。</p>
+  <script>
+    let div = document.getElementById('myDiv')
+    console.log(div.getAttribute('id'))
+    console.log(div.getAttribute('class'))
+    console.log(div.getAttribute('title'))
+    console.log(div.getAttribute('lang'))
+    console.log(div.getAttribute('dir'))
+    console.log(div.style)
+    console.log(div.onclick)
+
+    let Div = document.getElementById('MyDiv')
+    console.log(Div.getAttribute('my_special_attribute'))
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>outerHTML 属性</h1>
+  <p>获取outerHTML 属性时 , 会返回调用它的元素 ( 及所有后代元素 )的 HTML 字符串 , 在写入outerHTML属性时 , 调用它的元素会被传入的 HTML 字符串经解释之后生成的 DOM
+    子树取代 。 比如下面的HTML 代码
+  </p>
+  <code>
+    <pre>
+      &lt;div id="content">
+        &lt;p>This is a &lt;strong>paragraph&lt;/strong> with a list following it. &lt;/p>
+        &lt;ul>
+          &lt;li>Item 1&lt;/li>
+          &lt;li>Item 2&lt;/li>
+          &lt;li>Item 3&lt;/li>
+        &lt;/ul>
+      &lt;/div>
+    </pre>
+  </code>
+  <div id="content">
+    <p>This is a <strong>paragraph</strong> with a list following it. </p>
+    <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+    </ul>
+  </div>
+  <p>在这个&lt;div>元素上调用outerHTML , 会返回相同的字符串 , 包括&lt;div> 本身, 注意 , 浏览器因解析和解释HTML 代码的机制不同 , 返回的字符串也可能不同 , ( 跟innerHTML
+    的情况是一样的 )</p>
+  <p>使用 outerHTML 设置 HTML, 比如:</p>
+  <p>div.outerHTML = "&lt;p> This is a paragraph"</p>
+  <p>与执行以下脚本的结果相同</p>
+  <code>
+      <pre>
+    let p = document.createElement('p')
+    p.appendChild(document.createTextNode('This is a Paragraph'))
+    div.parentNode.replaceChild(p, div)
+      </pre>
+    </code>
+  <p>新的&lt;p>元素会取代DOM树中原来的 &lt;div> 元素</p>
+  <strong>简的来说就是 innerHTML 只会替换下面的所有子元素 , 而 outerHTML 是将父元素也给替换掉了</strong>
+  <script>
+    let div = document.getElementById('content')
+    div.outerHTML = '<p>This is a Paragraph</p>'
+
+    let p = document.createElement('p')
+    p.appendChild(document.createTextNode('This is a Paragraph'))
+    div.parentNode.replaceChild(p, div)
+  </script>
+</body>
+
+</html>

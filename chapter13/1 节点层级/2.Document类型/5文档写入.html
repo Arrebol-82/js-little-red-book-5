@@ -65,6 +65,7 @@
   </code>
   <p>这个例子使用了 window.onload 事件处理程序，将调用 document.write()的函数推迟到页面加载完毕后执行。执行之后，字符串"He11o world!"会重写整个页面内容。</p>
   <p>open()和 close()方法分别用于打开和关闭网页输出流。在调用write()和writeln()时,这两个方法都不是必需的</p>
+  <strong>重要的是 document.write 不能在异步脚本中使用</strong>
   <script>
     document.write('<strong>' + (new Date()).toString() + '</strong>')
     // window.onload = function () {

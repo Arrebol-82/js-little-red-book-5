@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>insertAdjacentHTML() 与 insertAdjacentText()</h1>
+  <p>用于插人标签的最后两个新增方法是insertAdjacentHrM()和insertadjacentText()。这两个万法都接收两个参数:要插人标记的位置和要插入的HTML或文本。第一个参数必须是
+    下列值中的一个
+  </p>
+  <ul>
+    <li>"beforebegin", 插入当前元素前面 , 作为前一个同胞节点</li>
+    <li>"afterbegin", 插入当前元素内部 , 作为新的子节点或放在第一个子节点前面</li>
+    <li>"beforeend", 插入当前元素内部 , 作为新的子节点或放在最后一个子节点后面</li>
+    <li>"afterend", 插入当前元素后面 , 作为下一个同胞节点</li>
+  </ul>
+  <p>注意这几个值是不区分大小写的。第二个参数会作为HTML解析 ( 与innerHTML 和 outerHTML 相同 ) 或者作为纯文本解析 ( 与innerText和outerText相同 ) 。
+    如果是 HTML , 则会在解析出错时抛出错误 。下面展示了它们的基本用法 ①
+  </p>
+  <code>
+    <pre>
+
+    </pre>
+  </code>
+  <div></div>
+  <p>① 假设当前元素是&lt;p>He110 worid!&lt;/p>，期"beforebegin"和*afterbegin*中的"begin*指开始标签:&lt;p>; 而
+    'afterend' 和 'beforeend' 中的 'and' 指结束标签&lt;/p> -- 译者注
+  </p>
+  <script>
+    const element = document.querySelector('div')
+
+    // 作为前一个同胞节点插入
+    element.insertAdjacentHTML("beforebegin", '<p>Hello World!</p>')
+    element.insertAdjacentText("beforebegin", 'Hello World!')
+
+    // 作为第一个子节点插入
+    element.insertAdjacentHTML("afterbegin", '<p>child node</p>')
+    element.insertAdjacentText("afterbegin", 'child node')
+
+    // 作为最后一个子节点插入
+    element.insertAdjacentHTML("beforeend", '<p>end</p>')
+    element.insertAdjacentText('beforeend', 'end')
+
+    // 作为下一个同胞节点插入
+    element.insertAdjacentHTML("afterend", '<P>The final sibling node</P>')
+    element.insertAdjacentText("afterend", 'The final sibling node')
+  </script>
+</body>
+
+</html>

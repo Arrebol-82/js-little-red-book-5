@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>动态脚本</h1>
+  <p>&lt;script>元素用于向网页中插入JavaScript代码, 可以是sre属性包含的外部文件、也可以是作为该元素内容的源代码 。动态脚本就是在页面初始加载时不存在 ,
+    之后又通过 DOM 包含的脚本 。 与对应的HTML元素一样 , 有两种方式通过 &lt;script>动态为网页添加脚本: 引入外部文件盒直接插入源代码。</p>
+  <p>动态加载外部文件很容易实现，比如下面的&lt;script>元素:</p>
+  <p class="retract"> &lt;script src = 'foo.js'> &lt;/script></p>
+  <p>可以像这样通过 DOM编程创建这个节点:</p>
+  <code>
+    <pre>
+    let script = document.createElement('script')
+    
+    script.src = 'foo.js'
+    document.body.appendChild(script)
+    </pre>
+  </code>
+  <p>这里的 DOM代码实际上完全照搬了它要表示的HTML代码。注意，在上面最后一行把 &lt;script> 元素添加到页面之前，是不会开始下载外部文件的。
+    当然也可以把定添加到 &lt;head>元素、同样可以实现动态脚本加载 。 这个过程可以抽象为一个函数 , 比如:</p>
+  <code>
+      <pre>
+    function loadScript(url) {
+      let script = document.createElement('script')
+      script.src = url
+      document.bodyappendChild(script)
+    }
+      </pre>
+    </code>
+  <p>然后 , 就可以像下面这样加载外部 Javascript 文件了:</p>
+  <p class="retract">loadScript('client.js')</p>
+  <p>加载之后，这个脚本就可以对页面执行操作了。这里有个问题:怎么知道脚本什么时候加载完呢 ? 这个问题并没有标准答案。第15章会讨论一些与加载相关的事件，具体情况取决于使用的浏览器。</p>
+  <p>另一种动态插人JavaScript的方式是嵌入源代码，如下面的例子所示:</p>
+  <code>
+    <pre>
+      &lt;script> 
+      function sayHi () {
+          alert('hi')
+      }
+      &lt;/script> 
+    </pre>
+  </code>
+  <p>注意，通过innerHTML属性创建的&lt;script>元素永远不会执行。浏览器会尽责地创建
+    &lt;script>元素,以及其中的脚步文本 , 但解析器会给这个&lt;script> 元素打上永不执行的标签 。只要使用innerHTML创建的 &lt;script> 元素 , 以后没有办法强制其执行</p>
+  <script>
+    let script = document.createElement('script')
+
+    script.src = 'foo.js'
+    document.head.appendChild(script)
+
+    function loadScript(url) {
+      let script = document.createElement('script')
+      script.src = url
+      document.bodyappendChild(script)
+    }
+
+    loadScript('client.js')
+  </script>
+</body>
+
+</html>

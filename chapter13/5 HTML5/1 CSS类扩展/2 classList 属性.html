@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>classList 属性</h1>
+  <p>要操作类名，可以通过 className 属性实现添加、删除和替换。但 className 是一个字符串 , 所以每次操作之后都需要重新设置这个值才能生效 , 即使只改了部分字符串也一样 。
+    以下面的 HTML 代码为例:</p>
+  <code>
+      <pre>
+        &lt;div class="bd user disabled">...&lt;/div>
+      </pre>
+    </code>
+  <div class="bd user disabled">...</div>
+  <p>这个&lt;div>元素有3个类名。要想刷除其中一个，就得先把className 拆开，删除不想要的那个 , 再把包含剩余类名的字符串设置回去 。 比如</p>
+  <code>
+    <pre>
+    // 要删除 "user" 类
+    let targetCLass = "user"
+
+    // 把类名拆成数组
+    let classNames = div.className.split(/\s+/)
+
+    // 找到要删除类名的索引
+    let idx = classNames.indexOf(targetCLass)
+    </pre>
+  </code>
+  <p>这就是从&lt;div>元素的类名中删除"user"的代码。替换类名和检测类名也要涉及同样的算法。添加类名只涉及字符串拼接，但必须先检查一下以确保不会重复添加相同的类名。
+    很多JavaScript库为这些提作实现了便利方法。</p>
+  <p class="retract">HTML5通过给所有元素增加classList属性为这些操作提供了更简单也更安全的实现方式。 classList是一个新的集合类型
+    DOMTokenList的实例。与其他DOM集合类型一样,DOMTokenList
+    也有length 属性表示自己包含多少项 , 也可以通过 item() 或中括号取得个别的元素 。此外 , DOMTokeList 还增加了以下方法
+  </p>
+  <ul>
+    <li>add( <i>value</i> ) , 向类名列表中添加指定的字符串值 value。如果这个值已经存在,则什么也不做</li>
+    <li>contains( <i>value</i> ) , 返回布尔值,表示给定的value是否存在</li>
+    <li>remove( <i>value</i> ) , 从类名列表中删除指定的字符串值value</li>
+    <li>toggle( <i>value</i> ) , 如果类名列表中已经存在指定的value, 则删除; 如果不存在,则添加。</li>
+  </ul>
+  <p>这样一来 , 前面的例子中那么多行带代码就可以简化成下面的一行:</p>
+  <p>div.classList.remove('user')</p>
+  <code>
+    <pre>
+    console.log(div.classList) //  ['bd', 'user', 'disabled', value: 'bd user disabled']
+    div.classList.remove('user')
+    console.log(div.classList) //  ['bd', 'disabled', value: 'bd disabled']
+    </pre>
+  </code>
+  <p>这行代码可以在不影响其他类名的情况下完成删除。其他方法同样极大地简化了操作类名的复杂性 , 如下面的例子所示:</p>
+  <code>
+    <pre>
+    // 删除 "disabled" 类
+    div.classList.remove('disabled')
+
+    // 添加 "current" 类
+    div.classList.add('current')
+
+    // 切换 'user' 类
+    div.classList.toggle('user') // true
+
+    //检测类名
+    console.log(div.classList.contains('bd'))
+    if (div.classList.contains('bd') && !div.classList.contains['disabled']) {
+      console.log('执行代码')
+    }
+
+    // 迭代类名
+    for (const Class of div.classList) {
+      console.log(Class)
+      // bd
+      //  current
+      //  user
+    }
+    </pre>
+  </code>
+  <p>添加了 classList 属性之后 , 除非是完全删除或完全重写元素的ciass属性，否则className 属性就用不到了</p>
+  <script>
+    const div = document.querySelector('.bd')
+
+    // // 要删除 "user" 类
+    // let targetCLass = "user"
+
+    // // 把类名拆成数组
+    // console.log(div)
+    // let classNames = div.className.split(/\s+/)
+
+    // // 找到要删除类名的索引
+    // let idx = classNames.indexOf(targetCLass)
+
+    // if (idx > -1) {
+    //   classNames.splice(idx, 1,)
+    // }
+
+    // div.className = classNames.join(' ')
+
+    // const div = document.getElementsByClassName('bd user disabled')
+
+    // // 要删除 "user" 类
+    // let targetCLass = "user"
+
+    // // 把类名拆成数组
+    // console.log(div)
+    // let classNames = div[0].className.split(/\s+/)
+
+    // // 找到要删除类名的索引
+    // let idx = classNames.indexOf(targetCLass)
+
+    // if (idx > -1) {
+    //   classNames.splice(idx, 1)
+    // }
+
+    // div[0].className = classNames.join(' ')
+
+    console.log(div.classList) //  ['bd', 'user', 'disabled', value: 'bd user disabled']
+    div.classList.remove('user')
+    console.log(div.classList) //  ['bd', 'disabled', value: 'bd disabled']
+
+    // 删除 "disabled" 类
+    div.classList.remove('disabled')
+
+    // 添加 "current" 类
+    div.classList.add('current')
+
+    // 切换 'user' 类
+    div.classList.toggle('user') // true
+
+    //检测类名
+    console.log(div.classList.contains('bd'))
+    if (div.classList.contains('bd') && !div.classList.contains['disabled']) {
+      console.log('执行代码')
+    }
+
+    // 迭代类名
+    for (const Class of div.classList) {
+      console.log(Class)
+      // bd
+      //  current
+      //  user
+    }
+
+  </script>
+</body>
+
+</html>

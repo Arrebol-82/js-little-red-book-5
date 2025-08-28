@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>创建文本节点</h1>
+  <p>document.createrextNode()可以用来创建新文本节点,它接收一个参数,即要插人节点的文本。跟设置已有文本节点的值一样 , 这些要插入也会应用HTML 或 XML
+    编码 , 如下面的例子所示:
+  </p>
+  <p class="retract">let textNode = document.createTextNode('&lt;strong>Hello&lt;/strong> world!')</p>
+  <p>创建新文本节点后 , 其ownerDocument属性会被设置为document。但在把这个节点添加到文档树之前 ,
+    我们不会在浏览器中看到它 , 以下代码创建一个 &lt;div> 元素并给它添加一段文本消息:</p>
+  <code>
+      <pre>
+    let element = document.createElement('div')
+    element.className = 'message'
+
+    let TextNode = document.createTextNode('Hello world!')
+    element.appendChild(TextNode)
+
+    document.body.appendChild(element)
+      </pre>
+    </code>
+  <p>这个例子先创建了一个&lt;div>元素并给它添加了值为"message"的 class 属性，然后又创建了一个这本节点并添加到该元素 。最后一步是把这个元素添加到文档的主体上 , 这样元素及
+    其包含的文本会出现在浏览器中
+  </p>
+  <p>一理般来说一个元素只包含一个文本子节点。不过，也可以让元素包含多个文本子节点，如下面的例子所示:</p>
+  <code>
+    <pre>
+        let element = document.createElement('div')
+        element.className = 'message'
+        
+        let TextNode = document.createTextNode('Hello world!')
+        element.appendChild(TextNode)
+        
+        let anotherTextNode = document.createTextNode('Yippee!')
+        element.appendChild(anotherTextNode)
+
+        document.body.appendChild(element)
+    </pre>
+  </code>
+  <p>在将一个文本节点作为另一个文本节点的同胞插入后，两个文本节点的文本之间不会包含空格。</p>
+  <script>
+    let textNode = document.createTextNode('<strong>Hello</strong> world!')
+
+    let element = document.createElement('div')
+    element.className = 'message'
+
+    let TextNode = document.createTextNode('Hello world!')
+    element.appendChild(TextNode)
+
+    document.body.appendChild(element)
+
+    let anotherTextNode = document.createTextNode('Yippee!')
+    element.appendChild(anotherTextNode)
+
+  </script>
+</body>
+
+</html>

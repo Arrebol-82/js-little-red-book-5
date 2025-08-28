@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <p>children 属性是一个 HTMLCollection , 只包含元素的 ELement 类型的子节点 。 如果元素的子节点类型全部是元素类型 , 那 children 和 chilNodes 中包含的节点应该是一样的 。
+    可以像下面这样使用children 属性:</p>
+  <code>
+    <pre>
+    let childCount = document.body.children.length
+    console.log(childCount) // 3
+    let firstChild = document.body.children[0]
+    console.log(firstChild) // p
+    </pre>
+  </code>
+  <script>
+    let childCount = document.body.children.length
+    console.log(childCount)  // 3
+    let firstChild = document.body.children[0]
+    console.log(firstChild)  // p
+  </script>
+</body>
+
+</html>

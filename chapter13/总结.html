@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+  <h1>总结</h1>
+  <p>文档对象模型(DOM，DocumentObjectModel)是语言中立的HTML和XML文档的 API。DOMLevel1将 HTML和
+    XML 工文档定义为一个节点的多层级结构，并暴露出JavaScript接口以操作文档的底层结构和外观。</p>
+  <p>DOM由一系列节点类型构成，主要包括以下几种。</p>
+  <ul>
+    <li class="circle">Node 是基准节点类型，是文档一个部分的抽象表示，所有其他类型都继承 Node。</li>
+    <li class="circle">Document 类型表示整个文档，对应树形结构的根节点。在JavaScript中，document 对象是Document 的实例，拥有查询和获取节点的很多方法。</li>
+    <li class="circle">Element 节点表示文档中所有 HTML或 XML元素 (也就是 &lt;> 标签)，可以用来操作它们的内容和属性。</li>
+    <li class="circle">其他节点类型分别表示文本内容、注释、文档类型、CDATA区块和文档片段。</li>
+  </ul>
+  <p>DOM编程在多数情况下没什么问题，在涉及&lt;script>和 &lt;style > 元素时会有一点兼容性问题。
+    因这些元素分别包含脚本和样式信息，所以浏览器会将它们与其他元素区别对待。</p>
+  <p>要理解
+    DOM、最关键的一点是知道影响其性能的问题所在。DOM操作在JavaScript代码中是代作比较高的，尤其需要注意NodeList对象。NodeList对象是“实时更新”的，这意味着每次访问它都会执行一次新的查询。考虑到这些问题，实践中要尽量减少DOM操作的次数。
+  </p>
+  <p>本章还介绍了另外3个规范。</p>
+  <ul>
+    <li>Selectors API为基于CSS选择符获取 DOM 元素定义了三个方法:queryselector()querySelectorA1l()和 matches()。</li>
+    <li>ElementTraversal 在 DOM元素上定义了额外的属性,以方便对 DOM 元素进行遍历。这个需求是因浏览器处理元素间空格的差异而产生的。</li>
+    <li>HTML5为标准DOM提供了大量扩展,其中包括对innerHTML 属性等事实标准进行标准化,还
+      有焦点管理、字符集、滚动等特性。</li>
+  </ul>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-16">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>字符集属性</h1>
+  <p>HTML5增加了几个与文档字符集有关的新属性,其中characterset 属性表示文档实际使用的字符集 , 也可以用来指定新字符集 。 这个属性的默认值 "UTF-8" ,
+    但可以通过&lt;meta> 元素或响应头 , 以及新增的 characterset 属性来修改。下面是一个例子:
+  </p>
+  <code>
+    <pre>
+    console.log(document.characterSet) // UTF-8
+    document.characterSet = 'UTF-16'
+    console.log(document.characterSet) // UTF-8
+
+    <strong>这里也证明了 docuemnt.characterSet 他是只读的</strong>
+    </pre>
+  </code>
+  <strong>这里使用 UTF-8 是因为 它网络传输快 (兼容ASCII) 以英文为主 (节省空间)</strong>
+  <p>浏览器确定编码时会综合考虑 <strong>HTTP 响应头、BOM、&lt;meta> 标签等因素，并存在优先级。</strong></p>
+  <script>
+    console.log(document.characterSet) // UTF-8
+    document.characterSet = 'UTF-16'
+    console.log(document.characterSet) // UTF-8
+  </script>
+</body>
+
+</html>

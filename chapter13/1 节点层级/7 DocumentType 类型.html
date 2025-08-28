@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>DocumentType 类型</h1>
+  <p>Documentrype 类型的节点包含文档的文档类型(doctype)信息，具有以下特征:</p>
+  <ul>
+    <li>nodeType 等于10</li>
+    <li>nodeName 值为文档类型的名称</li>
+    <li>nodeValue 值为null</li>
+    <li>parentNode 值为Document 对象</li>
+  </ul>
+  <p>Documentrype对象在DOMLevel1中不支持动态创建，只能在解析文档代码时创建。对于支持这个类型的浏览器，DocumentType对象保存在document.doctype属性中。
+    DOM Levell规定了Documentrype 对象的3个属性:name、entities和notations 。 name
+    是文档类型的名称,entities是这个文档类型描述的实体的NamedNodeMap，而notations 是这个文档类型描述的表示法的NamedNodeMap 因为浏览器中的文档通常是HTML或XHTML文档类型
+    , 所以entities和notation列表为空。(这个对象只包含行内声明的文档类型。)无论如何，只有 name 属性是有用的。这个属性包含文档类型的名称，即紧跟在
+    &lt;!DOCTYPE后面的那串文本。比如下面的HTML4.01严格文档类型: </p>
+  <code>
+      <pre>
+        &lt; !DOCTYPE html PUBLIC"-//W3C//DTD HTML4.01//EN" 
+        "http://www.w3.org/TR/html4/strict.dtd">
+      </pre>
+    </code>
+  <p>对与这个文档类型 , name 属性的值是'html'</p>
+  <p>console.log(document.doctype.name) // HTML</p>
+  <script>
+    console.log(document.doctype.name)  // HTML
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>动态样式</h1>
+  <p>CSS样式在 HTML页面中可以通过两个元素加载。&lt;1ink>元素用于包含CSS外部文件，而&lt;style>
+    元素用于添加嵌入样式。与动态脚本类似，动态样式也是页面初始加载时并不存在，而是在之后才添加到页面中的。</p>
+  <p>来看下面这个典型的&lt;link> 元素</p>
+  <p>&lt;link rel='stylesheet' type='text/css' href='styles.css'></p>
+  <p>这个元素很容易使用DOM编程来创建:</p>
+  <code>
+    <pre>
+    let link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.type = 'text/css'
+    link.href = 'styles.css'
+    let head = document.getElementsByTagName('head')[0]
+    head.appendChild(link)
+    </pre>
+  </code>
+  <p>以上代码在所有主流浏览器中都能正常运行 。注意应该把&lt;1ink>元素添加到&lt;head>元素而不是&lt;body> 元素,
+    这样才能保证所有浏览器都能正常运行。这个过程可以抽象为以下通用函数:
+  </p>
+  <code>
+    <pre>
+    function loadStyles(url) {
+      let link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.type = 'text/css'
+      link.href = url
+      let head = document.getElementsByTagName('head')[0]
+      head.appendChild(link)
+    }     
+    </pre>
+  </code>
+  <p>然后就可以像这样调用这个loadStyles()函数了:</p>
+  <p>loadStyles('styles.css')</p>
+  <p>通过外部文件加载样式是一个异步过程 。因此 , 样式的加载和正执行的 Javascript 代码并没有先后顺序。一般来说 , 也没有必要知道样式什么时候加载完成 <strong>外部 CSS（包括动态引入的 CSS）的加载过程和
+      JS 代码的执行过程是 “各自独立、没有强制先后” 的，所以确实可能出现 “CSS 先加载完” 或 “JS 先执行完” 的情况。</strong></p>
+  <p>另一种定义样式的方式是使用&lt;script>元素包含嵌人的CSS规则，例如:</p>
+  <code>
+    <pre>
+      &lt;style type='text/css'>
+        &lt;body>
+          background-color : pink;
+        &lt;/body>
+      &lt;/style> 
+    </pre>
+  </code>
+  <script>
+    let link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.type = 'text/css'
+    link.href = 'styles.css'
+    let head = document.getElementsByTagName('head')[0]
+    head.appendChild(link)
+
+    function loadStyles(url) {
+      let link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.type = 'text/css'
+      link.href = url
+      let head = document.getElementsByTagName('head')[0]
+      head.appendChild(link)
+    }
+  </script>
+</body>
+
+</html>

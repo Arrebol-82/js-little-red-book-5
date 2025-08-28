@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>contains()方法</h1>
+  <p>DOM编程中经常需要确定一个元素是不是另一个元素的后代。contains()方法应该在要搜索的祖先元素上调用，参数是目标节点。如果目标节点是被搜索节点的后代，contains()返回true，否则返回
+    false，下面看一个例子:
+  </p>
+  <p> console.log(document.documentElement.contains(document.body)) // true </p>
+  <p>这个例子测试&lt;htm1>元素中是否包含&lt;body>元素，在格式正确的HTML.中会返回 true。</p>
+  <p>另外，使用DOM Level3的 comparepocumentposition()方法也可以确定节点间的关系。这个方法会返回表示两个节点关系的位掩码。下表给出了这些位掩码的说明。</p>
+  <code>
+    <pre>
+                常量名（DOM 规范）                        数值                                                            含义描述
+
+                                                       0 (0x0)                                                         元素一致
+
+      DOCUMENT_POSITION_DISCONNECTED                   1 (0×1)                                          两个节点不在同一文档中（或有一个不在文档树中）
+              
+      DOCUMENT_POSITION_PRECEDING                      2 (0×2)                                         nodeB 在 nodeA 之前（同一层级，nodeB 先出现）
+      
+      DOCUMENT_POSITION_FOLLOWING                      4 (0×4)                                         nodeB 在 nodeA 之后（同一层级，nodeB 后出现）
+      
+      DOCUMENT_POSITION_CONTAINS                       8 (0×8)                                         nodeA 包含 nodeB（nodeB 是 nodeA 的后代）
+      
+      DOCUMENT_POSITION_CONTAINED_BY                  16 (0×10)                                        nodeA 被 nodeB 包含（nodeA 是 nodeB 的后代）
+        
+    </pre>
+  </code>
+  <p>要模仿 contains()方法，就需要用到掩码16(0x10)。compareDocumentPosition() 方法的结果可以通过按位与来确定参考是否包含传入的节点, 比如:</p>
+
+  <code>
+      <pre>
+
+      </pre>
+    </code>
+  <p>以上代码执行后resu1t 的值为 20(或 0x14，其中 0x4表示“随后”，加上 0x10“被包含”) 对esult和0x10应用按位与会返回非零值，而两个叹号会将这个值转换成对应的布尔值</p>
+  <strong>这里有个问题 , 应该输出的 12 , 也有可能是因为 文本节点所导致的 </strong>
+  <script>
+
+    document.normalize()
+
+    console.log(document.documentElement.contains(document.body)) // true
+
+    let result = document.body.compareDocumentPosition(document.documentElement)
+    window.onload = () => {
+      console.log(result)
+      // cnosole.log(0x10)
+      console.log(!!(result & 0x10))
+    }
+
+    setTimeout(() => {
+      console.log(result)
+    }, 1000);
+
+    let Result = document.documentElement.compareDocumentPosition(document.body);
+
+    // 检查是否被包含
+    if (Result & Node.DOCUMENT_POSITION_CONTAINED_BY) {
+      console.log("body被documentElement包含");
+    }
+  </script>
+</body>
+
+</html>

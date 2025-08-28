@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>跨站点脚本</h1>
+  <p>尽管innerHTML 不会执行自己创建的&lt;script>标签, 但扔然向恶意用户暴露了很多的攻击面 , 因为通过它可以毫不费力地创建元素并执行 onclick 之类的属性</p>
+  <p>如果页面中要使用用户提供的信息，则不建议使用innerHTML。与使用innerHryL获得的方便比，防止XSS攻击更让人头疼。此时一定要隔离要插人的数据，在插人页面前必须毫不犹豫地使用相关的库对它们进行转义。</p>
+</body>
+
+</html>
