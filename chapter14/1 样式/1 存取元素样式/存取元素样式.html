@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #myDiv {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>存取元素样式</h1>
+  <p>任何支持 style 属性的 HTML元素在 JavaScript中都会有一个对应的style 属性。这个 style 属性是 CSSstyleDeclaration 类型的实例，
+    其中包含通过 HTML style 属性为元素设置的所有样式信息，但不包含通过层叠机制从文档样式和外部样式中继承来的样式。HTML style 属性中的CSS属性在
+    JavaScriptstyle对象中都有对应的属性。 因为 css 属性名使用连字符表示法 (用连字符分隔两个单词 , 如background-image) , 所以在 javascript 中这些属性必须转换驼峰大小写形式 ( 如
+    backgroundImage ) 。 下表给出了常用的css 属性 与 style 对象等价属性对比
+  </p>
+  <code>
+    <pre>
+      _________________________________________________________________________________________________________________________
+               css 属性                     javascript 属性      ||              css 属性                      javascript 属性
+      _________________________________________________________________________________________________________________________
+                                                                ||
+          background-image              style.backgroundImage   ||              display                         style.display
+                                                                ||
+           color                        style.color             ||              font - family                   style.font - family
+      _________________________________________________________________________________________________________________________           
+    </pre>
+  </code>
+  <p> 大多数属性名会这样直接转化过来 。但有一个CSS属性名不能直接转换，它就是 float (浮动)。因为float是JavaScript的保留字，所以不能用作属性名。
+    DOM2 Stye规定它在 style 对象中对应的属应该是cssFloat。
+  </p>
+  <p>任何时候，只要获得了有效DOM元素的引用，就可以通过JavaScript来设置样式。来看下面的例子</p>
+  <div id="myDiv" style="background-color: blue; width: 10px; height: 25px;"></div>
+  <code>
+    <pre>
+    let myDiv = document.getElementById('myDiv')
+
+    // 设置背景颜色
+    myDiv.style.backgroundColor = 'pink'
+
+    // 修改尺寸
+    myDiv.style.width = '50px'
+    myDiv.style.height = '50px'
+
+    // 设置边框
+    myDiv.style.border = '2px solid black'
+    </pre>
+  </code>
+  <p>像这样修改样式时 , 元素的外观会自动更新</p>
+  <p><strong>注意</strong> 所有值都必须带单位把style.width 设置为"20"会被忽略 <strong>(不生效的)</strong> ，因为没带单位。记住，一定要加上单位。</p>
+  <p>通过style属性设置的值夜可以通过style 对象获取。 比如下面的HTLML</p>
+  <p> &lt;div id="myDiv" style="background-color: blue; width: 10px; height: 25px;">&lt;/div></p>
+  <p>这个元素style 属性的值可以像这样通过代码获取:</p>
+  <code>
+    <pre>
+    console.log(myDiv.style.backgroundColor)
+    console.log(myDiv.style.width)
+    console.log(myDiv.style.height)
+    </pre>
+  </code>
+  <p>如果元素上没有 style属性，则style 对象包含所有可能的 CSS 属性的空值。</p>
+  <script>
+    let myDiv = document.getElementById('myDiv')
+
+
+    console.log(myDiv.style.backgroundColor)
+    console.log(myDiv.style.width)
+    console.log(myDiv.style.height)
+
+    // 设置背景颜色
+    myDiv.style.backgroundColor = 'pink'
+
+    // 修改尺寸
+    myDiv.style.width = '50px'
+    myDiv.style.height = '50px'
+
+    // 设置边框
+    myDiv.style.border = '2px solid black'
+
+  </script>
+</body>
+
+</html>

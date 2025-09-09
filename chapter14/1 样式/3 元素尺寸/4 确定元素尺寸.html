@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+  <style>
+    #myDiv {
+      width: 200px;
+      height: 200px;
+      background-color: skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>确定元素尺寸</h1>
+  <p>浏览器在每个元素上都暴露了 getBoundingclientRect()方法，返回一个 DOMRect 对象 ,
+    包含6个属性:left、top、right、bottom、height和width。这些属性给出了元素在页面中相对于视口的位置。图14-4"展示了这些属性的含义。</p>
+  <p>此外 , 里面的 <strong>x / y 和 left / top 是一样 , 而 width 和 heigth 跟 offsetwidth 的规则是一样滴 都是不包含外边距</strong></p>
+  <img src="./image2.png" alt="">
+  <div id="myDiv" class="image_center"></div>
+  <script>
+    let div = document.getElementById('myDiv')
+    console.log(div.getBoundingClientRect());
+    console.log(div.getBoundingClientRect().top);
+    console.log(div.getBoundingClientRect().x);
+    console.log(div.getBoundingClientRect().left);
+
+  </script>
+</body>
+
+</html>

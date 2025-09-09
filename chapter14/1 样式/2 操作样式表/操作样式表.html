@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link id="link" rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>操作样式表</h1>
+  <p>cssstylesheet类型表示 CSS样式表，包括使用&lt;link>元素和通过&lt;style>元素定义的样式表 。 注意，这两个元素本身分别是HTMLinkElement和HTMustyleElement。
+    cssstylesheet类型是一个通用样式表类型 , 可以表示任何方式在 HTML 中定义的样式表 。另外, 元素特定的类型允许修改 HTML 属性 , 而CSSStyleSheet 类型的实例则是一个只读对象
+    (只有一个属性例外)
+  </p>
+  <p>cssstyleSheet类型继承StyleSheet , 后者可用作非CSS样式表的基类 。以下是CSSStyleSheet从StyleSheet继承的属性</p>
+  <ul>
+    <li class="circle">disabled , 布尔值 , 表示样式表是否被禁用了 (这个属性是可读写的 , 因此将他设置为 true 会禁用样式表)</li>
+    <li class="circle">href，如果使用 &lt;link>包含的样式表，则返回样式表的 URL，否则返回 null 。</li>
+    <li class="circle">media，样式表支持的媒体类型集合，这个集合有一个1ength属性和一个item()方法，跟所有DOM集合一样。同样跟所有DOM集合一样，也可以使用中括号访问集合中特定的项。
+      如果样式表可用于所有媒体，则返回空列表。 (也就是这个样式表适用于所以媒体的话 , 就返回空列表)
+    </li>
+    <li class="circle">ownerNode，指向拥有当前样式表的节点，要么是&lt;link>元素要么是&lt;sty1e>元素。如果当前样式表是通过@import被包含在另一个样式表中，
+      则这个属性值为 null。 <strong>(A文件 , 被 B文件用@import放在css文件中 , 此时A文件就会返回 null)</strong>
+    </li>
+    <li class="circle">parentstylesheet，如果当前样式表是通过 @import被包含在另一个样式表中，则这个属性指向导入它的样式表。</li>
+    <li class="circle">title, ownerNode 的title属件。 (这里的title 指的是 link标签里面title)</li>
+    <li class="circle">type，字符串，表示样式表的类型。对CSS样式表来说，就是"text/css"。</li>
+  </ul>
+  <p>上述属性里除了 aisabled，其他属性都是只读的。除了上面继承的属性，cssstylesheet 类型还支持以下属性和方法。</p>
+  <ul>
+    <li>cssRules，当前样式表包含的样式规则的集合。<strong>CSS 文件（或 &lt;style>标签里的代码）中「每一个顶层的 “大代码块”」如: div {} , @import 等等</strong></li>
+    <li>owmerRule 如果样式表是使用@import导入的，则指向导入规则;否则为nu11。</li>
+    <li>deleteRule(index)，在指定位置删除cssRules 中的规则。</li>
+    <li>insertRule(rule，index)，在指定位置向cssRules 中插人规则。</li>
+  </ul>
+  <p>document.stylesheets包含文档中可用的样式表集合。这个集合的length
+    属性保存着文档中样式表的数量，而每个样式表都可以使用中括号或item()方法获取。来看这个例子</p>
+  <code>
+    <pre>
+      let sheet = null
+      for (let i = 0; i < document.styleSheets.length; i++) {
+        sheet = document.styleSheets[i]
+        console.log(sheet)
+        console.log(sheet.href)
+      } 
+  </pre>
+</code>
+  <p>以上代码输出了文档中每个样式表的href属性(&lt;style>元素没有这个属性)。</p>
+  <p>document.stylesheets返回的样式表可能会因浏览器而异。所有浏览器都会包含&lt;style>
+    元素和rel属性设置为"stylesheet" 的&lt;link>元素。</p>
+  <p>通过&lt;link>或&lt;sty1e>元素也可以直接获取cssstylesheet对象。DOM在这两个元素上暴露了sheet属性，其中包含对应的cssstylesheet对象。</p>
+  <code>
+    <pre>
+    let link = document.getElementById('link')
+    console.log(link.sheet)  // CSSStyleSheet {ownerRule: null, cssRules: CSSRuleList, rules: CSSRuleList, type: 'text/css', href: 'http://127.0.0.1:5501/index.css', …}
+  </script>
+    </pre>
+  </code>
+  <script>
+    let sheet = null
+    for (let i = 0; i < document.styleSheets.length; i++) {
+      sheet = document.styleSheets[i]
+      console.log(sheet)
+      console.log(sheet.href)
+    }
+
+    let link = document.getElementById('link')
+    console.log(link.sheet)  // CSSStyleSheet {ownerRule: null, cssRules: CSSRuleList, rules: CSSRuleList, type: 'text/css', href: 'http://127.0.0.1:5501/index.css', …}
+  </script>
+</body>
+
+</html>

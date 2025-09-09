@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    div.box {
+      background-color: skyblue;
+      width: 100px;
+      height: 200px;
+    }
+  </style>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>CSS 规则</h1>
+  <code>
+    <pre>
+      CSSRule（基接口）
+      ├─ CSSStyleRule（样式规则，如 .box { color: red; }）
+      ├─ CSSMediaRule（媒体查询规则，如 @media ... { ... }）
+      ├─ CSSImportRule（导入规则，如 @import ...）
+      ├─ CSSKeyframesRule（动画关键帧规则，如 @keyframes ...）
+      └─ 其他规则类型（如 @font-face、@page 等）
+    </pre>
+  </code>
+  <p>CSSRule 类型表示样式表中的一条规则。这个类型也是一个通用基类,很多类型继承它，但其中最常用的是表示样式信息的 (其他CSS规则还有@import、@font-face、@page
+    和 @charset等，不过这些规则很少需要使用脚本来操作) 。以下是cssstyleRule 对象上可用的属性。 </p>
+  <ul>
+    <li>cssText，返回整条规则的文本。这里的文本可能与样式表中实际的文本不一样，因为浏览器内部处理样式表的方式也不一样。</li>
+    <li>parentRule、如果这条规则被其他规则(如@media)包含，则指向包含规则 , 否则就是null <strong>例如(@media (max-width: 768px) {div {width: 100px;} }
+        ) 还有 @keyframes 等等</strong></li>
+    <li>parentstylesheet，包含当前规则的样式表。<strong>(parentStyleSheet 返回的是一个 CSSStyleSheet 类型的对象)</strong></li>
+    <li>selectorText、返回规则的选择符文本。这里的文本可能与样式表中实际的文本不一样, 因为浏览器内部处理样式表的方式也不一样。 (他会返回更规范化的信息)</li>
+    <li>style、返回cssstylepeelaration 对象，可以设置和获取当前规则中的样式</li>
+    <li>type，数值常量，表示规则类型。对于样式规则，它始终为1。</li>
+  </ul>
+  <p>在这些属性中,使用最多的是casText , selectorText 和 style。cssText属性与style.cssText类似 , 不过并不完全一样。前者包含选择符文本和环绕样式声明的大括号
+    ，而后者只包含样式声明(类取于元素上的 style.cssText) 。此外,
+    cssText 是只读的 , 而 style.cssText 可以被重写 <strong>(这里的 cssText 指的是CSSRule里面的 , 而style.cssText 指的是元素里面的)</strong></p>
+  <p>多数情况下、使用style 属性就可以实现操作样式规则的任务。这个对象 <strong>(指的是 document.styleSheets[0].cssRules[0].style)</strong> 可以像每个元素上的style
+    对象一样，用来读取或修改规则的样式。比如下面这条CSS规则:</p>
+  <code>
+      <pre>
+        div.box {
+            background-color: skyblue;
+            width: 100px;
+            height: 200px;
+          }
+      </pre>
+    </code>
+  <p>假设这条规则位于页面中的第一个样式表中,而且是该样式表中唯一一条CSS规则，则下列代码可获取它的所有信息:</p>
+  <code>
+    <pre>
+    document.styleSheets[0].cssRules[0].style
+    let sheet = document.styleSheets[0].cssRules[0];
+    console.log(sheet.selectorText); // div.box
+    console.log(sheet.style.cssText); // background-color: skyblue; width: 100px; height: 200px;
+    console.log(sheet.style.backgroundColor); // skyblue
+    console.log(sheet.style.width); // 100px
+    console.log(sheet.style.height); // 200px
+    </pre>
+  </code>
+  <div class="box"></div>
+  <p>使用这些接口，可以像确定元素 style 对象中包含的样式一样，确定一条样式规则的样式信息 。 元素的场景一样，也可以修改规则中的样式，如下所示:</p>
+  <p class="retract">sheet.style.height = '100px'</p>
+  <p>注意，这样修改规则会影响页面上所有应用了该规则的元素。如果页面上有两个&lt;div>元素有"box"则这两个元素都会受到这个修改的影响。</p>
+  <script>
+    document.styleSheets[0].cssRules[0].style
+    let sheet = document.styleSheets[0].cssRules[0];
+    console.log(sheet.selectorText);  // div.box
+    console.log(sheet.style.cssText); // background-color: skyblue; width: 100px; height: 200px;
+    console.log(sheet.style.backgroundColor); // skyblue
+    console.log(sheet.style.width); // 100px
+    console.log(sheet.style.height); // 200px
+    sheet.style.height = '100px'
+  </script>
+</body>
+
+</html>

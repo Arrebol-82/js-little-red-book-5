@@ -26,6 +26,7 @@
     <li class="retract circle">behavior: 定义过渡动画，可取的值为"smooth"和"auto"，默认为"auto"。</li>
     <li class="retract circle">block: 定义垂直方向的对齐，可取的值为“start"、"center"、"end"和"nearest"，默认为 'start'</li>
     <li class="retract circle">inline: 定义水平方向的对齐，可取的值为"start"、"center"、"end"和"nearest"，默认为"nearest"。</li>
+    <li><strong>nearest</strong> 如果当前元素在页面中的话就不懂 , 不在的话 , 靠左就往左边靠 , 靠右就往右边靠</li>
     <li><strong>不传参数等同于 alignToTop 为 true</strong></li>
   </ul>
   <p>来看几个例子:</p>
@@ -72,6 +73,7 @@
     function scrollIntoViewOptions() {
       document.forms[0].scrollIntoView({ behavior: 'smooth', block: "center", inline: "start" })
     }
+
   </script>
 </body>
 

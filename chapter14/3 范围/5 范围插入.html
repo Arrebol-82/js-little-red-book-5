@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>范围插入</h1>
+  <p>上一节介绍了移除和复制范围的内容,本节来看一看怎么向范围中插人内容。使用insertNodes()方法可以在 <strong>范围选区的开始位置插入一个节点</strong> 。
+    假设我们想在前面例子中的HTML中插入如下HTML:</p>
+  <p id="p1"><b>Hello</b> world!</p>
+  <p class="retract">&lt;span style="color: red;">Inserted text&lt;/span></p>
+  <p>可以使用下列代码:</p>
+  <code>
+    <pre>
+    let p1 = document.getElementById('p1'),
+      helloNode = p1.firstChild.firstChild,
+      worldNode = p1.lastChild,
+      range = document.createRange()
+
+    range.setStart(helloNode, 2)
+    range.setEnd(worldNode, 3)
+
+    let span = document.createElement('span')
+    span.style.color = 'pink'
+    span.appendChild(document.createTextNode('Insertsd text'))
+    range.insertNode(span)
+    </pre>
+  </code>
+  <p>远行上面的代码会得到如下 HTML 代码:</p>
+  <p class="retract">&lt;p id="p1">&lt;b>He&lt;span style="color: red;">Inserted text&lt;/span>llo&lt;/b> world!&lt;/p>
+  </p>
+  <p>注意 , &lt;span>正好插入到'Hello'中的'llo'之前 , 也就是范围选区的前面。同时也要注意原始的HTML并没有添加或删除&lt;b>元素，因为这里并没有使用之前提到的方法。
+    使用这个技术可以插人有用的信息，比如在打开新窗口的外部链接旁边插人一个小图标。
+  </p>
+  <p>除了向范围中插入内容，还可以使用surroundcontents()方法插人包含范围的内容。这个方法接收一个参数，即包含范围内容的节点。调用这个方法时，后台会执行如下操作:</p>
+  <ul>
+    <li>提取范围的内容</li>
+    <li>在原始文档中范围之前所在的位置插入给定的节点;</li>
+    <li>将范围对应文档片段的内容添加到给定节点。</li>
+  </ul>
+  <p>这种功能适合在网页中高亮显示某些关键词，比如:</p>
+  <code>
+    <pre>
+    range.selectNode(helloNode) // 选中整个hello
+    let span = document.createElement('span')
+    span.style.backgroundColor = 'pink'
+    range.surroundContents(span) // 用 span 把hello包含起来
+    </pre>
+  </code>
+  <p>执行以上代码会以黄色背景高亮显示范围选择的文本。得到的HTML如下所示:</p>
+  <p class="retract">&lt;p>&lt;b>&lt;span style="background-color:yellow">Hello&lt;/span>&lt;/b> world!&lt;/p></p>
+  <p>
+    为了插入&lt;span>元素，范围中必须包含完整的DOM结构。如果范围中包含部分选择的非文节点，这个操作会失败并报错。另外，如果给定的节点是Document、DocumentType或DocumentFragment类型，也会导致错误。
+  </p>
+  <script>
+    let p1 = document.getElementById('p1'),
+      helloNode = p1.firstChild.firstChild,
+      worldNode = p1.lastChild,
+      range = document.createRange()
+
+    range.setStart(helloNode, 2)
+    range.setEnd(worldNode, 3)
+
+    // let span = document.createElement('span')
+    // span.style.color = 'pink'
+    // span.appendChild(document.createTextNode('Insertsd text'))
+    // range.insertNode(span)
+
+    range.selectNode(helloNode) // 选中整个hello
+    let span = document.createElement('span')
+    span.style.backgroundColor = 'pink'
+    range.surroundContents(span) // 用 span 把hello包含起来
+  </script>
+</body>
+
+</html>

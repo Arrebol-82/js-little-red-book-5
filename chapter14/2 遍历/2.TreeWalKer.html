@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>TreeWalker</h1>
+  <p>Treewalker 是 NodeIterator 的高级版。除了包含同样的 nextNode()、previousNode()方法 , Treewalker 还添加了如下在 DOM 结构中向不同方向遍历的方法</p>
+  <ul>
+    <li class="circle">parentNode()，遍历到当前节点的父节点。</li>
+    <li class="circle">firstchild()，遍历到当前节点的第一个子节点。</li>
+    <li class="circle">lastchild()，遍历到当前节点的最后一个子节点</li>
+    <li class="circle">nextSibling()，遍历到当前节点的下一个同胞节点。</li>
+    <li class="circle">previousSibling()，遍历到当前节点的上一个同胞节点</li>
+  </ul>
+  <p>Treewalker 对象要调用 document.createrTeewalker()方法来创建，这个方法接收与 document.createNodeIterator()
+    同样的参数:作为历起点的根节点，要查看的节点类型、节点过滤器和
+    一个表示是否扩展实体引用的布尔值 。因为两者很类似 , 所以 TreeWalker 通常可以取代 NodeIterator:
+  </p>
+  <div id="div1">
+    <p><b>Hello</b> world!</p>
+    <ul>
+      <li>List item 1</li>
+      <li>List item 2</li>
+      <li>List item 3</li>
+    </ul>
+  </div>
+  <code>
+    <pre>
+    let div = document.getElementById('div1')
+
+    let filter = function (node) {
+      return node.tagName.toLowerCase() == 'li' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+    }
+
+    let iterAtor = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    let walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, filter, false);
+
+    while ((condition = iterAtor.nextNode()) !== null) {
+      console.log(condition.tagName) // 输出标签名
+    }
+
+    // DIV P B U]  LI LI LI
+    </pre>
+  </code>
+  <p>不同的是，节点过滤器(fi1ter)除了可以返回NodeFilter.FILTER_ACCEPT 和 NodeFilter.FILTER_SKIP,还可以返回 NodeFilter.FILTER.REJECT 。 使用
+    NodeIterator时 , NodeFilter.FILTER_SKIP 和 NodeFilter.FILTER_REJECT 是一样的 。但在使用 Treewalker 时,Noderilter. FILIER_SKIP
+    表示跳过节点，访问子树中的下一个节点，而NodeFilter.FILTER_REJECT 则表示跳过该节点以及该节点的整个子树。如果把前面示例中的过滤器函数改为返回NodeEi1tez.FIETER_
+    REJECT(而不是NodeFi1ter.FILTER_SKIP)，则会导致遍历立即返回，不会访问任何节点。这是因为第一个返回的元素是&lt;div>
+    ，其中标签名不是“li"，因此过滤函数返回NodeFilEer.FILTER_REJECT，表示要跳过整个子树。因为&lt;div>本身就是遍历的根节点，所以遍历会就此结束。</p>
+  <strong>在 NodeIterator 中 NodeFilter.FILTER_SKIP 和 NodeFilter.FILTER.REJECT是一样的 , 都是跳过当前 , 继续遍历子节点 , 而在 Treewalker
+    NodeFilter.FILTER.REJECT 就会跳过下面的所以自身下面的所有子节点 , 继续遍历同胞节点</strong>
+  <p>还有一个知识点 , 但是他们输出的结果是一样的 ,如下:</p>
+  <code>
+    <pre>
+FILTER_SKIP 在两种工具中的核心行为都是 “跳过当前节点”，但：
+
+    NodeIterator 是 “按顺序跳”，子节点被包含是因为它们在顺序中排后面；
+
+    TreeWalker 是 “按层级跳”，子节点被包含是因为它会主动进入子树遍历。
+    </pre>
+  </code>
+  <p>当然，Treewalker真正的威力是可以在DOM结构中四处游走。如果不使用过滤器，单纯使用Treewa1kez 的漫游能力同样可以在DOM树中访问<1i>元素，比如:</p>
+  <code>
+    <pre>
+    let Walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    console.log(Walker.firstChild()) // p
+    console.log(Walker.nextSibling()) // ul
+
+    let node = Walker.firstChild();//前往第一个 1i
+    while (node !== null) {
+      console.log(node.tagName)
+      node = Walker.nextSibling()  // li li li
+    }
+    </pre>
+  </code>
+  <p>因为我们知道&lt;1i>元素在文档结构中的位置，所以可以直接定位过去。先使用firstchild()前往&lt;p>元素，再通过 nextsibling()前往&lt;u1>元素，然后使用
+    firstchild()到达第一个&lt;li>
+    元素。注意,此时的Treewalker只返回元素(这是因为传给createTreewalker()的第二个参数)最后就可以使用nextsibling()访问每个&lt;li>元素，直到再也没有元素，此时方法返回nu11
+  </p>
+  <p>Treewalker类型也有一个名为currentNode的属性，表示遍历过程中上一次返回的节点(无论使用的是哪个遍历方法)。<strong>当前遍历器在哪，currentNode 就指向哪</strong>
+    可以通过修改这个属性来影响接下来遍历的起点，如下面的例子所示:
+  </p>
+  <code>
+    <pre>
+    let WalKer = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+    let Node = WalKer.nextNode()
+    console.log(Node === WalKer.currentNode)
+    console.log(WalKer.currentNode) // p
+    console.log(Node) // p
+    WalKer.currentNode = document.body
+    </pre>
+  </code>
+  <p>相比于NodeIterator，mreewalker 类型为遍历DOM提供了更大的灵活性</p>
+  <script>
+    let div = document.getElementById('div1')
+
+    let filter = function (node) {
+      return node.tagName.toLowerCase() == 'li' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+    }
+
+    let iterAtor = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    let walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, filter, false);
+
+    while ((condition = iterAtor.nextNode()) !== null) {
+      console.log(condition.tagName) // 输出标签名
+    }
+
+    // DIV P B U]  LI LI LI
+
+    console.log('=========================================')
+
+    let Walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    console.log(Walker.firstChild()) // p
+    console.log(Walker.nextSibling()) // ul
+
+    let node = Walker.firstChild();//前往第一个<1i>
+    console.log(node)
+    while (node !== null) {
+      console.log(node.tagName)
+      node = Walker.nextSibling()  // li li li
+    }
+
+    let WalKer = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+    let Node = WalKer.nextNode()
+    console.log(Node === WalKer.currentNode)
+    console.log(WalKer.currentNode) // p
+    console.log(Node) // p
+    WalKer.currentNode = document.body
+  </script>
+</body>
+
+</html>

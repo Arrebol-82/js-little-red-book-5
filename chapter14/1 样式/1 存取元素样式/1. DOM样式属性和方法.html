@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+  <style>
+  </style>
+</head>
+
+<body>
+  <h1>DOM 样式属性和方法</h1>
+  <p>DOM2 Style规范也在 style对象上定义了一些属性和方法。这些属性和方法提供了元素style 属性的信息并支持修改 , 例举如下。</p>
+  <ul>
+    <li class="circle">cssText , 包含style 属性中的css代码</li>
+    <li class="circle">length, 应用给元素的css属性数量</li>
+    <li class="circle">parentRule，表示CSS信息的 CSSRule 对象(下一节会讨论 cssRule 类型 )。</li>
+    <li class="circle">getPropertyCssValue(propertyvame)，返回包含 CSS 属性 propertyame 值的 cssvalue 对象 (已废弃, 不推荐使用)</li>
+    <li class="circle">getPropertyPriority(propertyName),如果 CSS 属性 propertyName 使用了!important 则返回 "important" , 否则返回空字符串
+      <strong>这里不要使用 驼峰命名 使用正常的格式命名即可 (backgroundColor × : background-color √ )</strong>
+    </li>
+    <li class="circle">getPropertyValue(propertyName)，返回属性 propertyName 的字符串值。</li>
+    <li class="circle">item(index), 返回索引为 index 的 css属性名</li>
+    <li class="circle">removeProperty(propertywame)，从样式中删除CSS 属性 prepertyName.</li>
+    <li class="circle">setproperty(propertyName, value, priority ) , 设置CSS属性 , propertyName 的值为value , priority 是
+      "important" 或 空字符串 <strong>(返回undefined)</strong></li>
+  </ul>
+  <div class="myDiv" id="My"
+    style="width: 100px; height: 100px; padding-top: 10px; background-color: skyblue !important;">
+  </div>
+  <code>
+    <pre>
+    let div = document.getElementById('My')
+    console.log(div.style.cssText); // width: 100px; height: 100px; background-color: skyblue;
+    console.log(div.style.length); // 4
+    console.log(div.style.parentRule) // null
+    console.log(div.style.getPropertyPriority('background-color')) // important
+    console.log(div.style.getPropertyValue('background-color')) // skyblue
+    console.log(div.style.item(2)) // 2 索引对应着 padding-top
+    console.log(div.style.removeProperty('padding-top') + '原始值') // 10px 原始值
+    console.log(div.style.setProperty('background-color', 'pink', 'important')) // undefined
+    </pre>
+  </code>
+  <p>通过cssText 属性可以存取样式的CSS代码。在读模式下，cssText 返回 style 属性 CSS代码在浏览器内部的表示。在写模式下，给cssText赋值会重写整个style 属性的值，意味着之前通过 style
+    属性设置的属性都会丢失。比如一个元素通过 style 属性设置了边框，而赋给 cssText 属性的不包含边框，则元素的边框会消失。下面的例子演示了cssText 的使用:
+  </p>
+  <div>div.style.cssText = 'width: 50px; height:100px; background-color: black'<br>
+    console.log(div.style.cssText)</div>
+  <p>设置cssText是一次性修改元素多个样式最快捷的方式，因为所有变化会同时生效。</p>
+  <p>length属性是跟 item() 方法一起配套迭代CSS属性用的。此时，style 对象实际上变成了一个集合 ，也可以用中括号代替item()取得相应位置的CSS属性名，如下所示:</p>
+  <code>
+    <pre>
+    for (let i = 0; i < div.style.length; i++) {
+      console.log(div.style.length)
+      console.log(`索引${i}的属性：`, div.style.item(i)); // 或者用 myDiv.style.item(i)
+    }
+    </pre>
+  </code>
+  <p>使用中括号或者item()都可以取得相应位置的CSS属性名("background-color"，不是"backgroundcolor")。这个属性名可以传给 getpropertyValue()以取得属性的值，如下面的例子所示:
+  </p>
+  <code>
+    <pre>
+    let prop, value
+    for (let i = 0; i < div.style.length; i++) {
+      prop = div.style[i]
+      value = div.style.getPropertyValue(prop)
+      console.log(`prop: ${value}`)
+      // 50px 
+      // 100px
+      // black
+    }
+    </pre>
+  </code>
+  <p>getPropertyValue()方法返回CSS属性值的字符串表示。如果需要更多信息，则可以通过getPropertycssValue()获取cssValue
+    对象。这个对象有两个属性:cssText和cssValueType。前者的值与
+    getPropertyValue()方法返回的值一样;后者是一个数值常量，表示当前值的类型(0代表继承的值，1代表原始值 (width , height)，2代表列表 (padding: 10px 10px 10px 10px
+    ...)，3代表自定义值)。
+    ①下面的代码演示了如何输出 CSS属性值和值类型:</p>
+  <code>
+      <pre>
+        div.style.getPropertyCSSValue(prop) //报错 TypeError: div.style.getPropertyCSSValue is not a function 
+        <strong>这个方法已经废弃了 ,  现在浏览器调用很有可能会报错或者返回undefined</strong>
+      </pre>
+    </code>
+  <p>① 不过，getpropertycssvalue()方法已经被废弃，虽然可能有浏览器还支持，但随时有可能被删除。建议开发中用getPropertyValue()。--译者注</p>
+  <p>removeProperty()方法用于从元素样式中删除指定的CSS属性。使用这个方法删除属性意味着会应用该属性的默认(从其他样式表层叠继承的)样式。例如，可以像下面这样删除style 属性中设置的border 样式:</p>
+  <code>
+    <pre>
+      console.log(div.style.removeProperty('padding-top') + '原始值') // 10px 原始值
+    </pre>
+  </code>
+  <p>在不确定给定CSS属性的默认值是什么的时候，可以使用这个方法。只要从style属性中删除
+    可以使用默认值。</p>
+  <script>
+    let div = document.getElementById('My')
+    console.log(div.style.cssText);  // width: 100px; height: 100px; background-color: skyblue;
+    console.log(div.style.length);  //  4
+    console.log(div.style.parentRule)  // null 
+    console.log(div.style.getPropertyPriority('background-color')) // important
+    console.log(div.style.getPropertyValue('background-color')) // skyblue
+    console.log(div.style.item(2)) // 2 索引对应着 padding-top
+    console.log(div.style.removeProperty('padding-top') + '原始值') // 10px 原始值
+    console.log(div.style.setProperty('background-color', 'pink', 'important')) // undefined
+
+    for (let i = 0; i < div.style.length; i++) {
+      console.log(div.style.length)
+      console.log(`索引${i}的属性：`, div.style.item(i)); // 或者用 myDiv.style.item(i)
+    }
+
+    div.style.cssText = 'width: 50px; height:100px;  background-color: black'
+
+    let prop, value
+    for (let i = 0; i < div.style.length; i++) {
+      prop = div.style[i]
+      value = div.style.getPropertyValue(prop) //报错
+      console.log(`prop: ${value}`)
+      // 50px 
+      // 100px
+      // black
+    }
+
+    div.style.getPropertyCSSValue(prop) //报错 TypeError: div.style.getPropertyCSSValue is not a function
+
+  </script>
+</body>
+
+</html>

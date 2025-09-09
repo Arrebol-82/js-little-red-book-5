@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>复制范围</h1>
+  <p>调用范围的cloneRange()方法可以复制范围。这个方法会创建调用它的范围的副本;</p>
+  <strong>cloneRange()是复制整个 Range 对象拥有范围的 “位置定义”（起点 / 终点） , 而cloneContents() 只是复制了内容</strong>\
+  <code>
+    <pre>
+    let range = document.createRange()
+    let newRange = range.cloneRange()
+    </pre>
+  </code>
+  <p>新范围包含与原始范围一样的属性，修改其边界点不会影响原始范围 。</p>
+  <script>
+    let range = document.createRange()
+    let newRange = range.cloneRange()
+
+  </script>
+</body>
+
+</html>

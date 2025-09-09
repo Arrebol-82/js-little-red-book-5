@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>Observer API 的方法</h1>
+  <p>Observer API的初始化和使用可以说是大同小异。为此，本节用一个虚拟的观察者类 FakeObserver 作为例子 , 统一介绍这些API的共同之处</p>
+  <strong>“FakeObserver 是测试专用的‘假观察者’，用极简代码模拟真实观察者的行为，帮你验证逻辑是否正确，同时避免真实操作的复杂和干扰。”</strong>
+  <p class="retract"><b>1. 初始化</b></p>
+  <p>要创建一个观察者的实例，使用new来调用相应的构造函数。构造函数接收一个回调函数 , 这个回调函数在每次相关事件“被观察到”的时候执行。以FakeObserver 为例:</p>
+  <code>
+    <pre>
+    class FakeObserver {
+      constructor(item) {
+        this.item = item
+      }
+    }
+
+    const fakeCallback = () => { }
+    const fakeObserver = new FakeObserver(fakeCallback)
+    </pre>
+  </code>
+  <p>这样就会创建一个虚拟观察者的实例，每当 “虚拟事件” 发生时应该执行作为回调的空箭头函数 。 但现在还不会执行回调函数，因为这个观察者还没有观察任何元素。接下来我们介绍如何观察元素。</p>
+  <p class="retract"><b>2. 执行回调</b></p>
+  <p>每当观察者检测到被观察对象以某种方式发生变化时(ResizeObserver检测缩放事件、Inter-sectionObserver 检测重叠事件 ) ,就会执行回调</p>
+  <code>
+    <pre>
+    let fakeCallBack = (fakeEventContext, obsever) => console.log('Fake event happened!')
+    let FakeOberver = new FakeObserver(fakeCallBack) // 此时还未执行 , 因为因为只是将函数传过去了
+    let FakeOberver = new FakeObserver(fakeCallBack()) // Fake event happened!
+    </pre>
+  </code>
+  <p>在回调函数中，fakeEventContext 参数包含触发回调的事件信息。对有的API来说，这是一个具有不同属性以描述不同事件的对象:
+    对另一些API来说，这可能是一个数组 , 包含一个或多个描述相关事件的条目。另外 , 回调也会接收一个观察者实例的引用作为第二个参数。
+    <strong>不同的 Observer 类（或类似的回调机制），会根据自身要处理的 “事件复杂度”，设计不同的回调参数格式。</strong>
+  </p>
+  <p>回调被值执行的频率取决子于API。有的回调会在谊染过程中执行，而有的作为微任务异步执行 </p>
+  <p class="retract"><b>3. observe()方法</b></p>
+  <P>观察者实例必须与要观察的元素建立连接才能执行回调。建立链接要使用观察者的 observe() 方法。这个方法接收的参数因API而异 , 但都会接受要观察的元素。
+    比如 , 下面的代码会让虚拟观察者观察文档主体上的虚拟事件:
+  </P>
+  <p class="retract">fakeObserver.observe(document.body)</p>
+  <p>要观察多个元素，可以多次调用observe()方法:</p>
+  <code>
+    <pre>
+    for (const div of document.querySelectorAll('div')) {
+      fakeObserver.observe(div)
+    }
+    </pre>
+  </code>
+  <p>在回调中，多个变化的元素在接收到的条目中是可以区分的。</p>
+  <p><strong>注意</strong> Resize Observer 在调用observe()后总会立即触发一次回调</p>
+  <p class="retract"><b>4. unobserve() 和 disconnet() 方法</b></p>
+  <p>unobserve() 方法用于停止观察一个元素 , disconnect()方法用于停止观察所有元素。 这两个方法的操作是幂等的 , 也就是说在停止观察的元素上调用一次或多次这个两个方法 ,
+    什么都不会发生 , 可以根据需要观察元素或解除对元素的观察
+  </p>
+  <code>
+    <pre>
+    // 停止对body的观察
+    fakeObserver.unobserve(document.body)
+    
+    // 停止对所有元素的观察
+    fakeObserver.disconnect();
+    </pre>
+  </code>
+  <p>关键在于 , 在回调还在队列中时 , 调用这两个方法会取消该回调的执行</p>
+  <p><strong>注意</strong> MutationObserver没有实现unobserve()方法。</p>
+  <p class="retract"><b>5. 异步回到和记录列表</b></p>
+  <p>观察者相关的规范都很注重性能，核心是异步回调和记录队列。比如，为了在注册大量重叠事件时不影响性能，每个有效事件(由观察者实例决定)的信息都会被捕获到一个记录中，
+    这个队列对每个观察者都是唯一的，表示按顺序发生的每个事件。<strong>每个观察者实例会维护一个 “专属的事件记录队列”，当短时间内有多个相关事件发生时，这些事件不会立即触发回调，而是先被 “打包”
+      存到这个队列里，最后由浏览器在合适的时机（空闲时）一次性处理</strong>
+  </p>
+  <p>每次向记录队列添加一个记录,(初始化时传人的)观察者回调只会在没有回调微任务的情况下才会安排一个微任务。这样就能确保不对记录队列的内容进行重复处理。
+    <strong>总结就是保证在任务列表中永远只有一个回调任务 , 这样一来就释放了内存 , 提高了性能</strong>
+  </p>
+  <p>在回调的微任务执行时，有可能会发生更多事件。此时，被调用的回调会收到一个添加到记录队列中的记录实例的数组。
+    回调要负责处理数组中的每个记录 , 因为只要函数退出，它们就不存在了。回调执行结束 ,每条记录都被认为已经没用了，因此记录队列会被清空，内容也会被抛弃。
+    <strong>回调函数执行时会拿到当前记录队列里的所有记录（数组形式），一旦回调执行完毕，这些已处理的记录就会被彻底清除，不会保留。</strong>
+  </p>
+  <p><strong>注意</strong> Resize0bserver不使用记录队列，没有实现takeRecords()方法 </p>
+  <p class="retract"><b>6. takeRecords()方法</b></p>
+  <p>通常 , 记录会自动出列并传给回调。如果你想手动处理队列, 可以调用 observer.takeRecords() 方法 , 取得所有尚未被回调处理的记录。
+    为防止再次处理，调用这个方法也会清空队列
+  </p>
+  <code>
+    <pre>
+    console.log(fakeObserver.takeRecords())
+    //  [FakeObserverRecord , FakeObserverRecord, ... ]
+    </pre>
+  </code>
+  <p>这个方法非常适合想调用disconnect()但又希望先处理记录队列中的记录的情况</p>
+  <p class="retract"><b>7. 观察者的引用</b></p>
+  <p>观察者与它所观察的 (一个或多个) 元素之间的引用关系是不对称的。观察者有指向被观察元素的弱引用 , 因为是弱引用 , 所以不会影响目标元素被作为垃圾回收</p>
+  <p>然而 , 目标元素有指向观察者的强引用。如果目标元素从DOM中被删除 , 进而被作为垃圾回收 , 关联的观察者也会被作为垃圾回收</p>
+  <code>
+    <pre>
+     · 弱引用（观察者→元素）：元素回收 <strong>不影响</strong> 观察者（观察者只要有其他引用就存活）；
+
+     · 强引用（元素→观察者）：元素回收后，若观察者 <strong>没有任何其他强引用</strong>，则会跟着被回收（元素活着时会 “保住” 观察者）。
+    </pre>
+  </code>
+  <script>
+    class FakeObserver {
+      constructor(item) {
+        this.item = item
+      }
+      observe(item) {
+        console.log(item)
+      }
+    }
+
+    const fakeCallback = () => { }
+    const fakeObserver = new FakeObserver(fakeCallback)
+
+    let fakeCallBack = (fakeEventContext, obsever) => console.log('Fake event happened!')
+    let FakeOberver = new FakeObserver(fakeCallBack) // 此时还未执行 , 因为因为只是将函数传过去了 
+    // let FakeOberver = new FakeObserver(fakeCallBack()) // Fake event happened!
+    fakeObserver.observe(document.body)
+
+    for (const div of document.querySelectorAll('div')) {
+      fakeObserver.observe(div)
+    }
+
+    // 停止对body的观察
+    fakeObserver.unobserve(document.body)
+
+    // 停止对所有元素的观察
+    fakeObserver.disconnect();
+
+    console.log(fakeObserver.takeRecords())
+    //  [FakeObserverRecord , FakeObserverRecord, ... ]
+
+  </script>
+</body>
+
+</html>

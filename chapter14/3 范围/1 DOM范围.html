@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>DOM范围</h1>
+  <p>DOM2 在 document 类型上定义了一个createRange()方法，暴露在 document 对象上。
+    使用这个方法可以创建一个DOM 范围对象,如下所示:</p>
+  <p class="retract">let range = document.createRange();</p>
+  <p>与节点类似、这个新创建的范围对象是与创建它的文档关联的，不能在其他文档中使用。然后可以使用这个范围在后台选择文档特定的部分 。创建范围并指定它的位置之后，
+    可以对范围的内容执行一些操作 , 从而实现对底层 DOM 树更精细的控制
+  </p>
+  <p class="retract">每个都是 Range 类型的实例 , 拥有相应的属性和方法 。下面的属性提供了与范围在文档中位置相关的信息</p>
+  <ul>
+    <li class="circle"><strong>startContainer</strong> 范围起点所在的节点 ( 选区中第一个子节点的父节点 ) </li>
+    <li class="circle"><strong>startOffset</strong> 范围起点在 startContainer 中的偏移量。如果 startContainer 是文本节点 , 注释节点或CData 区块节点
+      , 则 startOffset 指范围起点之前跳过的字符数 ; 否则 , 表示范围中第一个节点索引 <strong>字符数据节点（文本、注释等）→ startOffset 是 “跳过的字符数”；字符数据节点（文本、注释等）→
+        startOffset 是 “跳过的字符数”；</strong></li>
+    <li class="circle"><strong>endContainer</strong> 范围终点所在的节点(选区中最后一个子节点的父节点)。</li>
+    <li class="circle"><strong>endOffset</strong> 范围起点在startContainer 中的偏移量(与startOffset 中偏移量的含义相同)</li>
+    <li class="circle"><strong>commonAncestorContainer</strong> 文档中以startContainer 和 endContainer 为后代的最深的节点 。
+      这些属性会在范围被放到文档中特定位置时获得相应的值。<strong>起点和终点的最近共同祖先</strong></li>
+    <li>startOffset 和 endOffset 是左闭右开 , 一个包含当前节点 , 一个包含当前节点</li>
+  </ul>
+  <div id="grandpa"> <!-- 祖父节点 -->
+    <p id="parent">
+      开头文本<span id="child">中间内容</span>结尾文本
+    </p>
+  </div>
+  <code>
+    <pre>
+    const parent = document.getElementById('parent');
+    const text1 = parent.firstChild; // 文本节点1："开头文本"
+    const childSpan = document.getElementById('child');
+    const text3 = childSpan.firstChild; // 文本节点3："中间内容"
+    
+    // 2. 创建范围并定义起点和终点
+    const range = document.createRange();
+    // 起点：text1中，跳过"开头"（2个字符），从"文本"开始（startOffset=2）
+    range.setStart(text1, 2);
+    // 终点：text3中，跳过"中间"（2个字符），到"内容"前结束（endOffset=2）
+    range.setEnd(text3, 2);
+
+    <strong>文本&Lt;span id="child">中间</strong>
+    </pre>
+  </code>
+  <script>
+    // let range = document.createRange();
+    // 1. 找到相关节点
+    const parent = document.getElementById('parent');
+    const text1 = parent.firstChild; // 文本节点1："开头文本"
+    const childSpan = document.getElementById('child');
+    const text3 = childSpan.firstChild; // 文本节点3："中间内容"
+
+    // 2. 创建范围并定义起点和终点
+    const range = document.createRange();
+    // 起点：text1中，跳过"开头"（2个字符），从"文本"开始（startOffset=2）
+    range.setStart(text1, 2);
+    // 终点：text3中，跳过"中间"（2个字符），到"内容"前结束（endOffset=2）
+    range.setEnd(text3, 2); 
+  </script>
+</body>
+
+</html>

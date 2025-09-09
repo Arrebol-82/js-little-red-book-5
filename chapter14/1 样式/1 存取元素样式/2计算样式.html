@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #myDiv {
+      background-color: blue;
+      width: 100px;
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>计算样式</h1>
+  <p>style对象中包含支持 style 属性的元素为这个属性设置的样式信息,但不包含从其他样式表层叠继承的同样影响该元素的科式信息 。
+    DOM2 Sble在document.defaultView上增加了 getComputeastyle() 方法 。这个方法接收两个参数:要取得计算样式的元素和伪元素字符事(如":after”)。
+    如果不需要查询伪元素 , 则第二个参数可以传 null 。 getComputeastyle() 方法返回一个 CSSStyleDeclaration 对象 (与 style 属性的类型一样)
+    包含元素的计算样式。<strong>(第一个参数查询的元素 , 第二个所以的伪元素) 他是只读 , 不能修改</strong> 假设有如下HTML 页面:</p>
+  <code>
+      <pre>
+        &lt;!DOCTYPE htm1>
+          &lt;html>
+        
+          &lt;head>
+            &lt;title>Computed styles Example&lt;/title>
+            &lt;style type="text/css">
+              #myDiv {background-color:blue ;
+              width: 100px;
+               height:200px;
+               }
+            &lt;/style>
+          &lt;/head>
+        
+          &lt;body>
+            &lt;div id="myDiv" style="background-color: red; border: 1px solid black">&lt;/div
+          &lt;/body>
+          </html>
+      </pre>
+    </code>
+  <div id="myDiv" style="background-color: red; border: 1px solid black;"></div>
+  <p>这里的&lt;div>元素从文档样式表(&lt;sty1e>元素)和自己的style 属性获取了样式。此时，这个元素的 style 对象中包含 backgroundcolor 和 border
+    属性，但不包含(通过样式表规则应用的) width 和 heigth 属性。下面的代码从这个元素获取计算样式</p>
+  <code>
+      <pre>
+    let computedStyle = document.defaultView.getComputedStyle(div, null)
+    
+    console.log(computedStyle.backgroundColor) // rgb(255, 0, 0)
+    console.log(computedStyle.width) // :59 100px
+    console.log(computedStyle.height) // :60 200px
+    console.log(computedStyle.border) // :61 1px solid rgb(0, 0, 0)
+      </pre>
+    </code>
+  <p>在取得这个元素的计算样式时，得到的背景颜色是"red"，宽度为"100px"，高度为"200px"。背景颜色不是"blue"，因为元素样式覆盖了它。border 属性不一定返回样式表中实际的 border
+    规则。(他会返回更详细的信息) 这种不一致性是因浏览器解释简写样式的方式造成的，比如border实际上会设置一组别的属性。在设置 border
+    时，实际上设置的是4条边的线条宽度、颜色和样式(border-left-width、bordertop-color、border-bottom-style等)。因此，即使computedstyle.border
+    在所有浏览器中者不会返回值，computedstyle.borderLeftwidth也一定会返回值。
+  </p>
+  <p>
+    关于计算样式要记住一点，即在所有浏览器中计算样式都是只读的，不能修改getcomputedstyle(
+    )方法返回的对象。而且，计算样式还包含浏览器内部样式表中的信息。因此有默认值的CSS属性会出现在计算样式里。例如，visibi1ity
+    属性在所有浏览器中都有默认值，但这个值因实现而不同。有些测览器会把 visibility (控制元素可见性) 的默认值设置为"visible" (默认可见),而另一些将其设置为"inherit" (继承父节点)。不能假设
+    CSS属性的默认值在所有浏览器中都一样。如果需要元素具有特定的默认值，那么一定要在样式表中手动指定</p>
+  <script>
+    let div = document.getElementById('myDiv')
+    console.log(div.style)
+
+    let computedStyle = document.defaultView.getComputedStyle(div, null)
+
+    console.log(computedStyle.backgroundColor)    //  rgb(255, 0, 0)
+    console.log(computedStyle.width)              // :59 100px
+    console.log(computedStyle.height)             // :60 200px
+    console.log(computedStyle.border)             // :61 1px solid rgb(0, 0, 0)
+    console.log(computedStyle.visibility)             // :61 1px solid rgb(0, 0, 0)
+
+  </script>
+</body>
+
+</html>

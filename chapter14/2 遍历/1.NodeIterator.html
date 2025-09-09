@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>NodeIterator</h1>
+  <p>Noderterator 是上述两个类型中比较简单的，可以通过document.createNodeIterator()方法创建其实例 。这个方法接收以下 4个参数</p>
+  <ul>
+    <li class="circle">root，作为遍历根节点的节点。 (一定要填)</li>
+    <li class="circle">whatToShow 数值代码，表示应该访问哪些节点。（可选，默认显示所有节点）</li>
+    <li class="circle">filter， Noderilter 对象或函数，表示是否接收或跳过特定节点。(自定义过滤器)</li>
+    <li class="circle">entityReferenceExpansion, 布尔值 , 表示是否扩展实体引用 。这个参数在HTML文档中没有 , 因为实体引用永远不扩展
+      (已废弃，传 false 即可)
+    </li>
+  </ul>
+  <p>whatroshow 参数是一个位掩码，通过应用一个或多个过滤器来指定访问哪些节点。这个参数对应的常量是在 NodeFilter 类型中定义的。</p>
+  <ul>
+    <li class="circle">NodeFilter.SHOW_ALL，所有节点 <strong>(all)</strong></li>
+    <li class="circle">NodeFilter.SHOW_ELEMENT，元素节点。<strong>(element)</strong></li>
+    <li class="circle">NodeFilter.SHOW_ATTRIBUTE，属性节点。由于DOM的结构，因此实际上用不上 <strong>(style)</strong></li>
+    <li class="circle">NodeFilter.SHOW_TEXT，文本节点。<strong>(text)</strong></li>
+    <li class="circle">NodeFilter.SHOW_CDATA_SECTION， CDATA 区块节点。不是在HTML页面中使用的<strong> (cdata) </strong>不需要解析的文本片段</li>
+    <li class="circle">NodeFilter.SHOW_ENTITY_REFERENCE，实体引用节点。不是在HTML页面中使用的 <strong> ( &Lt ; )</strong> 在HTML会被转换为文本节点
+    </li>
+    <li class="circle">NodeFilter.SHOW_ENTITY，实体节点。不是在HTML页面中使用的。<strong>(myEntity)</strong></li>
+    <li class="circle">NodeFi1ter.SHOW_PROCESSING_INSTRUCTION,处理指令节点。不是在HTML页面中使用的<strong>(nodeType=7)</strong></li>
+    <li class="circle">NodeFilter.SHOW_COMMENT，注释节点<strong>(comment)</strong></li>
+    <li class="circle">NodeFilter.SHOW_DOCUMENT，文档节点<strong>(document)</strong></li>
+    <li class="circle">NodeFilter.SHOW_DOCUMENT_TYPE，文档类型节点。<strong>(DocumentType Node)</strong></li>
+    <li class="circle">NodeFi1ter.SHOW_DOCUMENT_FRAGMENT，文档片段节点。不是在HTML页面中使用的。<strong>(DocumentFragment)</strong> 是js
+      里面用于存放要添加的节</li>
+    <li class="circle">NodeFilter.SHOW_NOTATION，记号节点。不是在HTML页面中使用的。<strong>(Notation)</strong></li>
+  </ul>
+  <p>这些值除了 NodeFilter.SHOW_ALL之外都可以组合使用。比如，可以像下面这样使用按位或操作组合多个选项</p>
+  <code>
+    <pre>
+    let whatroshow = NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT
+
+    <strong>因为whatroshow 的参数是位掩码所以就要是 | 来判断</strong>
+    </pre>
+  </code>
+  <p>createNodeIterator()方法的 filter 参数可以用来指定自定义 NodeFilter 对象，或者一个作为节点过滤器的函数。NodeFilter
+    对象只有一个方法acceptNode()，如果给定节点应该访问就返回 NodeFilter.FILTER_ACCEPT,
+    否则返回NodeFilter.FILTER_SKIP。<strong>(是否让当前节点被遍历工具‘纳入结果’)</strong>
+    因为Noderilter 是 抽象类型，所以不可能创建它的实例。只要创建一个包含acceptnode()的对象，然后把它传给createNodeIterator()就可以了。以下代码定义了只接收
+    &lt;p>元素的节点过滤器对象:
+  </p>
+  <code>
+    <pre>
+    let whatroshow = NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT
+
+    let filter = {
+      acceptNode(node) {
+        // toLowerCase 将字符串中的所有大写字母转换为小写字母
+        return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+      }
+    }
+
+    let iterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      filter,
+      false
+    )
+
+    let currentNode;
+    let result = []; // 存储被保留的节点标签名
+
+    while ((currentNode = iterator.nextNode()) !== null) {
+      result.push(currentNode.tagName); // 收集标签名（如"DIV"、"SPAN"、"P"等）
+    }
+
+    // 打印结果并检查是否有&lt;P>标签
+    console.log("被保留的节点标签名：", result); // 被保留的节点标签名： (4) ['P', 'P', 'P', 'P']
+
+    <strong>这样的话就过滤掉其他标签了 , 保留了p标签</strong>
+    </pre>
+  </code>
+  <p>filter 参数还可以是一个函数，与acceptode()的形式一样，如下面的例子所示:</p>
+  <code>
+    <pre>
+    let Filter = function (node) {
+      return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+    }
+
+    let Iterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      filter,
+      false
+    )
+
+
+
+    </pre>
+  </code>
+  <p>通常在JavaScript中会使用这种形式,因为更简单也更像普通 JavaScript代码。如果不需要指定过滤器 , 则可以给这个参数传入 null </p>
+  <p class="retract">要创建一个简单的遍历所有节点的NodeIterator，可以使用以下代码:</p>
+  <code>
+    <pre>
+        let Iterator = document.createNodeIterator(
+              document.body,
+              NodeFilter.SHOW_ELEMENT,
+              filter,
+              false
+            )
+    </pre>
+  </code>
+  <p>NodeIterator的两个主要方法是nextNode()和 previousNode()。nextNode()方法在 DOM树中以深度优先方式前进一步，
+    而previousNode()则是在遍历中后退一步。创建NodeIteratoi对象的时候，会有一个内部指针指向根节点，因此第一次调用nextNode()返回的是根节点。
+    当遍历到达DOM树最后一个节点时，nextNode()返回nu11。previousNode()方法也是类似的。当遍历到达DOM树最后一个节点时，调用previousNode()返回遍历的根节点后，再次调用也会返回 nu11。
+  </p>
+  <code>
+    <pre>
+      <strong>我的代码</strong>
+ let filter = {
+      acceptNode(node) {
+        // toLowerCase 将字符串中的所有大写字母转换为小写字母
+        return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT
+      }
+    }
+
+    let iterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      filter,
+      false
+    )
+
+    let currentNode;
+    let result = []; // 存储被保留的节点标签名
+
+    // 获取最后一个节点 
+    while ((currentNode = iterator.nextNode()) !== null) { }
+
+    while ((currentNode = iterator.previousNode()) !== null) {
+      result.push(currentNode.tagName); // 收集标签名（如"DIV"、"SPAN"、"P"等）
+    }
+
+    // 打印结果并检查是否有 &Lt;P> 标签
+    console.log("被保留的节点标签名：", result); // 被保留的节点标签名 按F12看控制台吧 , 太多了
+  </code>
+  <div id="div1">
+    <p><b>He11o</b> world!</p>
+    <ul>
+      <li>List item 1</li>
+      <li>List item 2</li>
+      <li>List item 3</li>
+    </ul>
+  </div>
+  <p>假设想要遍历&lt;div>元素内部的所有元素，那么可以使用如下代码:</p>
+  <code>
+    <pre>
+      <strong>书上的例子</strong>
+    let div = document.getElementById("div1");
+    let iterAtor = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    while ((currentNode = iterAtor.nextNode()) !== null) {
+      console.log(currentNode.tagName)    // 输出标签名 
+    }
+    // DIV P B U]  LI LI LI
+    </pre>
+  </code>
+  <p>这个例子中第一次调用 nextNode()返回&lt;div>元素。因为nextNoe()在遍历到达 DOM 子树末尾时返回null，所以这里通过whi1e 循环检测每次调用nextNode()的返回值是不是au11。以上代
+    码执行后会输出以下标签名:
+  </p>
+  <p class="retract">// DIV P B U] LI LI LI</p>
+  <p>如果只想遍历&lt;li>元素，可以传入一个过滤器，比如:</p>
+  <code>
+    <pre>
+      let div = document.getElementById("div1");
+      let filter =function(node){
+        return node.tagName.toLowerCase()=="li" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      };
+
+      let iterator = document.createNodeIterator(div,NodeFilter.SHOW ELEMENT , filter,false);
+
+      let node = iterator.nextNode();
+
+
+      while(node !==null){
+        console.log(node.tagName);
+        node = iterator.nextNode();
+      }
+    </pre>
+  </code>
+  <p>在这个例子中，遍历只会输出&lt;li>元素的标签。</p>
+  <p>nextNode()和previousNode()方法使用NodeIterator对DOM 结构的内部指针，因此修改DOM结构也会体现在遍历中。</p>
+  <p>书上并没有说到 , 这里看看</p>
+  <code>
+    <pre>
+        let filter = {
+          acceptNode(node) {
+            // toLowerCase 将字符串中的所有大写字母转换为小写字母
+            return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT
+          }
+        }
+
+        let iterator = document.createNodeIterator(
+          document.body,
+          NodeFilter.SHOW_ELEMENT,
+          filter,
+          false
+        )
+
+        let currentNode;
+        let result = []; // 存储被保留的节点标签名
+
+        // 获取最后一个节点 
+        while ((currentNode = iterator.nextNode()) !== null) { }
+
+        while ((currentNode = iterator.previousNode()) !== null) {
+          result.push(currentNode.tagName); // 收集标签名（如"DIV"、"SPAN"、"P"等）
+        }
+
+        // ['SCRIPT', 'PRE', 'CODE', 'PRE', 'CODE', 'STRONG', 'PRE', 'CODE', 'LI', 'LI', 'LI', 'U]', 'B', 'DIV', 'STRONG', 'CODE',
+        'PRE', 'CODE', 'PRE', 'CODE', 'PRE', 'CODE', 'STRONG', 'PRE', 'CODE', 'STRONG', 'STRONG', 'PRE', 'CODE', 'STRONG', 'LI',
+        'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI',
+        'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'STRONG', 'LI', 'UL', 'LI', 'LI', 'LI', 'LI', 'UL',
+        'H1', 'BODY']
+    </pre>
+  </code>
+  <p>如果没有获取最后一个节点 , 那么返回的将是空数组 , 因为没有获取最后一个值 , 所以拿到的是第一个值 , 而previousNode会往上找 , 而第一个值是目标对象,
+    而NodeIterator是不能遍历目标对象的同胞或者父级的 所以会返回空数组 , 那么此时就有人问了 , 那为什么不返回目标对象,人家nextNode都会返回目标对象呢 , 人家是人家你管人家干嘛(开玩笑哈) , 这是因为
+    <strong>当前节点是集合中的第一个节点时，此方法返回 null。</strong> 记住了啊 , 下面有文档去看
+  </p>
+  <code>
+      <pre>
+        NodeIterator.previousNode() 方法返回 NodeIterator 所代表集合中的前一个节点，并将迭代器的位置在集合中向后移动。
+        
+        <strong>当当前节点是集合中的第一个节点时，此方法返回 null。</strong>
+        
+        在旧浏览器中，根据旧版本规范的规定，如果在调用 NodeIterator.detach() 方法后调用此方法，可能会抛出 INVALID_STATE_ERR 异常。现代浏览器不再抛出此异常。
+        
+        返回值：一个表示此 NodeIterator 集合中当前节点前一个节点的节点对象，或者如果当前节点是集合中的第一个节点，则返回 null。
+      </pre>
+    </code>
+  <script>
+    let whatroshow = NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT
+
+    let filter = {
+      acceptNode(node) {
+        // toLowerCase 将字符串中的所有大写字母转换为小写字母
+        return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_ACCEPT
+      }
+    }
+
+    let iterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      filter,
+      false
+    )
+
+    let currentNode;
+    let result = []; // 存储被保留的节点标签名
+
+    // 获取最后一个节点 
+    while ((currentNode = iterator.nextNode()) !== null) { }
+
+    while ((currentNode = iterator.previousNode()) !== null) {
+      result.push(currentNode.tagName); // 收集标签名（如"DIV"、"SPAN"、"P"等）
+    }
+
+    // 打印结果并检查是否有<P>标签
+    console.log("被保留的节点标签名：", result); // 被保留的节点标签名： (4) ['P', 'P', 'P', 'P']
+
+    let Filter = function (node) {
+      return node.tagName.toLowerCase() == 'p' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+    }
+
+    let Iterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      filter,
+      false
+    )
+
+    let div = document.getElementById("div1");
+    let iterAtor = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+    while ((currentNode = iterAtor.nextNode()) !== null) {
+      console.log(currentNode.tagName)    // 输出标签名 
+    }
+    // DIV P B U]  LI LI LI
+
+  </script>
+</body>
+
+</html>

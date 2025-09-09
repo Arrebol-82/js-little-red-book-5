@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style></style>
+</head>
+
+<body>
+  <h1>创建规则</h1>
+  <p>DOM 规定，可以使用insertRule()方法向样式表中添加新规则。这个方法接收两个参数:规则的文本和表示插人位置的索引值。下面是一个例子</p>
+  <p>document.styleSheets[0].insertRule("body {background-color: silver} ", 0) <strong>(前提是页面一定要有一个css文件)</strong></p>
+  <p>这个例子插人了一条改变文档背景颜色的规则。这条规则是作为样式表的第一条规则(位置0)插入的 , 顺序对规则层叠是很重要的。</p>
+  <p>虽然可以这样添加规则，但随着要维护的规则增多，很快就会变得非常麻烦。这时候，更好的方电用第13章介绍的动态样式加载技术 (style innerHTML ...)</p>
+  <script>
+    document.styleSheets[0].insertRule("body {background-color: silver} ", 0)
+
+  </script>
+</body>
+
+</html>

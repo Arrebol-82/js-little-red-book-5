@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>清理</h1>
+  <p>在使用完范围之后，最好调用detach()方法把范围从创建它的文档中剥离。调用detach()之后,戴可以放心解除对范围的引用，以便垃圾回收程序释放它所占用的内存。下面是一个例子:</p>
+  <code>
+    <pre>
+          let range = document.createRange()
+          range.detach() // 从文档中剥离范围
+          range = null   // 解除引用
+    </pre>
+  </code>
+  <p>这两步是最合理的结束使用范围的方式。剥离之后的范围就不能再使用了。</p>
+  <script>
+    let range = document.createRange()
+    range.detach()    // 从文档中剥离范围
+    range = null      // 解除引用
+  </script>
+</body>
+
+</html>

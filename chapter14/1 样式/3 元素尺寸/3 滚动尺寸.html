@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+  <style>
+    html,
+    body {
+      overflow: auto;
+      margin: 0;
+    }
+
+    div {
+      width: 10px;
+      height: 2000px;
+      background-color: pink;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>滚动尺寸</h1>
+  <p>最后一组尺寸是滚动尺寸(scroll dimensions)，提供了元素内容滚动距离的信息。有些元素，比如 &lt;html>无须任何代码就可以自动滚动，
+    而其他元素需要使用CSS的 overflow 属性令其滚动。滚动尺寸相关的属性有如下4个。</p>
+  <ul>
+    <li>scrollHeight , 没有滚动条出现时 , 元素内容的总高度</li>
+    <li>scrollWidth , 没有滚动条出现时 , 元素内容的总宽度</li>
+    <li>scrollLeft , 内容区左侧隐藏的像素数，设置这个属性可以改变元素的滚动位置</li>
+    <li>scrollTop , 内容区顶部隐藏的像素数，设置这个属性可以改变元素的滚动位置。</li>
+  </ul>
+  <p>示例: (下面还有)</p>
+  <button onclick="scrollWithElement()">跳转</button>
+  <div></div>
+  <button onclick="buttom()">回到顶部</button>
+  <p>scrollwidth 和 scrollHeight
+    可以用来确定给定元素内容的实际尺寸。例如，&lt;html>元素是浏览器中滚动视口的元素。因此，document.documentelement.scrollHeight就是整个页面垂直方向的总高度。</p>
+  <p>scrollwidth 和 clientwidth 两者的 <strong>“共性” 是都包含 “内边距（padding）”，且都不包含边框、外边距、滚动条</strong> ；“核心差异” 是 “高度的范围”——
+    <strong>一个针对 “元素的可见区域”</strong> , <strong>一个针对 “内容的总范围”。</strong>
+  </p>
+  <p>scrollLeft和scrollTop 属性可以用于确定当前元素滚动的位置，或者用于设置它们的滚动位置。元素在未滚动时，这两个属性都等于 0
+    。如果元素在垂直方向上滚动，则scrollTop会大于0表示元素顶部不可见区域的高度。如果元素在水平方向上滚动，则scro1lLeft会大于0，表示元素左侧不可见区域的宽度。
+    因为这两个属性也是可写的,所以把它们都设置为0就可以重置元素的滚动位置 。 下面这个函数检测元素是不是位于顶部，如果不是则把它滚动回顶部:
+  </p>
+  <code>
+    <pre>
+    function scrolltoto(element) {
+      if (element.scrollTop != 0) {
+        element.scrollTop = 0
+      }
+    }  
+    </pre>
+  </code>
+  <p>这个函数使用scrollTop获取并设置值。</p>
+  <script>
+    function scrollWithElement() {
+      window.scrollTo(0, 2000)
+    }
+    function buttom() {
+      document.documentElement.scrollTop = '0'
+    }
+    // document.documentElement.scrollTop = function scrollWithElement() { document.documentElement.scrollTop = 1000; updateScrollPosition(); }
+
+    function scrolltoto(element) {
+      if (element.scrollTop != 0) {
+        element.scrollTop = 0
+      }
+    }
+  </script>
+</body>
+
+</html>
