@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>书接上回 Resize Observer</h1>
+  <section>
+    <h3 class="retract">1. 盒模型配置</h3>
+    <p>observe()的第二个参数 options 对象用于控制以什么盒模型来计算目标节点的尺寸 。这个对象的box属性可以是以下 3 个值</p>
+    <ul>
+      <li class="circle"><strong>content-box</strong>: 默认值, 使用内容尺寸</li>
+      <li class="circle"><strong>border-box</strong>使用边框尺寸</li>
+      <li class="circle"><strong>device-pixel-content-box</strong>使用内容尺寸 , 优先应用于任何css变换</li>
+    </ul>
+    <p>observer.observe(document.body , {box: 'device-pixel-content-box'})</p>
+    <strong>其实就是告诉盒模型 , 要观察哪里</strong>
+  </section>
+  <section>
+    <h3 class="retract">2. 回调安排及执行</h3>
+    <p>Resize0bserver在渲染过程中处理缩放事件: 所有操作在布局之后、绘制之前发生。这很好理解浏览器会等到可以度量元素尺寸的时候并确定是否发生缩放，
+      但要在执行绘制之前运行回调,以防回调进一步修改布局。
+      <strong>浏览器先通过 “布局” 算出元素的最新尺寸 → 对比旧尺寸判断是否发生变化（缩放、内容修改等都可能导致变化）→ 在 “绘制” 前执行 ResizeObserver 回调（方便回调修改布局，避免重复绘制）→
+        最后用最终布局结果去绘制。</strong>
+    </p>
+    <code>
+      <pre>
+    let obServer = new ResizeObserver(() => console.log('&lt;body> was resized'))
+
+    obServer.observe(document.body)
+
+    // ResizeObserver 总会在 observe() 执行后调用一次回调
+    // &lt;body> was resized
+
+    setTimeout(() => {
+      document.body.style.width = '100px'
+      console.log('Changed body width')
+    }, 1000);
+
+    // (1000 毫秒之后)
+    // Changed body width
+    // <body> was resized
+      </pre>
+    </code>
+    <p>注意，回调中的console.log()是后执行的，说明回调在 style.width 被赋予新值时不是同步执行的</p>
+    <p>现实当中，缩放事件通常不会只发生一次。比如，用户会持续拖动并缩放窗口 , 动画会不断修改元素大小 , 或逐步地渲染内容 , 这些都会导致连续不断地触发缩放事件 。
+      回调函数需要考虑到这一点。
+    </p>
+  </section>
+  <section>
+    <h3 class="retract">3. ResizeObserverEntry</h3>
+    <p>每个回调都会接收两个参数: 第一个是表示每个缩放事件的ReaizeObserverEntry对象的数组 , 第二个是观察者实例。这样回调可以根据缩放尺寸来修改页面 , 也可以通过观察者引用来停止观察某个
+      元素。 <strong>简单理解就是: 第一个参数是 一个数组存储着变化了的参数 : 第二个是ResizeObserver本身</strong>
+    </p>
+    <p>ReaizeObserverEntry 对象是一个包含以下只读属性的字典。</p>
+    <ul>
+      <li class="circle"><strong>borderBoxSize</strong>: 包含新边框盒子的尺寸。<strong>需要获取元素 “整体占位尺寸” 的场景</strong></li>
+      <li class="circle"><strong>contentBoxSize</strong>: 包含新内容盒子的尺寸。<strong>需要知道 “尺寸变化了多少” 的场景</strong></li>
+      <li class="circle"><strong>devicePixelContentBoxSize</strong>: 包含以设备像素计的新内容盒子的尺寸 。<strong>需要精确到物理像素的渲染场景</strong>
+      </li>
+      <li class="circle"><strong>contentRect</strong>: DoMRect 对象，包含新元素尺寸，是之前API规范遗留下来的。<strong>快速获取元素
+          “实际可显示内容的区域尺寸”</strong></li>
+      <li class="circle"><strong>target</strong>: 对元素的引用。</li>
+    </ul>
+    <img src="./image.png" alt="">
+    <p>上面这些*-Boxsize属性是包含两个属性的对象的数组 , 其中一个属性是blocksize，即块维度元素盒子的长度 , 另一个属性是inlinesize，即行内维度元素盒子的长度。
+      之所以是数组，主要是因游多栏布局中元素可能有多个片段，但一般来说数组长度都是1
+    </p>
+    <code>
+      <pre>
+          1. inlineSize ≈ “当前排版方向下的行内尺寸”（横排是宽度，竖排是高度）；
+          2. blockSize ≈ “当前排版方向下的块尺寸”（横排是高度，竖排是宽度）；
+          3. 数组形式是为了多栏布局，平时直接用 *BoxSize[0] 取第一个元素即可。
+      </pre>
+    </code>
+    <p>下面的例子展示了一个示例Resize0bserverEntry 对象的数组:</p>
+    <code>
+      <pre>
+    let observer = new ResizeObserver((entries, observer) => {
+      console.log(entries)
+    })
+
+    observer.observe(document.body)
+
+    // 观察到一次缩放后的输出: 
+
+    [
+      {
+        borderBoxSize: [
+          {
+            inlineSize: 1628,
+            blockSize: 2471.09375
+          }
+        ],
+        contentBoxSize: [
+          {
+            inlineSize: 1628,
+            blockSize: 2516.4375
+          }
+        ],
+
+        devicePixelContentBoxSize: [
+          {
+            inlineSize: 2442,
+            blockSize: 3775
+          }
+        ],
+
+        contentRect: {
+          x: 0,
+          y: 0,
+          width: 1628,
+          height: 2516.4375,
+          top: 0,
+        },
+        target: body
+      }
+    ]
+      </pre>
+    </code>
+    <p>Resize Observer API
+      没有使用记录队列，因为回调触发的间隔是严格定义的。如果浏览器检测到缩放在布局渲染之后发生，它会触发一次回调并传入一个捕获当前目标缩放后状态的ResizeObserverEntr下一次触发事件的时机在后续的布局阶段，
+      于是就不会出现针对同一事件触发两次缩放事件的情况。因此不需要使用队列。
+    </p>
+    <strong>Resize Observer 会自动合并 “同一布局阶段内的所有尺寸变化”，只触发一次回调，所以不需要用 “队列” 来存储多次变化记录。 </strong>
+    <p>还有不要搞混了前面的记录列表 , 记录的是变化的元素 , 以及前后尺寸的变化的数据</p>
+  </section>
+  <script>
+    // let obServer = new ResizeObserver(() => console.log('<body> was resized'))
+
+    // obServer.observe(document.body)
+
+    // // ResizeObserver 总会在 observe() 执行后调用一次回调
+    // // <body> was resized
+
+    // setTimeout(() => {
+    //   document.body.style.width = '100px'
+    //   console.log('Changed body width')
+    // }, 1000);
+
+    // // (1000 毫秒之后)
+    // // Changed body width
+    // // <body> was resized
+
+    // setTimeout(() => {
+    //   document.body.style.width = `${window.innerWidth}px`
+    // }, 2000)
+
+    let observer = new ResizeObserver((entries, observer) => {
+      console.log(entries)
+    })
+
+    observer.observe(document.body)
+    // [
+    //   {
+    //     borderBoxSize: [
+    //       {
+    //         inlineSize: 1628,
+    //         blockSize: 2471.09375
+    //       }
+    //     ],
+    //     contentBoxSize: [
+    //       {
+    //         inlineSize: 1628,
+    //         blockSize: 2516.4375
+    //       }
+    //     ],
+
+    //     devicePixelContentBoxSize: [
+    //       {
+    //         inlineSize: 2442,
+    //         blockSize: 3775
+    //       }
+    //     ],
+
+    //     contentRect: {
+    //       x: 0,
+    //       y: 0,
+    //       width: 1628,
+    //       height: 2516.4375,
+    //       top: 0,
+    //     },
+    //     target: body
+    //   }
+    // ]
+  </script>
+</body>
+
+</html>

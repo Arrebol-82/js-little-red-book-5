@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>Intersection Observer</h1>
+  <p>Intersection Observer API 可以监听DOM 元素相对于指定视口或容器元素的可见性及位置。使用
+    Intersectionobserver,可以在被观察的元素与“视口”重叠或离开视口时异步执行回调函数。这个API
+    特别适合用于实现基于滚动的动画,或者图片懒加载、无穷滚动等性能优化逻辑。Intersectionobserver
+    也提供了不同选项用于控制观察行为，比如控制触发重叠的阈值、同时观察多个元素，以及调整重叠区
+    域的根元素。
+    <strong>当元素碰到视口 , 或者是离开视口都是会触发的</strong>
+  </p>
+  <p>要创建Intersectionobserver的实例,需要在调用这个构造函数时传人一个回调函数和一个可选的 options 对象:</p>
+  <p class="retract">let observer = new IntersectionObserver(()=> console.log("Intersection!"));</p>
+  <p>在不提供 options 对象的情况下，观察者的默认行为如下。</p>
+  <ul>
+    <li class="circle">默认视口是文档的视口，也就是整个屏幕。</li>
+    <li class="circle">默认阈值是0，即目标元素与视口有1个像素的重叠就会触发回调。</li>
+  </ul>
+  <div id="observation"></div>
+  <p>来看下面这个使用默认行为的例子:</p>
+  <code>
+    <pre>
+    let observer = new IntersectionObserver(() => console.log("Intersection!"));
+
+    document.getElementById('observation').innerHTML = `
+    &lt;div id='location' style = 'margin-top:100px; height:100px; background-color:pink;'>
+    `
+
+    let Observer = new IntersectionObserver(entries => {
+      console.log("Intersection!")
+    })
+    observer.observe(document.getElementById('location'))
+    </pre>
+  </code>
+  <p>页面的初始状态是有一个&lt;div>元素，完全位于视口之下。当在任何方向上达到阈值时，都会触发回调: 从完全覆盖到部分可见，或从部分可见到完全覆盖。
+    当用户向下滚动时，只要&lt;div>的顶部与文档视口重叠，就会触发回调。如果继续向上滚动，&lt;div>又看不到了，还会再触发回调。</p>
+  <script>
+    let observer = new IntersectionObserver(() => console.log("Intersection!"));
+
+    document.getElementById('observation').innerHTML = `
+    <div id='location' style = 'margin-top:500px; margin-bottom: 530px; height:100px; background-color:pink;'>
+    `
+
+    let Observer = new IntersectionObserver(entries => {
+      console.log("Intersection!")
+    })
+    observer.observe(document.getElementById('location'))
+  </script>
+</body>
+
+</html>

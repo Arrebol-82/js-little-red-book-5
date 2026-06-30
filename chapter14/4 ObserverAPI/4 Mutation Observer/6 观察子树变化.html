@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>观察子树变化</h1>
+  <p>默认情况下，MutationObserver 只限于观察目标元素及其子节点列表的 <strong>修改</strong> 。通过在MutationobserverInit 中将subtree 属性设置为true，
+    可以将观察范围扩展到 DOM 子树。
+  </p>
+  <p>以下代码展示了如何观察子树的属性变化:</p>
+  <code>
+    <pre>
+    let observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    )
+
+    const test = document.getElementById('test')
+
+    // 创建一个元素
+    test.appendChild(document.createElement('div'))
+
+    // 观察&lt;body>子树
+    observer.observe(test, { subtree: true, attributes: true })
+
+    // 修改&lt;body>子树
+    test.firstChild.setAttribute('foo', 'bar')
+
+    // 对子树的修改会注册为变化
+     
+    // [
+    //   {
+    //     addedNodes:NodeList[],
+    //     <strong>attributeName:'foo',</strong>
+    //     attributeNamespace:null,
+    //     nextSibling:null,
+    //     oldValue:null,
+    //     previousSibling:null,
+    //     removedNodes:NodeList[],
+    //      <strong>target:div#test,</strong> 
+    //     type:"childList"
+    //   }
+    // ]
+    </pre>
+  </code>
+  <div id="test"></div>
+  <p>有意思的是，节点子树注册的回调即使在节点被移出被观察树的情况下仍然有效。
+    这意味着子树节点离开特定的子树后，严格来说发生在被观察子树外部的变化仍然会注册为有效的变化。<strong>"一旦开始观察某个节点，无论这个节点被移动到DOM树的哪个地方，
+      只要它发生变化，观察器的回调函数就会自动执行。"</strong>
+  </p>
+  <p>以下代码展示了这一行为:</p>
+  <code>
+    <pre>
+    // 清除主体内容
+
+    test.innerHTML = ''
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    )
+
+    let subtreeRoot = document.createElement('div'),
+      subtreeLeaf = document.createElement('span');
+
+    // 创建高度为2的子树
+    test.appendChild(subtreeRoot)
+    subtreeRoot.appendChild(subtreeLeaf);
+
+    // 观察子树
+    Observer.observe(subtreeRoot, { attributes: true, subtree: true })
+
+    // 将子树中的节点转移到被观察的子树外部
+    test.insertBefore(subtreeLeaf, subtreeRoot)
+
+    subtreeLeaf.setAttribute('foo', 'bar')
+
+    // 子树的修改仍然会注册为变化
+    // [MutationRecord]
+    </pre>
+  </code>
+  <script>
+    let observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    )
+
+    const test = document.getElementById('test')
+
+    // 创建一个元素
+    test.appendChild(document.createElement('div'))
+
+    // 观察<body>子树
+    observer.observe(test, { subtree: true, attributes: true })
+
+    // 修改<body>子树
+    test.firstChild.setAttribute('foo', 'bar')
+
+    // 对子树的修改会注册为变化
+
+    // [
+    //   {
+    //     addedNodes:NodeList[],
+    //     attributeName:'foo',
+    //     attributeNamespace:null,
+    //     nextSibling:null,
+    //     oldValue:null,
+    //     previousSibling:null,
+    //     removedNodes:NodeList[],
+    //     target:div#test,
+    //     type:"childList"
+    //   }
+    // ]
+
+
+    // 清除主体内容
+
+    test.innerHTML = ''
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    )
+
+    let subtreeRoot = document.createElement('div'),
+      subtreeLeaf = document.createElement('span');
+
+    // 创建高度为2的子树
+    test.appendChild(subtreeRoot)
+    subtreeRoot.appendChild(subtreeLeaf);
+
+    // 观察子树
+    Observer.observe(subtreeRoot, { attributes: true, subtree: true })
+
+    // 将子树中的节点转移到被观察的子树外部
+    test.insertBefore(subtreeLeaf, subtreeRoot)
+
+    subtreeLeaf.setAttribute('foo', 'bar')
+
+    // 子树的修改仍然会注册为变化
+    // [MutationRecord]
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>Observer的性能</h1>
+  <p>在使用ObserverAPI时，关键要处理好回调的性能。这些API有可能以惊人的频率执行回调，导致页面性能明显下降。比如，观察
+    &lt;body>元素的一个ResizeObserver在一次对窗口的拖动中就会触发数百次回调。此外，观察者的计算也始终是拖慢页面的一个因素。
+    虽然耗时的点击处理程序会临时导致页面变慢，但低效的观察者却可能始终触发，因此产生让用户肉眼可见的性能劣化。</p>
+  <p class="retract">要优化观察者的性能，一种方式是对回调函数进行防抖处理。防抖可以延迟回调函数执行，虽然在上一次事件触发指定的时间之后，但可以保证处理最后一次事件。
+    在这观察者的场景中非常关键，因为了解元素最终的状态很重要。
+  </p>
+  <p>以下示例至少1秒执行一次回调:</p>
+  <code>
+    <pre>
+    let timeoutId = null
+    let observer = new ResizeObserver(() => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => console.log('&lt;body> size changed'), 1000)
+    })
+
+    observer.observe(document.getElementById('test'))
+    </pre>
+  </code>
+  <div id="test"></div>
+  <p>另一个简单但重要的优化策略是在不需要时删除观察者。换句话说，在不需要观察者时要激进地调
+    用unobserve()和disconnect()。</p>
+  <p>最后，尽可能使用异步回调。比如，因为ResizeObserver预期回调会导致进一步的布局变化 , 以它会同步运行回调，并将渲染绘制操作延迟到回调完成后进行。
+    如果不需要同步执行回调，可以将国调定义为异步函数，这样可以延迟执行回调，让绘制尽快开始。 </p>
+  <script>
+    let timeoutId = null
+    let observer = new ResizeObserver(() => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => console.log('<body> size changed'), 1000)
+    })
+
+    observer.observe(document.getElementById('test'))
+  </script>
+</body>
+
+</html>

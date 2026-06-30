@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Mutation Observer</h1>
+  <p>Mutation Observer API 可以在DOM被修改时异步执行回调 。使用Mutationobserver 可以观察整个文档 , DOM树 ,
+    或者一个元素。而且，还可以观察元素属性、子节点、文本，以及上述三者任意组合的变化。</p>
+  <p><strong>注意:</strong> MutationObserver用于取代废弃的Mutation Events</p>
+  <p>MutationObserver实例通过调用MutationObserver构造函数并传入一个回调函数来创建:</p>
+  <p class="retract">let observer = new MutationObserver(() => console.log('DOM was mutated!'))</p>
+  <p>这个实例现在还没有跟任何DOM元素关联起来。要把这个观察者连接到DOM，使用observe()方法 。
+    这个方法接收两个必传参数:要观察变化的目标DOM元素及MutationObserverInit对象。</p>
+  <p>MutationObserverInit对象用于控制观察者要观察什么变化，是键-值形式的字典。比如,下面的代码创建了一个观察者，并配置它观察
+    &lt;body>元素的属性变化:
+  </p>
+  <div id="observation"></div>
+  <code>
+    <pre>
+    let observer = new MutationObserver(() => console.log('&Lt;body> attributes changed'))
+
+    observer.observe(document.getElementById('observation'), { attributes: true })
+    </pre>
+  </code>
+  <p>此时，&lt;div id='observation'>元素任何属性的变化都会被 MutationObserver 实例检测到，从而异步执行回调。
+    对子元素的修改或其他非属性 DOM 元素的修改不会触发回调。这个行为可以通过如下代码来展示:
+  </p>
+  <code>
+    <pre>
+    // let observer = new MutationObserver(() => console.log('DOM was mutated!'))
+
+    let observer = new MutationObserver(() => console.log('&lt;body> attributes changed'))
+
+    observer.observe(document.getElementById('observation'), { attributes: true })
+    document.getElementById('observation').className = 'foo'
+    console.log('Changed body class')
+
+    // Changed body class
+    // <body> attributes changed
+    </pre>
+  </code>
+  <p>注意，回调函数中的console.1og()是后执行的，这表示回调并不是与实际的DOM修改同步执行的。</p>
+  <p>MutationObserverInit对象。</p>
+  <ul>
+    <li><strong>childList</strong> 作用: 观察目标节点的直接子节点的添加和移除 <br> 类型: boolean</li>
+    <li><strong>attributes</strong> 作用: 观观察目标节点的属性变化 <br> 类型: boolean</li>
+    <li><strong>characterData</strong> 作用: 观察目标节点文本内容的变化 <br> 类型: boolean</li>
+    <li><strong>subtree</strong> 作用: 将观察范围扩展到目标节点的所有后代节点，而不仅仅是直接子节点 <br> 类型: boolean</li>
+    <li><strong>attributeFilter</strong> 作用: 观察目标节点的直接子节点的添加和移除指定要观察的特定属性名称数组（白名单） <br> 类型: boolean</li>
+    <li><strong>attributeOldValue</strong> 作用: 记录属性变化前的旧值 <br> 类型: boolean</li>
+    <li><strong>characterDataOldValue</strong> 作用: 记录文本内容变化前的旧值 <br> 类型: boolean</li>
+  </ul>
+  <strong>Mutation Observer重点是 <i>(他不会立即执行)</i>跟Intersection Observer 和 Resize Observer 是不一样的</strong>
+  <script>
+    // let observer = new MutationObserver(() => console.log('DOM was mutated!'))
+
+    let observer = new MutationObserver(() => console.log('<body> attributes changed'))
+
+    observer.observe(document.getElementById('observation'), { attributes: true })
+    document.getElementById('observation').className = 'foo'
+    console.log('Changed body class')
+
+    // Changed body class
+    // <body> attributes changed
+  </script>
+</body>
+
+</html>

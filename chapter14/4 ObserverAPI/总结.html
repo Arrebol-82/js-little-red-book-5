@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../index.css">
+</head>
+
+<body>
+  <h1>总结</h1>
+  <p>DOM规定了与 HTML文档交互的核心API，其他几个规范也定义了对DOM的扩展。很多扩展都基于之前已成为事实标准的专有特性标准化而来的。
+    DOM2规范定义了一些模块，用来丰富DOM1的功能。DOM2 Style模块定义了如何操作元素的样式信息。
+  </p>
+  <ul>
+    <li>每个元素都有一个关联的style 对象，可用于确定和修改元素的行内样式,</li>
+    <li>要确定元素的计算样式，包括应用到元素的所有CSS规则，可以使用getcomputedstyle()
+      方法。</li>
+    <li>通过 document.stylesheets集合可以访问文档上所有的样式表,DOM2 Traversal and Range 模块定义了与 DOM 结构交互的不同方式。</li>
+    <li>NodeIterator和Treewalker 可以对 DOM树执行深度优先的遍历。</li>
+    <li>Noderterator 接口很简单，每次只能向前和向后移动一步。Treewalker 除了支持同样的行为，还支持在 DOM结构的所有方向移动，包括父节点、同胞节点和子节点。</li>
+    <li>范围是选择DOM结构中特定部分并进行操作的一种方式。</li>
+    <li>通过范围的选区可以在保持文档结构完好的同时从文档中移除内容，也可复制文档中特定的部分</li>
+  </ul>
+  <p class="retract">ObserverAPI是强大的JavaScript接口，可以用来监控DOM
+    变化并以适当方式响应这些变化。Intersectionobserver可以用来跟踪DOM元素相对于指定视口或容器元素的可见性及位置。
+    通过使用IntersectionObserver,可以在观察到元素重叠或元素离开重叠区域时异步执行回调。这个API
+    特别适合实现基于滚动的动画或性能优化，如图片懒加载、无穷滚动等。
+  </p>
+  <p class="retract">另一个有用的观察者是Resizeobserver,利用它可以检测元素或其子节点的变化。这个观察者可以用来实现响应式设计或者需要适应视口或内容尺寸变化的布局算法。</p>
+  <p class="retract">Mutationobserver可以让我们监控DOM树的变化，并在指定类型的变化发生时执行回调函数这个观察者可以用于实现响应式用户界面，以及检测第三方部件或脚本对 DOM的动态修改。</p>
+</body>
+
+</html>

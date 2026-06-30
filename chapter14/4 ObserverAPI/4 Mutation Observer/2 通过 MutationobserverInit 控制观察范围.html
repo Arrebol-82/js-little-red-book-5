@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>通过 MutationobserverInit 控制观察范围</h1>
+  <p>MutationobserverInit 用于控制观察目标元素的哪些变化。宽泛地说，观察者可以观察属性变化 , 文本变化和子节点变化</p>
+  <p>MutationobserverInit对象含如下属性。</p>
+  <img src="./image1.png" alt="" width="1200px">
+  <ul>
+    <li><strong>childList</strong> 作用: 观察目标节点的直接子节点的添加和移除 <br> 类型: boolean</li>
+    <li><strong>attributes</strong> 作用: 观观察目标节点的属性变化 <br> 类型: boolean</li>
+    <li><strong>characterData</strong> 作用: 观察目标节点文本内容的变化 <br> 类型: boolean</li>
+    <li><strong>subtree</strong> 作用: 将观察范围扩展到目标节点的所有后代节点，而不仅仅是直接子节点 <br> 类型: boolean</li>
+    <li><strong>attributeFilter</strong> 作用: 观察目标节点的直接子节点的添加和移除指定要观察的特定属性名称数组（白名单） <br> 类型: boolean</li>
+    <li><strong>attributeOldValue</strong> 作用: 记录属性变化前的旧值 <br> 类型: boolean</li>
+    <li><strong>characterDataOldValue</strong> 作用: 记录文本内容变化前的旧值 <br> 类型: boolean</li>
+  </ul>
+  <p><strong>注意</strong> 在调用observe()时，MutationObserverInit
+    对象中必须至少attributes (检测目标节点)、characterData (检测文本内容的变化)或childList (检测子节点的添加和删除)中的一个要为true(可以直接设置，也可以通过设置关联属性如
+    attributeOldValue 间接设置)。否则会抛出错误,因为没有变化会触发回调</p>
+</body>
+
+</html>

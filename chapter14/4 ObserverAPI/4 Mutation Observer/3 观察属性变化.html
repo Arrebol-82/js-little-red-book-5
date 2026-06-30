@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>观察属性变化</h1>
+  <p>Mutationobserver 可以观察节点属性的新增、删除和修改。在MutationObserverInit对象中 , 将attributes 属性设置为 true 即可注册回调函数，如下所示:</p>
+  <code>
+    <pre>
+    let observer = new MutationObserver((mutationRecord) => {
+      console.log(mutationRecord)
+    })
+
+    observer.observe(document.getElementById('vessel'), { attributes: true })
+
+    // 新增属性
+    document.getElementById('vessel').setAttribute('foo', 'bar')
+
+    // 修改属性
+    document.getElementById('vessel').setAttribute('foo', 'baz')
+
+    // 删除属性
+    document.getElementById('vessel').removeAttribute('foo')
+
+    // 三个修改都被记录为变化
+    <strong>[MutationRecord, MutationRecord, MutationRecord]</strong>
+    </pre>
+  </code>
+  <div id="vessel"></div>
+  <p>默认行为是观察所有属性变化，不在MutationRecord中记录旧属性值。如果想观察属性的子集 , 可以为attributerFilter 属性指定白名单:</p>
+  <code>
+    <pre>
+    let Observer = new MutationObserver(
+      (mutationRecord) => console.log(mutationRecord)
+    )
+
+    Observer.observe(document.getElementById('test'), { attributeFilter: ['foo'] })
+    // attributeFilter: ['foo'] 表示只观察test这个元素身上的 foo 属性有没有变化
+
+    // 添加白名单中的属性
+    document.getElementById('test').setAttribute('foo', 'bar')
+
+    // 添加其他属性
+    document.getElementById('test').setAttribute('baz', 'qux')
+
+    // 只有一个变化记录 , 对应 "foo" 属性
+    // [MutationRecord]
+    </pre>
+  </code>
+  <div id="test"></div>
+  <p class="retract">此时文档中的 div 是: &lt;div id="test" foo="bar" baz="qux">&lt;/div></p>
+  <p>如果想在变化记录中保存旧属性值，需要将attribute0ldValue 设置为true:</p>
+  <code>
+    <pre>
+
+    let Observe = new MutationObserver(
+      (mutationRecord) => console.log(mutationRecord.<strong>map((x) => x.oldValue)</strong> )
+    );
+
+    Observe.observe(document.getElementById('observation'), <strong>{ attributeOldValue: true }</strong> )
+
+    document.getElementById('observation').setAttribute('foo', 'bar')
+    document.getElementById('observation').setAttribute('foo', 'baz')
+    document.getElementById('observation').setAttribute('foo', 'qux')
+
+    // 每次变化都会记录之前的值
+    <strong>[null, 'bar', 'baz']</strong>
+    <strong>第一次输出null , 是因为第一次给foo赋值,前面是空的 </strong>
+    </pre>
+  </code>
+  <div id="observation"></div>
+  <script>
+    let observer = new MutationObserver((mutationRecord) => {
+      console.log(mutationRecord)
+    })
+
+    observer.observe(document.getElementById('vessel'), { attributes: true })
+
+    // 新增属性
+    document.getElementById('vessel').setAttribute('foo', 'bar')
+
+    // 修改属性
+    document.getElementById('vessel').setAttribute('foo', 'baz')
+
+    // 删除属性
+    document.getElementById('vessel').removeAttribute('foo')
+
+    // 三个修改都被记录为变化
+    //  [MutationRecord, MutationRecord, MutationRecord]
+
+    let Observer = new MutationObserver(
+      (mutationRecord) => console.log(mutationRecord)
+    )
+
+    Observer.observe(document.getElementById('test'), { attributeFilter: ['foo'] })
+    // attributeFilter: ['foo'] 表示只观察test这个元素身上的 foo 属性有没有变化
+
+    // 添加白名单中的属性
+    document.getElementById('test').setAttribute('foo', 'bar')
+
+    // 添加其他属性
+    document.getElementById('test').setAttribute('baz', 'qux')
+
+    // 只有一个变化记录 , 对应 "foo" 属性
+    // [MutationRecord]
+
+    let Observe = new MutationObserver(
+      (mutationRecord) => console.log(mutationRecord.map((x) => x.oldValue))
+    );
+
+    Observe.observe(document.getElementById('observation'), { attributeOldValue: true })
+
+    document.getElementById('observation').setAttribute('foo', 'bar')
+    document.getElementById('observation').setAttribute('foo', 'baz')
+    document.getElementById('observation').setAttribute('foo', 'qux')
+  </script>
+</body>
+
+</html>

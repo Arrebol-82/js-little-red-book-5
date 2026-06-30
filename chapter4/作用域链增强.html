@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>作用域链增强</h1>
+    <p>
+      <strong>作用域链增强</strong>:
+      简单来说就是会在js执行的时候突然给作用域顶部增加一个属性,让内部访问到这个属性。
+    </p>
+    <p>能成功触发的就只有两种语法</p>
+    <ul>
+      <li>try... catch</li>
+      <li>with</li>
+    </ul>
+    <code>
+      <pre>
+        对比:
+        原本的作用域链：[ 全局上下文的 VO ]
+        增强后的作用域链：[ location 对象本身 , 全局上下文的 VO ]
+      </pre>
+    </code>
+    <p>
+      为什么: 需要作用域链增强 , 你想想看如果你在前面定义了 error变量. 而后面的
+      catch又要用到, 他们之间就会形成冲突
+    </p>
+    <code>
+      <pre>
+        function uploadData() {
+  var error = "这是我自己定义的、非常重要的业务逻辑变量";
+
+  try {
+    // 假设这里写错了，抛出了一个系统错误
+    JSON.parse("给你个错误的JSON"); 
+  } catch (error) { 
+    // 如果没有“作用域链增强”把 error 隔离出去：
+    // 这个系统错误对象会直接【覆盖】掉你上面自己写的那个 "非常重要的业务变量"！
+    console.log(error.message); 
+  }
+
+  // 出了 catch 块之后
+  console.log(error); // 此时你想用你自己的变量，结果发现它已经变成了系统报错对象！❌ 逻辑彻底崩溃！
+}
+      </pre>
+    </code>
+    <p>
+      此时作用域链增强的好处就出来了, 这样就可以避免了两个属性的冲突. 一但出来,
+      catch{} 就不会再受到作用域链增强的影响了
+    </p>
+    <p>
+      这里有个要注意的点就是 , with语句是在作用域前端添加指定对象,
+      而catch是创建一个新的变量对象
+    </p>
+  </body>
+</html>

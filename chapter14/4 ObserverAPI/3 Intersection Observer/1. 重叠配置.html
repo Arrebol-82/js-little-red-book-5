@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>重叠配置</h1>
+  <p>options对象用于配置观察者如何判断重叠事件发生，可以使用以下属性。</p>
+  <ul>
+    <li class="circle"><strong>root</strong> :表示应该被作为视口的元素。默认是文档视口。一般不用修改这个值，因为元素进入设备视口是重叠观察者最常用的场景。</li>
+    <li class="circle"><strong>rootMargin</strong>
+      :用于人工修改视口的边界盒子,可以扩展或收缩,以确定哪一部分属于视口范畴。这个属性应该与CSS的margin样式使用相同的值，默认为0px0px 0px 0px。</li>
+    <li class="circle"><strong>threshold</strong> :是一个浮点值或介于0.0到10之间的浮点值的数组。用于定义会触发重叠回调的百分比(或多个百分比)。</li>
+    <li class="circle"><strong>trackvisibility</strong> :是一个布尔值，表示观察者是否要跟踪目标元素可见性的变化 。如果设置为true，则必须设置 delay 属性。</li>
+    <li class="circle"><strong>delay</strong>: 只有在trackvisibility为true 时才需要，表示观察者针对给定目标元素发出通知的最小延迟时间，最小为100毫秒。</li>
+  </ul>
+  <code>
+    <pre>
+        root 是默认文档视口 , 
+
+        rootMargin 表示在 root的基础上扩大了范围 , 还是缩小了范围 , 也就是负数 , 
+
+        threshold 可以设置百分比 , 到达一定百分比会执行回调函数 , 如果是三位数的话那就是px了 ,
+        
+        rackVisibility他是用于检测元素能不能看见 , 如果用户在视口中可以看见元素 , 那么就会执行回调 , 而且如果当前元素被其他元素覆盖了 看不见是不会执行回调函数的 
+        要考虑到 "“视觉可见性”"
+
+        delay 这段时间内最多只会触发一次trackVisibility 前提是trackVisibility:true
+    </pre>
+  </code>
+  <p>下面的例子对之前的例子进行了修改，每当可见区域达到0%、50%和100%时都触发回调:</p>
+  <code>
+    <pre>
+    document.getElementById('observation').innerHTML = `
+    &lt;div id='location' style = 'margin-top:400px; margin-bottom: 400px; height:500px; background-color:pink;'>
+      `
+
+    let observer = new IntersectionObserver(() => console.log("Intersection!"), { threshold: [0, 0.25, 0.5, 0.75, 1] });
+
+    observer.observe(document.querySelector('div'))
+    </pre>
+  </code>
+  <p>此时滚动页面，让&lt;div>完全可见，再让其完全不可见将触发7次回调: 初始一次 , 进入一次 ,然后分别是4次 , 退出一次</p>
+  <p>trackVisibility和delay是在Intersection0bserver 第2版的规范中新增的，目前只有Chromium 浏览器支持。(也就只有 Eage 和 Google)支持是一个实验性的API
+    在第1版中，重叠的坐标表示目标元素是否与视口重叠，但这并不代表用户能够看到元素。像transform、filter、opacity、z-index和visibility 这样的 CSS 规则都可以让元素对用户不可见。
+    第2版为解决这个问题允许开发者使用isvisible布尔值，这个值表示是否存在重叠且是否有像素实际渲染到屏幕上可以被用户看到。下面的例子创建了一个观察者，检查两个
+    &lt;div>元素的实际可见性:
+  </p>
+  <code>
+    <pre>
+    document.getElementById('vessel').innerHTML = `
+    &lt;div style="height:100px;width:100px;">Foo&lt;/div>
+    &lt;div style="height:100px;width:100px;opacity:0;">Bar&lt;/div>
+    `
+
+    let Observer = new IntersectionObserver(
+      (entries) => {
+        console.log(`isVisble: ${entries.map((x) => x.isVisible)}`), {
+          trackVisibility: true,
+            delay: 1000
+        }
+      }
+    );
+
+
+    [...document.querySelectorAll('div')].map((el) => observer.observe(el))
+
+    // isvisible: [true, false]
+    </pre>
+  </code>
+  <div id="observation"></div>
+  <div id="vessel"></div>
+  <p>相对于计算重叠，计算实际的可见性非常耗费资源。因此这里的elay值用于控制浏览器尽可能少地执行这种计算，应该给它设置一个你觉得能够容忍的最大值。</p>
+  <p><strong>注意</strong> 浏览器对可见性的计算比较容易误报。在目标元素实际可见时它有可能返回isVisible:false，但是不会在目标元素不可见时返回isVisible:true。</p>
+  <script>
+
+    document.getElementById('observation').innerHTML = `
+    <div id='location' style = 'margin-top:400px; margin-bottom: 400px; height:500px; background-color:pink;'>
+      `
+
+    let observer = new IntersectionObserver(() => console.log("Intersection!"), { threshold: [0, 0.25, 0.5, 0.75, 1] });
+
+    observer.observe(document.querySelector('div'))
+
+    document.getElementById('vessel').innerHTML = `
+    <div style="height:100px;width:100px;">Foo</div>
+    <div style="height:100px;width:100px;opacity:0;">Bar</div>
+    `
+
+    let Observer = new IntersectionObserver(
+      (entries) => {
+        console.log(`isVisble: ${entries.map((x) => x.isVisible)}`), {
+          trackVisibility: true,
+          delay: 1000
+        }
+      }
+    );
+
+
+    [...document.querySelectorAll('div')].map((el) => observer.observe(el))
+
+    // isvisible: [true, false]
+  </script>
+</body>
+
+</html>

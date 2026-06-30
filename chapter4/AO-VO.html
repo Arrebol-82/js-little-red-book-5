@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>AO-VO</h1>
+    <p>
+      VO 相当于游戏里面的预加载.
+      代码还未运行的时候会在上下文一个文件里面放的都是:
+      参数、函数声明、变量声明。
+    </p>
+    <p>AO 既代码开始跑起来了, 讲VO里面的信息给填上了, 这样就成了AO了</p>
+    <h5>看下面的代码:</h5>
+    <code>
+      <pre>
+        function playGamer(nickname, level) {
+  var score = 100;
+  function getStatus() {
+    return 'Active';
+  }
+  var title;
+}
+
+// 调用函数
+playGamer('RexCode', 5);
+      </pre>
+    </code>
+    <p>此时的VO代码</p>
+    <code>
+      <pre>
+        // playGamer 函数的执行上下文（创建阶段）
+playGamerExecutionContext = {
+  // 1. 作用域链：此时指向自己当前的 VO 和全局 VO
+  ScopeChain: [ playGamerExecutionContext.VO, GlobalContext.VO ],
+
+  // 2. 变量对象（VO）
+  VO: {
+    // A. 专属于函数的 arguments 对象，此时已经把实参对齐了
+    arguments: {
+      0: 'RexCode',
+      1: 5,
+      length: 2
+    },
+    
+    // B. 形参被登记，并直接赋予传入的实参值
+    nickname: 'RexCode',
+    level: 5,
+    
+    // C. 函数声明：直接在内存里开辟空间，VO 里的属性直接指向这个内存地址
+    getStatus: <reference to function getStatus()>,
+    
+    // D. var 变量提升：只登记名字，一律先抹平初始化为 undefined
+    score: undefined,
+    title: undefined
+  },
+
+  // 3. 确定 this 的指向（这里指向 window 或者是 undefined）
+  this: window
+};
+      </pre>
+    </code>
+    <p>此时的AO代码</p>
+    <code>
+      <pre>
+        // playGamer 函数的执行上下文（执行阶段）
+playGamerExecutionContext = {
+  // 1. 作用域链保持不变
+  ScopeChain: [ playGamerExecutionContext.AO, GlobalContext.VO ],
+
+  // 2. 此时 VO 已经被激活（Activated），正式更名为活动对象（AO）
+  AO: {
+    arguments: {
+      0: 'RexCode',
+      1: 5,
+      length: 2
+    },
+    nickname: 'RexCode',
+    level: 5,
+    getStatus: <reference to function getStatus()>,
+    
+    // 🌟 重点：随着代码执行到对应的赋值语句，真实的数据开始注入！
+    score: 100,      // 原本的 undefined 被真正的数值 100 覆盖了
+    title: undefined // 因为源代码里没有给 title 赋值，所以它依然保持 undefined
+  },
+
+  this: window
+};
+      </pre>
+    </code>
+  </body>
+</html>

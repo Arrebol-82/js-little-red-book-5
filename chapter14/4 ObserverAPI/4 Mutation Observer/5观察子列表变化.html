@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>观察子列表变化</h1>
+  <p>Mutationobserver可以观察到目标元素添加或删除子节点。这需要在MutationobserverInit中将 childList 属性设置为 true。</p>
+  <p>以下代码展示了添加节点:</p>
+  <div id="test"></div>
+  <code>
+    <pre>
+      // 清除主体内容
+      const test = document.getElementById('test')
+          test.innerHTML = ''
+
+      let observer = new MutationObserver(
+        (mutationRecords) => console.log(mutationRecords)
+      );
+
+      observer.observe(test, { childList: true })
+
+      // 添加一个 div
+      test.appendChild(document.createElement('div'))
+
+     [
+       {
+         <strong>addedNodes:NodeList[div],</strong>
+         attributeName:null,
+         attributeNamespace:null,
+         nextSibling:null,
+         oldValue:null,
+         previousSibling:null,
+         <strong>removedNodes:NodeList[],</strong>
+         target:div#test,
+         type:"childList"
+       }
+     ]
+
+    </pre>
+  </code>
+  <p>以下代码删除了节点:</p>
+  <code>
+    <pre>
+      // 在前面示例的基础上，删除刚刚添加的 div
+      test.removeChild(test.firstChild)
+
+      [
+       {
+         <strong>addedNodes:NodeList[],</strong>
+         attributeName:null,
+         attributeNamespace:null,
+         nextSibling:null,
+         oldValue:null,
+         previousSibling:null,
+         <strong>removedNodes:NodeList[div],</strong>
+         target:div#test,
+         type:"childList"
+       }
+     ]
+    </pre>
+  </code>
+  <p>子节点重新排序虽然可以通过一个方法完成，但也会注册两个独立的变化,因为严格来说这涉及一次节点删除和一次节点再添加 </p>
+  <code>
+    <pre>
+      // 清除主体内容
+
+    const vessel = document.getElementById('vessel')
+    vessel.innerHTML = ''
+
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    );
+
+    // 先创建两个子节点
+    vessel.appendChild(document.createElement('div'))
+    vessel.appendChild(document.createElement('span'))
+
+    Observer.observe(vessel, { childList: true });
+
+    // 交换子节点的位置
+    vessel.insertBefore(vessel.lastChild, vessel.firstChild)
+    // insertBefore 将第一个元素(第一个节点) 插入到 第二个元素(第二个节点)前面
+
+    记录了两次变化
+    索引0是删除 , 索引1是新增
+
+    // [
+    //   {
+    //     addedNodes:NodeList[],
+    //     attributeName:null,
+    //     attributeNamespace:null,
+    //     nextSibling:null,
+    //     oldValue:null,
+    //     previousSibling:div,
+    //     <strong>removedNodes:NodeList[span],</strong>
+    //     <strong>target:div#vessel,</strong>
+    //     type:"childList"
+    //   }, 
+    //   {
+    //    <strong> addedNodes:NodeList[span],</strong>
+    //     attributeName:null,
+    //     attributeNamespace:null,
+    //     <strong>nextSibling:div,</strong>
+    //     oldValue:null,
+    //     previousSibling:div,
+    //     removedNodes:NodeList[],
+    //     target:div#vessel,
+    //     type:"childList"
+    //   }
+    // ]
+    </pre>
+  </code>
+  <div id="vessel"></div>
+  <script>
+    const test = document.getElementById('test')
+    test.innerHTML = ''
+
+    let observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    );
+
+    observer.observe(test, { childList: true })
+
+    // 添加一个 div
+    test.appendChild(document.createElement('div'))
+
+    // [
+    //   {
+    //     addedNodes:NodeList[div],
+    //     attributeName:null,
+    //     attributeNamespace:null,
+    //     nextSibling:null,
+    //     oldValue:null,
+    //     previousSibling:null,
+    //     removedNodes:NodeList[],
+    //     target:div#test,
+    //     type:"childList"
+    //   }
+    // ]
+
+    test.removeChild(test.firstChild)
+
+    const vessel = document.getElementById('vessel')
+    vessel.innerHTML = ''
+
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords)
+    );
+
+    // 先创建两个子节点
+    vessel.appendChild(document.createElement('div'))
+    vessel.appendChild(document.createElement('span'))
+
+    Observer.observe(vessel, { childList: true });
+
+    // 交换子节点的位置
+    vessel.insertBefore(vessel.lastChild, vessel.firstChild)
+    // insertBefore 将第一个元素(第一个节点) 插入到 第二个元素(第二个节点)前面
+
+  </script>
+</body>
+
+</html>

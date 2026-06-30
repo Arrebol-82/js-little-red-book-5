@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>回调与IntersectionObserverEntry</h1>
+  <p>回调在被触发时会接收到一个 IntersectionObserverEntry 对象的数组，其中每个对象对应一个被观察的元素,
+    而这个条目本身代表该元素在满足阀值条件触发回调时的重叠状态。它包含如下只读属性。
+  </p>
+  <ul>
+    <li><strong>boundingClientRect</strong>: 被观察元素的 DOMRect 边界矩形，相对于视口。</li>
+    <li><strong>intersectionRatio</strong>: 被观察元素的重叠区域与其整个区域的比例，介于0到1之间 。重点在于这个值可能与触发回调的阈值不匹配。</li>
+    <li><strong>isIntersecting</strong>: 布尔值，表示目标元素是否与视口有任何重叠。</li>
+    <li><strong>rootBounds</strong>: 根元素的DOMRect边界矩形。</li>
+    <li><strong>target</strong>: 对被观察元素的引用。</li>
+    <li><strong>time</strong>: DomHighResrimestamp，表示记录重叠的时间。</li>
+    <li><strong>isVisible</strong>: 布尔值，表示元素是否被确定为可见。只在设置了trackvisibility 和 delay时使用 , 默认值为false</li>
+  </ul>
+  <code>
+    <pre>
+      属性                       作用                        类型                               示例值
+      target                被观察的是哪个元素               Element                      &lt;div id="my-element">
+
+      isIntersecting          是否在视口内（最常用）         boolean                          true 或 false
+
+      intersectionRatio       进入视口的比例                 number                           0.5（表示50%）
+      
+      boundingClientRect      元素的位置和大小             DOMRectReadOnly        {x: 100, y: 200, width: 300, height: 150}
+
+      rootBounds              视口的位置和大小             DOMRectReadOnly        {x: 0, y: 0, width: 1200, height: 800}
+      
+      time                    变化发生的时间戳               number                           5123.400（毫秒）
+
+      isVisible        是否真正可见（需开启trackVisibility） boolean                           true 或 false
+
+    </pre>
+  </code>
+  <p>下面的例子输出了一个简单的&lt;div>的条目:</p>
+  <code>
+    <pre>
+    {
+      entries: [
+        {
+          boundingClientRect: {
+            bottom: 844.25,
+            height: 100,
+            left: 8,
+            right: 108,
+            top: 744.25,
+            width: 100,
+            x: 8,
+            y: 744.25
+          },
+          intersectionRatio: 0,
+          intersectionRect: {
+            bottom: 0,
+            height: 0,
+            left: 0,
+            right: 0,
+            top: 0,
+            width: 0,
+            x: 0,
+            y: 0
+          },
+          isIntersecting: false,
+          isVisible: false,
+          rootBounds: {
+            bottom: 367.3333435058594,
+            height: 367.3333435058594,
+            left: 0,
+            right: 1644,
+            top: 0,
+            width: 1644,
+            x: 0,
+            y: 0
+          },
+          target: div,
+          time:271.80000000074506
+        }
+      ]
+    }
+    </pre>
+  </code>
+  <p>布尔值isIntersecting特别有用,因为可以在回调中利用它来根据最新状态有条件地应用逻辑 。比如下面这个例子:</p>
+  <code>
+    <pre>
+      // 生成30个div 的垂直列
+
+    document.getElementById('vessel').innerHTML = `
+      &lt;div id="strip" style="height:100px; width: 100px;">&lt;/div>
+    `
+    let Observer = new IntersectionObserver((entries) => {
+      entries.map((entry) => {
+        //根据可见性设置蓝色和红色
+        entry.target.style.backgroundColor = entry.isIntersecting ? 'blue' : 'red'
+      }),
+      //只在&lt;div>的可见性超过一半时触发回调
+      {
+        threshold: 0.5
+      }
+    });
+
+    [...document.querySelectorAll('#strip')].map((test) => { Observer.observe(test) })
+    </pre>
+  </code>
+  <div id="observation"></div>
+  <div id="vessel"></div>
+  <p>
+    在这个例子中，我们用一个简单的观察者观察了一堆&Lt;div>元素，但只会将可见元素设置为蓝色。每次回调被触发，我们并不知道会收到多少个Intersection0bserverEntry对象。
+    可能是1个，也可能是全部30个，也可能是中间某个值。而且，其中某些条目可能会表明相应的目标元素变得可见了,而其他表明相应的元素变得不可见了。
+    为此，前面的例子展示了一次性处理所有条目的常用模式:使用isIntersecting
+    来分别处理条目。</p>
+  <script>
+    document.getElementById('observation').innerHTML = `
+    <div id='test' style="height:100px;width:100px;margin-top:-50px;"></div>
+    `
+
+    let observer = new IntersectionObserver(
+      (entries) => console.log({ entries })
+    )
+
+    observer.observe(document.getElementById('test'))
+
+    // {
+    //   entries: [
+    //     {
+    //       boundingClientRect: {
+    //         bottom: 844.25,
+    //         height: 100,
+    //         left: 8,
+    //         right: 108,
+    //         top: 744.25,
+    //         width: 100,
+    //         x: 8,
+    //         y: 744.25
+    //       },
+    //       intersectionRatio: 0,
+    //       intersectionRect: {
+    //         bottom: 0,
+    //         height: 0,
+    //         left: 0,
+    //         right: 0,
+    //         top: 0,
+    //         width: 0,
+    //         x: 0,
+    //         y: 0
+    //       },
+    //       isIntersecting: false,
+    //       isVisible: false,
+    //       rootBounds: {
+    //         bottom: 367.3333435058594,
+    //         height: 367.3333435058594,
+    //         left: 0,
+    //         right: 1644,
+    //         top: 0,
+    //         width: 1644,
+    //         x: 0,
+    //         y: 0
+    //       },
+    //       target: div,
+    //       time:271.80000000074506
+    //     }
+    //   ]
+    // }
+
+    // 生成30个div 的垂直列
+    document.getElementById('vessel').innerHTML = `
+      <div id="strip" style="height:100px; width: 100px;"></div>
+    `
+    let Observer = new IntersectionObserver((entries) => {
+      entries.map((entry) => {
+        //根据可见性设置蓝色和红色
+        entry.target.style.backgroundColor = entry.isIntersecting ? 'blue' : 'red'
+      }),
+      //只在<div>的可见性超过一半时触发回调
+      {
+        threshold: 0.5
+      }
+    });
+
+    [...document.querySelectorAll('#strip')].map((test) => { Observer.observe(test) })
+  </script>
+</body>
+
+</html>

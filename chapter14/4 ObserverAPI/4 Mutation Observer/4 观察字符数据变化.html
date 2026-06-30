@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>观察字符数据变化</h1>
+  <p>MutationObserver可以观察到文本节点 (如Text、Comment或 ProcessingInstruction节点) 中的字符增加、删除和修改。
+    这需要在MutationObserverInit 中将characterData属性设置为true，如下所示:
+  </p>
+  <code>
+    <pre>
+    let observer = new MutationObserver((mutationRecords) => {
+      console.log(mutationRecords)
+    })
+
+    const vessel = document.getElementById('vessel')
+    // 创建要观察的文本节点 
+    vessel.innerText = 'Arrebol'
+
+    // 因为他是直接节点下面是文本节点 , 后面的 characterData: true 是表示观察里面的文本节点变化
+    observer.observe(vessel.firstChild, { characterData: true })
+
+    // 相同的字符串赋值
+    vessel.firstChild.textContent = 'Arrebol'
+
+    // 新字符串赋值
+    vessel.firstChild.textContent = 'arr'
+
+    //节点设置函数赋值
+    vessel.firstChild.textContent = 'baz'
+
+    // 全部 3 次修改都被记录为变化
+    //  [MutationRecord, MutationRecord, MutationRecord]
+    </pre>
+  </code>
+  <div id="vessel"></div>
+  <p>默认行为是不在MutationRecord 中记录旧文本值。如果想在变化记录中保存旧文本值 , 可以将
+    characterDataOldValue 设置为true
+  </p>
+  <div id="test"></div>
+  <code>
+    <pre>
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords.map((x) => x.oldValue))
+    )
+    const test = document.getElementById('test');
+
+    test.innerText = 'foo'
+    Observer.observe(test.firstChild, { characterDataOldValue: true })
+
+    test.firstChild.textContent = 'foo'
+    test.firstChild.textContent = 'bar'
+    test.firstChild.textContent = 'baz'
+
+    // 每次变化都会记录之前的值
+    <strong> ['foo', 'foo', 'bar']</strong>
+    </pre>
+  </code>
+  <script>
+    let observer = new MutationObserver((mutationRecords) => {
+      console.log(mutationRecords)
+    })
+
+    const vessel = document.getElementById('vessel')
+    // 创建要观察的文本节点 
+    vessel.innerText = 'Arrebol'
+
+    // 因为他是直接节点下面是文本节点 , 后面的 characterData: true 是表示观察里面的文本节点变化
+    observer.observe(vessel.firstChild, { characterData: true })
+
+    // 相同的字符串赋值
+    vessel.firstChild.textContent = 'Arrebol'
+
+    // 新字符串赋值
+    vessel.firstChild.textContent = 'arr'
+
+    //节点设置函数赋值
+    vessel.firstChild.textContent = 'baz'
+
+    // 全部 3 次修改都被记录为变化
+    //  [MutationRecord, MutationRecord, MutationRecord]
+
+    let Observer = new MutationObserver(
+      (mutationRecords) => console.log(mutationRecords.map((x) => x.oldValue))
+    )
+    const test = document.getElementById('test');
+
+    test.innerText = 'foo'
+    Observer.observe(test.firstChild, { characterDataOldValue: true })
+
+    test.firstChild.textContent = 'foo'
+    test.firstChild.textContent = 'bar'
+    test.firstChild.textContent = 'baz'
+
+    // 每次变化都会记录之前的值
+    // ['foo', 'foo', 'bar']
+  </script>
+</body>
+
+</html>

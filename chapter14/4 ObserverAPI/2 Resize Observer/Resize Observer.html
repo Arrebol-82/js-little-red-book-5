@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../../index.css">
+</head>
+
+<body>
+  <h1>Resize Observer</h1>
+  <p>ResizeObserver API用于跟踪DOM元素尺寸的变化。通过ResizeObserver，我们可以在观察的元素尺寸 (宽和高) 发生变化时异步执行回调函数 。
+    这个API适用于响应式Web设计或动态布局更新 。ResizeObserver也可以让我们观察元素内容或内边距盒子的尺寸变化，因而在需要响应Web应用布局变化时非常有用。
+  </p>
+  <p>要创建ResizeObserver的实例，需要在调用这个构造函数时传人一个回调函数:</p>
+  <code>
+    <pre>
+    let observer = new ResizeObserver(() => {
+      console.log('Resized! ')
+    })    
+    </pre>
+  </code>
+  <p>observe() 方法接收两个参数: 要观察的目标DOM节点和可选的options对象<strong>制定观察规则</strong> 。下面的例子创一个观察者实例，并配置其观察页面主体的尺寸变化:</p>
+  <code>
+    <pre>
+    let Observer = new ResizeObserver(() => console.log('&lt;body> size changed'))
+
+    Observer.observe(document.body)
+    // &lt;body> size changed
+    </pre>
+  </code>
+  <p>调用observe()方法后，&lt;body>元素的大小只要发生变化，都会被ResizeObserver 实例检测到 , 进而异步执行回调 。注意 , 调用 observe() 也会触发一次回调执行。
+    利用这个机会可以在起始尺寸上进行初始化</p>
+  <p>下面的例子展示了缩放回到的初次及后续执行:</p>
+  <code>
+    <pre>
+    let ObServer = new ResizeObserver(() => console.log('&lt;body> was resized'))
+
+    ObServer.observe(document.body)
+    // ResizeObserver 总会在 observe() 执行后调用一次回调
+    // &lt;body> was resized
+
+    setTimeout(() => {
+      document.body.style.width = '100px'
+    }, 1000)
+
+    // (1000 毫秒之后)
+    // &lt;body> was resized
+    </pre>
+  </code>
+  <p>目标元素的子元素缩放不会触发回调，除非导致了被观察元素的尺寸变化。</p>
+  <p>调用 unobserve()或 disconnect()会停止缩放事件触发回调。更重要的是 , 这样会导致入队列的回调被取消</p>
+  <code>
+    <pre>
+    let obServer = new ResizeObserver(() => console.log('&lt;body> Cancel callback')) // 取消回调
+
+    obServer.observe(document.body)
+
+    //  ResizeObserver 总会在 observe() 执行后调用一次回调
+    //  &lt;body> Cancel callback
+
+    setTimeout(() => {
+      document.body.style.width = '100px'
+      obServer.unobserve(document.body)
+    }, 1000)
+
+    // 没有输出
+    </pre>
+  </code>
+  <p>这里<strong>之所以没有进行二次输出是因为</strong>ResizeObserver 的宏任务是在setTimeout宏任务里面才创建的 , 那此时是先执行完setTimeout嘛 , 那就解除了解除观察关联了
+  </p>
+  <script>
+    let observer = new ResizeObserver(() => {
+      console.log('Resized! ')
+    })
+
+    let Observer = new ResizeObserver(() => console.log('<body> size changed'))
+
+    Observer.observe(document.body)
+    // <body> size changed
+
+    let ObServer = new ResizeObserver(() => console.log('<body> was resized'))
+
+    ObServer.observe(document.body)
+    // ResizeObserver 总会在 observe() 执行后调用一次回调
+    // <body> was resized
+
+    setTimeout(() => {
+      document.body.style.width = '100px'
+    }, 1000)
+
+    // (1000 毫秒之后)
+    // <body> was resized
+
+    setTimeout(() => {
+      document.body.style.width = `${window.innerWidth}px`
+    }, 2000)
+
+    // let obServer = new ResizeObserver(() => console.log('<body> Cancel callback')) // 取消回调
+
+    // obServer.observe(document.body)
+
+    //  ResizeObserver 总会在 observe() 执行后调用一次回调
+    //  <body> Cancel callback
+
+    // setTimeout(() => {
+    //   document.body.style.width = '100px'
+    //   obServer.unobserve(document.body)
+    // }, 1000)
+
+    // 没有输出
+  </script>
+</body>
+
+</html>
