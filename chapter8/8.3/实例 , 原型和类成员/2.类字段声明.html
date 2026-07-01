@@ -1,17 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-
-<body>
-  <h1>类字段的声明</h1>
-  <p>鉴于在构造函数中为每个实例的初始化成员赋值是非常常见的事 , ECMAscript增加类字段声明的快捷方式</p>
-  <code>
-    <pre>
+  <body>
+    <h1>类字段的声明</h1>
+    <p>
+      鉴于在构造函数中为每个实例的初始化成员赋值是非常常见的事 ,
+      ECMAscript增加类字段声明的快捷方式
+    </p>
+    <code>
+      <pre>
       class PersonwithConstrctor {
         constructor() {
           this.friendCount = 6
@@ -51,57 +53,73 @@
   
       // console.log(new Per);
       new Per // undefined
-    </pre>
-  </code>
-  <strong>类字段其实除了在没有办法接收参数 , 其他都是和构造函数没什么区别 , 但是一个是在构造函数前初始化 , 一个是在构造函数里面初始化 , 就没啥区别了 , 最后就是大多数情况下用类字段 , 因为方便 , 还有就是
-    class { age =
-    18 } 这样也是会初始化的 ,所以直接写在 { 里面的代码会进行初始化 } 还有 { constructor( ) { } } 里面的代码也会 ,</strong>
-  <h2><i class="pink">类字段会将里面的值自动绑定上this,而且也不需要再写this , 在写的话就会报错 , 即为了统一 ,还为了方便</i></h2>
-  <script>
-    class PersonwithConstrctor {
-      constructor() {
-        this.friendCount = 6
+    </pre
+      >
+    </code>
+    <strong
+      >类字段其实除了在没有办法接收参数 , 其他都是和构造函数没什么区别 ,
+      但是一个是在构造函数前初始化 , 一个是在构造函数里面初始化 , 就没啥区别了 ,
+      最后就是大多数情况下用类字段 , 因为方便 , 还有就是 class { age = 18 }
+      这样也是会初始化的 ,所以直接写在 { 里面的代码会进行初始化 } 还有 {
+      constructor( ) { } } 里面的代码也会 ,</strong
+    >
+    <h2>
+      <i class="pink"
+        >类字段会将里面的值自动绑定上this,而且也不需要再写this ,
+        在写的话就会报错 , 即为了统一 ,还为了方便</i
+      >
+    </h2>
+    <h3>
+      在class里面是没有公共属性的 (Person.prototype.number = 123) ,
+      所以才会在class{} 作用域下直接写
+      <i>属性=值</i>的时候js能帮我整理放到实例对象上
+    </h3>
+    <div>
+      当然你说有么有办法搞出一个公共属性, 那当然还是有的, 那就是用get() 方法,
+      get number() {return 123} 当然还可以配合set 来实现双向链接
+    </div>
+    <script>
+      class PersonwithConstrctor {
+        constructor() {
+          this.friendCount = 6;
+        }
       }
-    }
 
-    let a = new PersonwithConstrctor()
-    console.log(a.friendCount);
+      let a = new PersonwithConstrctor();
+      console.log(a.friendCount);
 
-    class PersonwithClassFields {
-      friendCount = 8
-    }
-
-    let b = new PersonwithClassFields()
-    console.log(b.friendCount);
-
-    console.log('如果定义了构造函数,则在构造函数中可以访问类字段声明');
-
-    class Person {
-      friendCount = 0
-      constructor() {
-        console.log(this.friendCount);
+      class PersonwithClassFields {
+        friendCount = 8;
       }
-    }
 
-    // console.log(new Person);
-    new Person  // 0
+      let b = new PersonwithClassFields();
+      console.log(b.friendCount);
 
-    console.log('也可以只声明而不初始化');
+      console.log("如果定义了构造函数,则在构造函数中可以访问类字段声明");
 
-    class Per {
-      friendCount
-      constructor() {
-        console.log(this.friendCount);
-        this.age = 18
+      class Person {
+        friendCount = 0;
+        constructor() {
+          console.log(this.friendCount);
+        }
       }
-    }
 
-    // console.log(new Per);
-    let A = new Per // undefined
-    console.log(A.age);
+      // console.log(new Person);
+      new Person(); // 0
 
+      console.log("也可以只声明而不初始化");
 
-  </script>
-</body>
+      class Per {
+        friendCount;
+        constructor() {
+          console.log(this.friendCount);
+          this.age = 18;
+        }
+      }
 
+      // console.log(new Per);
+      let A = new Per(); // undefined
+      console.log(A.age);
+    </script>
+  </body>
 </html>
